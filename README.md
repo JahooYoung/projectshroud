@@ -28,3 +28,25 @@
 1. `cd frontend`
 2. `yarn serve`
 3. 访问`http://localhost:8080`
+
+## 数据模式
+
+### Entities
+
+- User
+  - registered_events[]
+  - attended_events[]
+  - unattended_events()
+  - //friends[]
+- Event
+  - title
+  - description
+  - start_time
+  - end_time
+  - created_time
+  - location
+  - event_admin[]
+  - registered_user[]
+  - signed_user[]
+- SuperEvent
+  - event[]
