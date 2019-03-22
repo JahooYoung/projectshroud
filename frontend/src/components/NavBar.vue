@@ -1,0 +1,77 @@
+<template>
+  <div>
+    <b-navbar toggleable="lg" type="dark" variant="info" id="nav">
+      <b-navbar-brand href="#">NavBar</b-navbar-brand>
+
+      <b-navbar-toggle target="nav_collapse" />
+
+      <b-collapse is-nav id="nav_collapse">
+        <b-navbar-nav>
+          <b-nav-item to="/">Home</b-nav-item>
+          <b-nav-item to="/event">Event</b-nav-item>
+          <!-- <b-nav-item to="#" disabled>Disabled</b-nav-item> -->
+        </b-navbar-nav>
+
+        <!-- Right aligned nav items -->
+        <b-navbar-nav class="ml-auto">
+          <b-nav-form>
+            <b-form-input size="sm" class="mr-sm-2" type="text" placeholder="Search" />
+            <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
+          </b-nav-form>
+
+          <b-nav-item-dropdown text="Lang" right>
+            <b-dropdown-item href="#">EN</b-dropdown-item>
+            <b-dropdown-item href="#">ES</b-dropdown-item>
+            <b-dropdown-item href="#">RU</b-dropdown-item>
+            <b-dropdown-item href="#">FA</b-dropdown-item>
+          </b-nav-item-dropdown>
+
+            <!-- Using button-content slot -->
+          <div v-if="user != null">
+            <b-nav-item-dropdown right>
+              <template slot="button-content"><em>{{user}}</em></template>
+              <b-dropdown-item href="#">Profile</b-dropdown-item>
+              <b-dropdown-item @click="logout()">Logout</b-dropdown-item>
+            </b-nav-item-dropdown>
+          </div>
+          <div v-else>
+            <b-nav-item to="/login">Login</b-nav-item>
+          </div>
+        </b-navbar-nav>
+      </b-collapse>
+    </b-navbar>
+  </div>
+</template>
+
+<script>
+import { mapState } from 'vuex'
+
+export default {
+  name: 'NavBar',
+  computed: mapState({
+    user: 'user'
+  }),
+  methods: {
+    logout () {
+      const commit = this.$store.commit
+      const router = this.$router
+      this.axios.post('/api/auth/logout/')
+        .then(res => {
+          commit('setUserState', null)
+          router.push('/')
+        })
+        .catch(err => {
+          alert('fail to logout!')
+          console.log(err)
+        })
+    }
+  }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+#nav_collapse .router-link-exact-active {
+  color: #ffffff;
+}
+</style>

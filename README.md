@@ -3,7 +3,6 @@
 ## 说明
 
 - 前端采用vue.js，暂定做单页应用
-
 - 后端采用Django+django rest framework
 - 前后端通信使用RESTful api
 
@@ -12,7 +11,7 @@
 ### 环境
 
 1. 建议使用virtualenv
-2. `pip install Django djangorestframework`
+2. `pip install -r requirements.pip`
 3. 安装[yarn](https://yarnpkg.com/zh-Hant/)
 4. `cd frontend && yarn install`
 
