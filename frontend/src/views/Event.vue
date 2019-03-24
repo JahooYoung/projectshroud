@@ -11,12 +11,12 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       events: []
     }
   },
-  mounted() {
+  mounted () {
     this.axios.get('/api/event/')
       .then(res => {
         this.events = res.data

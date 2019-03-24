@@ -14,7 +14,6 @@
                 id="usernameInput"
                 type="text"
                 v-model="form.username"
-                v-focus
                 required/>
             </b-form-group>
           </b-col>
@@ -36,8 +35,37 @@
         </b-row>
         <b-row>
           <b-col cols="12" offset-md="3" md="6" offset-lg="4" lg="4">
-            <b-button type="submit" variant="primary">Login</b-button>
-            <b-button to="/register" variant="danger">Register</b-button>
+            <b-form-group
+              id="RepeatPasswordInputGroup"
+              label="Repeat password:"
+              label-for="repeatPasswordInput"
+              >
+              <b-form-input
+                id="repeatPasswordInput"
+                type="password"
+                v-model="form.repeatPassword"
+                required/>
+            </b-form-group>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="12" offset-md="3" md="6" offset-lg="4" lg="4">
+            <b-form-group
+              id="emailInputGroup"
+              label="Email:"
+              label-for="emailInput"
+              >
+              <b-form-input
+                id="emailInput"
+                type="email"
+                v-model="form.email"
+                required/>
+            </b-form-group>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="12" offset-md="3" md="6" offset-lg="4" lg="4">
+            <b-button type="submit" variant="primary">Register</b-button>
           </b-col>
         </b-row>
       </b-container>
@@ -53,19 +81,23 @@ export default {
     return {
       form: {
         username: 'jahoo',
-        password: ''
+        password: '',
+        repeatPassword: '',
+        email: ''
       }
     }
   },
   methods: {
     onSubmit (evt) {
       evt.preventDefault()
-      this.axios.post('api/auth/login/', {
+      this.axios.post('api/auth/registration/', {
         username: this.form.username,
-        password: this.form.password
+        password1: this.form.password,
+        password2: this.form.repeatPassword,
+        email: this.form.email
       })
         .then(res => {
-          if (res.status < 300) {
+          if (res.status == 201) {
             this.$store.commit('setUserState', {
               user: this.form.username,
               key: res.data.key
@@ -76,17 +108,10 @@ export default {
           }
         })
         .catch(err => {
-          alert('login failed')
+          console.log(err)
+          alert('register failed')
         })
     }
-  },
-  directives: {
-  focus: {
-    // 指令的定义
-    inserted: function (el) {
-      el.focus()
-    }
   }
-}
 }
 </script>

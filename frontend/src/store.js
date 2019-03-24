@@ -2,8 +2,11 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 
-axios.interceptors.request.use((config) => {
+axios.interceptors.request.use(config => {
+  // only receive json
   config.headers['Content-Type'] = 'application/json'
+  // all status code are valid
+  config.validateStatus = status => true
   // handle csrftoken
   config.headers['X-Requested-With'] = 'XMLHttpRequest'
   const regex = /.*csrftoken=([^;.]*).*$/
@@ -12,6 +15,15 @@ axios.interceptors.request.use((config) => {
 })
 
 Vue.use(Vuex)
+
+const readLocalStorage = store => {
+  if (window.localStorage && window.localStorage.user) {
+    store.commit('setUserState', {
+      user: window.localStorage.user,
+      key: window.localStorage.token
+    })
+  }
+}
 
 export default new Vuex.Store({
   state: {
@@ -26,15 +38,25 @@ export default new Vuex.Store({
           config.headers['Authorization'] = 'Token ' + userState.key
           return config
         })
+        if (window.localStorage) {
+          window.localStorage.user = state.user
+          window.localStorage.token = userState.key
+        }
       } else {
         state.user = null
         if (state.tokenInterceptor != null) {
           axios.interceptors.request.eject(state.tokenInterceptor)
+        }
+        if (window.localStorage) {
+          window.localStorage.user = null
+          window.localStorage.token = null
         }
       }
     }
   },
   actions: {
 
-  }
+  },
+  plugins: [ readLocalStorage ],
+  strict: process.env.NODE_ENV !== 'production'
 })
