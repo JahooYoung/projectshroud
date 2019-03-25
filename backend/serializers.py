@@ -17,3 +17,18 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = ('id', 'title', 'description', 'start_time', 'host')
+
+
+class TransportSerializer(serializers.ModelSerializer):
+    # Todo
+    pass
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    # Todo
+    pass
+
+
+class UserRegisterEventSerializer(serializers.ModelSerializer):
+    # Todo
+    pass

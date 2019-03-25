@@ -1,12 +1,32 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-# Create your models here.
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    mobile = models.CharField(max_length=11, blank=False)
+    real_name = models.CharField(max_length=20, blank=False)
+    # IDtype, ID number, ProfileImage
+
+
+class UserRegisterEvent(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    registered_transport = models.ForeignKey(Transport, on_delete=models.SET_NULL)
+    date_registered = models.DateTimeField()
+
+
+class Transport(models.Model):
+    # Todo
+    pass
+
+
 class Event(models.Model):
     title = models.CharField(max_length=100, blank=True, default='')
     description = models.TextField()
     create_time = models.DateTimeField(auto_now_add=True)
     start_time = models.DateTimeField()
-    host = models.ForeignKey('auth.User', related_name='events', on_delete=models.CASCADE)
+    host = models.ForeignKey(User, related_name='events', on_delete=models.CASCADE)
+    registered_attendee = models.ManyToManyField(User, through='UserRegisterEvent')
 
     class Meta:
         ordering = ('create_time',)
