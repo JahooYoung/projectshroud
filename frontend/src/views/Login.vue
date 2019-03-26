@@ -77,16 +77,17 @@ export default {
         })
         .catch(err => {
           alert('login failed')
+          console.log(err)
         })
     }
   },
   directives: {
-  focus: {
+    focus: {
     // 指令的定义
-    inserted: function (el) {
-      el.focus()
+      inserted: function (el) {
+        el.focus()
+      }
     }
   }
-}
 }
 </script>

@@ -97,7 +97,7 @@ export default {
         email: this.form.email
       })
         .then(res => {
-          if (res.status == 201) {
+          if (res.status === 201) {
             this.$store.commit('setUserState', {
               user: this.form.username,
               key: res.data.key

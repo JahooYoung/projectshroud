@@ -8,13 +8,6 @@ class UserProfile(models.Model):
     # IDtype, ID number, ProfileImage
 
 
-class UserRegisterEvent(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    registered_transport = models.ForeignKey(Transport, on_delete=models.SET_NULL)
-    date_registered = models.DateTimeField()
-
-
 class Transport(models.Model):
     # Todo
     pass
@@ -43,3 +36,10 @@ class Event(models.Model):
     #                             full=True, **options)
     #     self.highlighted = highlight(self.code, lexer, formatter)
     #     super(Snippet, self).save(*args, **kwargs)
+
+
+class UserRegisterEvent(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    registered_transport = models.ForeignKey(Transport, null=True, on_delete=models.SET_NULL)
+    date_registered = models.DateTimeField()
