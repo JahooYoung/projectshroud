@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <b-navbar toggleable="lg" type="dark" variant="info" id="nav">
+  <div class="navbar-div">
+    <b-navbar fixed="top" toggleable="md" type="dark" variant="info" id="nav">
       <b-navbar-brand href="#">NavBar</b-navbar-brand>
 
       <b-navbar-toggle target="nav_collapse" />
@@ -71,6 +71,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.navbar-div {
+  margin-bottom: 5em
+}
+
 #nav_collapse .router-link-exact-active {
   color: #ffffff;
 }

@@ -17,7 +17,7 @@ axios.interceptors.request.use(config => {
 Vue.use(Vuex)
 
 const readLocalStorage = store => {
-  if (window.localStorage && window.localStorage.user) {
+  if (window.localStorage && window.localStorage.user !== '') {
     store.commit('setUserState', {
       user: window.localStorage.user,
       key: window.localStorage.token
@@ -32,7 +32,7 @@ export default new Vuex.Store({
   },
   mutations: {
     setUserState (state, userState) {
-      if (userState != null) {
+      if (userState !== null) {
         state.user = userState.user
         state.tokenInterceptor = axios.interceptors.request.use(config => {
           config.headers['Authorization'] = 'Token ' + userState.key
@@ -48,8 +48,8 @@ export default new Vuex.Store({
           axios.interceptors.request.eject(state.tokenInterceptor)
         }
         if (window.localStorage) {
-          window.localStorage.user = null
-          window.localStorage.token = null
+          window.localStorage.user = ''
+          window.localStorage.token = ''
         }
       }
     }

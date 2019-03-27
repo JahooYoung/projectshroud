@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <NavBar/>
-    <router-view/>
+    <transition name="fade">
+      <router-view/>
+    </transition>
   </div>
 </template>
 
@@ -26,16 +28,10 @@ export default {
   color: #2c3e50;
 }
 
-/*#nav {
-  padding: 30px;
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .2s;
 }
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-} */
 </style>

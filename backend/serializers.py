@@ -16,7 +16,7 @@ class EventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ('id', 'title', 'description', 'start_time', 'host')
+        fields = ('id', 'title', 'description', 'start_time', 'host', 'registered_attendee')
 
 
 class TransportSerializer(serializers.ModelSerializer):
