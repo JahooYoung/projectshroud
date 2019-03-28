@@ -41,5 +41,5 @@ class Event(models.Model):
 class UserRegisterEvent(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    registered_transport = models.ForeignKey(Transport, null=True, on_delete=models.SET_NULL)
+    registered_transport = models.ForeignKey(Transport, blank=True, null=True, on_delete=models.SET_NULL)
     date_registered = models.DateTimeField()

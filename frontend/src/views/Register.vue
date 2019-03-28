@@ -80,7 +80,7 @@ export default {
   data () {
     return {
       form: {
-        username: 'jahoo',
+        username: '',
         password: '',
         repeatPassword: '',
         email: ''
