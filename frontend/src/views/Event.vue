@@ -3,16 +3,19 @@
     <b-container>
       <h2>Event List</h2>
       <b-row>
-        <b-col md="6" class="my-1">
-          <b-form-group label-cols-sm="3" label="Filter" class="mb-0">
-            <b-input-group>
-              <b-form-input v-model="filter" placeholder="Type to Search" />
-              <b-input-group-append>
-                <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
-              </b-input-group-append>
-            </b-input-group>
-          </b-form-group>
+        <b-col md="4" class="my-1">
+          <b-input-group>
+            <b-input-group-text slot="prepend">Filter</b-input-group-text>
+            <b-form-input v-model="filter" placeholder="Type to Search" />
+            <b-input-group-append>
+              <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
+            </b-input-group-append>
+          </b-input-group>
         </b-col>
+        <b-col offset-md="6" md="2" class="my-1">
+          <b-button variant="outline-info">New Event</b-button>
+        </b-col>
+
         <b-table striped hover show-empty :busy="isLoading" :items="events"
           :fields="fields" primary-key="id" :filter="filter"
         >
@@ -20,44 +23,45 @@
             <b-spinner class="align-middle" />
             <strong>Loading...</strong>
           </div>
-          <template slot="id" slot-scope="row">
-            <b-link :to="'/event/' + row.value">{{ row.value }}</b-link>
+
+          <template slot="title" slot-scope="row">
+            <b-link :to="'/event/' + row.item.id">{{ row.value }}</b-link>
+          </template>
+
+          <template slot="actions" slot-scope="row">
+            <b-button size="sm" @click="row.toggleDetails">
+              {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
+            </b-button>
+          </template>
+
+          <template slot="row-details" slot-scope="row">
+            <b-card>
+              <ul>
+                <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
+              </ul>
+            </b-card>
           </template>
         </b-table>
+
       </b-row>
     </b-container>
   </div>
 </template>
 
 <script>
+const fields = [
+  { key: 'title', sortable: false },
+  { key: 'start_time', sortable: true },
+  { key: 'host', sortable: true },
+  { key: 'actions' }
+]
+
 export default {
   data () {
     return {
       isLoading: false,
-      filter: '',
-      fields: {
-        id: {
-          // label: 'Id',
-          sortable: true
-        },
-        title: {
-          // label: '',
-          sortable: false
-        },
-        description: {
-          // label: '',
-          sortable: false
-        },
-        start_time: {
-          // label: '',
-          sortable: true
-        },
-        host: {
-          // label: '',
-          sortable: true
-        },
-        registerd_attendee: {}
-      },
+      filter: null,
+      fields,
       events: []
     }
   },

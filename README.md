@@ -28,9 +28,23 @@
 2. `yarn serve`
 3. 访问`http://localhost:8080`
 
-## 数据模式 
+## Views
+
+- home: login ? [recent event, registered event, host event] : introduction to the website
+- event: public event list, add event entry, register event
+- event detail
+  - host or admin: basic info (modifiable), attendee list, check in, export to excel, ...
+    - attendee list: add attendee
+    - check in: start/stop checking in, QR code
+  - attendee: basic info, transport info
+  - others: basic info, register
+
+- user profile:
+- user registered event: list, sortable, filterable
+
+## 数据模式
 See `models.py`
 
 ### 关于自定义UserProfile
-使用非Django自带的User Model，必须作为整个项目的第一次migrations  
+使用非Django自带的User Model，必须作为整个项目的第一次migrations
 若报错需删除数据库及`migrations`文件夹，然后`python manage.py makemigrations && python manage.py migrate`;
