@@ -2,18 +2,20 @@
   <div>
     <b-form @submit="onSubmit">
 
-      <b-container>
+      <b-container fluid>
         <b-row>
           <b-col cols="12" offset-md="3" md="6" offset-lg="4" lg="4">
             <b-form-group
-              id="usernameInputGroup"
-              label="Username:"
-              label-for="usernameInput"
-              >
+              id="mobileInputGroup"
+              label="Mobile:"
+              label-for="mobileInput"
+              label-cols-sm="4"
+              label-cols-lg="3"
+            >
               <b-form-input
-                id="usernameInput"
+                id="mobileInput"
                 type="text"
-                v-model="form.username"
+                v-model="form.mobile"
                 required/>
             </b-form-group>
           </b-col>
@@ -24,7 +26,9 @@
               id="passwordInputGroup"
               label="Password:"
               label-for="passwordInput"
-              >
+              label-cols-sm="4"
+              label-cols-lg="3"
+            >
               <b-form-input
                 id="passwordInput"
                 type="password"
@@ -39,7 +43,9 @@
               id="RepeatPasswordInputGroup"
               label="Repeat password:"
               label-for="repeatPasswordInput"
-              >
+              label-cols-sm="4"
+              label-cols-lg="3"
+            >
               <b-form-input
                 id="repeatPasswordInput"
                 type="password"
@@ -51,10 +57,29 @@
         <b-row>
           <b-col cols="12" offset-md="3" md="6" offset-lg="4" lg="4">
             <b-form-group
+              id="realNameInputGroup"
+              label="Real name:"
+              label-for="realNameInput"
+              label-cols-sm="4"
+              label-cols-lg="3"
+            >
+              <b-form-input
+                id="realNameInput"
+                type="realName"
+                v-model="form.realName"
+                required/>
+            </b-form-group>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col cols="12" offset-md="3" md="6" offset-lg="4" lg="4">
+            <b-form-group
               id="emailInputGroup"
               label="Email:"
               label-for="emailInput"
-              >
+              label-cols-sm="4"
+              label-cols-lg="3"
+            >
               <b-form-input
                 id="emailInput"
                 type="email"
@@ -80,10 +105,11 @@ export default {
   data () {
     return {
       form: {
-        username: '',
+        mobile: '',
         password: '',
         repeatPassword: '',
-        email: ''
+        email: '',
+        realName: ''
       }
     }
   },
@@ -91,15 +117,16 @@ export default {
     onSubmit (evt) {
       evt.preventDefault()
       this.axios.post('api/auth/registration/', {
-        username: this.form.username,
+        username: this.form.mobile,
         password1: this.form.password,
         password2: this.form.repeatPassword,
-        email: this.form.email
+        email: this.form.email,
+        real_name: this.form.realName
       })
         .then(res => {
           if (res.status === 201) {
             this.$store.commit('setUserState', {
-              user: this.form.username,
+              user: this.form.mobile,
               key: res.data.key
             })
             this.$router.back()
