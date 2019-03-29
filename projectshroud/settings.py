@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_auth',
     'allauth',
     'allauth.account',
+    'allauth.socialaccount',
     'rest_auth.registration',
     'backend.apps.BackendConfig',
 ]
@@ -141,6 +142,7 @@ STATIC_URL = '/static/'
 # Django-allauth registration
 SITE_ID = 1
 
+ACCOUNT_ADAPTER = 'backend.adapters.AccountAdapter'
 ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_AUTHENTICATION_METHOD = 'mobile'
