@@ -4,6 +4,16 @@ from django.contrib.auth.models import User
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 
 
+def generate_user_uuid():
+    uid = str(uuid.uuid4())
+    return ''.join(uid.split('-'))[0:16]
+
+
+def generate_event_uuid():
+    uid = str(uuid.uuid4())
+    return ''.join(uid.split('-'))[0:12]
+
+
 class UserProfileManager(BaseUserManager):
     def create_user(self, mobile, real_name, email, password=None):
         """
@@ -46,7 +56,7 @@ class UserProfile(AbstractBaseUser):
     # user = models.OneToOneField(User, on_delete=models.CASCADE)
     id = models.CharField(max_length=16,
         primary_key=True,
-        default=''.join(str(uuid.uuid4()).split('-'))[0:16],
+        default=generate_user_uuid,
         editable=False
     )
     mobile = models.CharField(max_length=11, blank=False, verbose_name='手机号码', unique=True)
@@ -103,7 +113,7 @@ class Transport(models.Model):
 class Event(models.Model):
     id = models.CharField(max_length=16,
         primary_key=True,
-        default=''.join(str(uuid.uuid4()).split('-'))[0:12],
+        default=generate_event_uuid,
         editable=False
     )
     title = models.CharField(max_length=50, blank=False, default='', verbose_name='活动名称')
