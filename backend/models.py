@@ -94,11 +94,12 @@ class Transport(models.Model):
 
 
 class Event(models.Model):
-    title = models.CharField(max_length=100, blank=True, default='', verbose_name='活动名称')
-    description = models.TextField('描述', blank=False)
+    title = models.CharField(max_length=50, blank=False, default='', verbose_name='活动名称')
+    description = models.TextField('描述', blank=True)
     create_time = models.DateTimeField('创建时间', auto_now_add=True)
     start_time = models.DateTimeField('开始时间')
     end_time = models.DateTimeField('结束时间')
+    location = models.CharField(max_length=50, blank=False)
     host = models.ForeignKey(UserProfile, related_name='events', on_delete=models.CASCADE, verbose_name='创建者')
     admins = models.ManyToManyField(UserProfile, through='UserManageEvent', related_name='admins')
     registered_attendee = models.ManyToManyField(UserProfile, through='UserRegisterEvent', related_name='registered_attendee')
