@@ -13,6 +13,7 @@
             </b-input-group>
           </b-form-group>
         </b-col>
+
         <b-table striped hover show-empty :busy="isLoading" :items="events"
           :fields="fields" primary-key="id" :filter="filter"
         >
@@ -20,44 +21,46 @@
             <b-spinner class="align-middle" />
             <strong>Loading...</strong>
           </div>
+
           <template slot="id" slot-scope="row">
             <b-link :to="'/event/' + row.value">{{ row.value }}</b-link>
           </template>
+
+          <template slot="actions" slot-scope="row">
+            <b-button size="sm" @click="row.toggleDetails">
+              {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
+            </b-button>
+          </template>
+
+          <template slot="row-details" slot-scope="row">
+            <b-card>
+              <ul>
+                <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
+              </ul>
+            </b-card>
+          </template>
         </b-table>
+
       </b-row>
     </b-container>
   </div>
 </template>
 
 <script>
+const fields = [
+  { key: 'id', sortable: true },
+  { key: 'title', sortable: false },
+  { key: 'start_time', sortable: true },
+  { key: 'host', sortable: true },
+  { key: 'actions' }
+]
+
 export default {
   data () {
     return {
       isLoading: false,
-      filter: '',
-      fields: {
-        id: {
-          // label: 'Id',
-          sortable: true
-        },
-        title: {
-          // label: '',
-          sortable: false
-        },
-        description: {
-          // label: '',
-          sortable: false
-        },
-        start_time: {
-          // label: '',
-          sortable: true
-        },
-        host: {
-          // label: '',
-          sortable: true
-        },
-        registerd_attendee: {}
-      },
+      filter: null,
+      fields,
       events: []
     }
   },
