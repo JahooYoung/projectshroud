@@ -94,8 +94,7 @@ export default {
         username: this.form.username,
         password1: this.form.password,
         password2: this.form.repeatPassword,
-        email: this.form.email,
-        real_name: 'Hello'
+        email: this.form.email
       })
         .then(res => {
           if (res.status === 201) {
