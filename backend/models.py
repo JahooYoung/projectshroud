@@ -1,6 +1,8 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+
 
 class UserProfileManager(BaseUserManager):
     def create_user(self, mobile, real_name, email, password=None):
@@ -42,6 +44,11 @@ class UserProfileManager(BaseUserManager):
 
 class UserProfile(AbstractBaseUser):
     # user = models.OneToOneField(User, on_delete=models.CASCADE)
+    id = models.CharField(max_length=16,
+        primary_key=True,
+        default=''.join(str(uuid.uuid4()).split('-'))[0:16],
+        editable=False
+    )
     mobile = models.CharField(max_length=11, blank=False, verbose_name='手机号码', unique=True)
     real_name = models.CharField(max_length=20, blank=False, verbose_name='真实姓名')
     email = models.EmailField('电子邮件', blank=True)
@@ -94,13 +101,18 @@ class Transport(models.Model):
 
 
 class Event(models.Model):
+    id = models.CharField(max_length=16,
+        primary_key=True,
+        default=''.join(str(uuid.uuid4()).split('-'))[0:12],
+        editable=False
+    )
     title = models.CharField(max_length=50, blank=False, default='', verbose_name='活动名称')
     description = models.TextField('描述', blank=True)
     create_time = models.DateTimeField('创建时间', auto_now_add=True)
     start_time = models.DateTimeField('开始时间')
     end_time = models.DateTimeField('结束时间')
     location = models.CharField(max_length=50, blank=False)
-    host = models.ForeignKey(UserProfile, related_name='events', on_delete=models.CASCADE, verbose_name='创建者')
+    host = models.ForeignKey(UserProfile, related_name='event_host', on_delete=models.CASCADE, verbose_name='创建者')
     admins = models.ManyToManyField(UserProfile, through='UserManageEvent', related_name='admins')
     registered_attendee = models.ManyToManyField(UserProfile, through='UserRegisterEvent', related_name='registered_attendee')
     public = models.BooleanField('是否公开', default=True)
@@ -111,6 +123,10 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def host_display_info(self):
+        return self.host.real_name
 
     # def save(self, *args, **kwargs):
     #     """
