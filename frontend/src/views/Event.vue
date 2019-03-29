@@ -24,8 +24,8 @@
             <strong>Loading...</strong>
           </div>
 
-          <template slot="id" slot-scope="row">
-            <b-link :to="'/event/' + row.value">{{ row.value }}</b-link>
+          <template slot="title" slot-scope="row">
+            <b-link :to="'/event/' + row.item.id">{{ row.value }}</b-link>
           </template>
 
           <template slot="actions" slot-scope="row">
@@ -50,7 +50,6 @@
 
 <script>
 const fields = [
-  { key: 'id', sortable: true },
   { key: 'title', sortable: false },
   { key: 'start_time', sortable: true },
   { key: 'host', sortable: true },
