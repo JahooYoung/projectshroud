@@ -4,11 +4,11 @@ from backend.models import *
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    events = serializers.PrimaryKeyRelatedField(many=True, queryset=Event.objects.all())
+    userregisterevent = serializers.RelatedField(many=True, read_only=True)
 
     class Meta:
         model = UserProfile
-        fields = ('id', 'mobile', 'real_name', 'email', 'events')
+        fields = ('id', 'mobile', 'real_name', 'email', 'userregisterevent')
 
 
 class EventListSerializer(serializers.ModelSerializer):

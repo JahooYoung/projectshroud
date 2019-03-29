@@ -5,7 +5,11 @@ from backend import views
 urlpatterns = [
     path('', views.index),
     path('api/event/', views.EventList.as_view()),
+    path('api/event/past/', views.PastEventList.as_view()),
+    path('api/event/ongoing/', views.OngoingEventList.as_view()),
+    path('api/event/future/', views.FutureEventList.as_view()),
     path('api/event/<pk>/', views.EventDetail.as_view()),
+
     path('api/users/', views.UserList.as_view()),
     path('api/users/<pk>/', views.UserDetail.as_view()),
 ]
