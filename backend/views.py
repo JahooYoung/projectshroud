@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from backend.models import Event
 from backend.serializers import *
 from backend.permissions import IsOwnerOrReadOnly
+from django.utils import timezone
 
 
 class UserList(generics.ListAPIView):
@@ -28,6 +29,21 @@ class EventList(generics.ListCreateAPIView):
         # user = get_user_model().objects.get(id=self.request.data.get('host_id', ''))
         user = self.request.user
         serializer.save(host=user)
+
+
+class PastEventList(generics.ListAPIView):
+    queryset = Event.objects.all().filter(public=True, end_time__lte=timezone.now())
+    serializer_class = EventListSerializer
+
+
+class FutureEventList(generics.ListAPIView):
+    queryset = Event.objects.all().filter(public=True, start_time__gte=timezone.now())
+    serializer_class = EventListSerializer
+
+
+class OngoingEventList(generics.ListAPIView):
+    queryset = Event.objects.all().filter(public=True, start_time__lte=timezone.now(), end_time__gt=timezone.now())
+    serializer_class = EventListSerializer
 
 
 class EventDetail(generics.RetrieveUpdateDestroyAPIView):
