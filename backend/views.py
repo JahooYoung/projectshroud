@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from rest_framework import generics
 from rest_framework import permissions
 from backend.models import Event
@@ -8,12 +9,12 @@ from backend.permissions import IsOwnerOrReadOnly
 
 
 class UserList(generics.ListAPIView):
-    queryset = User.objects.all()
+    queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
 
 
 class UserDetail(generics.RetrieveAPIView):
-    queryset = User.objects.all()
+    queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
 
 
@@ -23,7 +24,8 @@ class EventList(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
-        serializer.save(host=self.request.user)
+        # Todo
+        serializer.save(host=self.request.user.userprofile)
 
 
 class EventDetail(generics.RetrieveUpdateDestroyAPIView):

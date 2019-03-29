@@ -1,34 +1,38 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from backend.models import Event
+from backend.models import *
 
 
 class UserSerializer(serializers.ModelSerializer):
     events = serializers.PrimaryKeyRelatedField(many=True, queryset=Event.objects.all())
 
     class Meta:
-        model = User
-        fields = ('id', 'username', 'events')
+        model = UserProfile
+        fields = ('user.username', 'mobile', 'real_name', 'events')
 
 
 class EventSerializer(serializers.ModelSerializer):
-    host = serializers.ReadOnlyField(source='host.username')
+    host = serializers.ReadOnlyField(source='host.user')
 
     class Meta:
         model = Event
-        fields = ('id', 'title', 'description', 'start_time', 'host', 'registered_attendee')
+        fields = ('id', 'title', 'host', 'description', 'start_time', 'end_time',
+                  'public', 'require_approve')
 
 
 class TransportSerializer(serializers.ModelSerializer):
-    # Todo
-    pass
-
-
-class UserProfileSerializer(serializers.ModelSerializer):
-    # Todo
-    pass
+    class Meta:
+        model = Transport
+        fields = '__all__'
 
 
 class UserRegisterEventSerializer(serializers.ModelSerializer):
-    # Todo
-    pass
+    class Meta:
+        model = UserRegisterEvent
+        fields = '__all__'
+
+
+class UserManageEventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserManageEvent
+        fields = '__all__'

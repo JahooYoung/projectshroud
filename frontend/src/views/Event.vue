@@ -70,6 +70,7 @@ export default {
       .then(res => {
         this.isLoading = false
         this.events = res.data
+        console.log(res.data)
       })
       .catch(err => {
         this.isLoading = false
