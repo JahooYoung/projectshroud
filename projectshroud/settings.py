@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -88,6 +87,8 @@ REST_FRAMEWORK = {
     )
 }
 
+AUTH_USER_MODEL = 'backend.UserProfile'
+
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
@@ -141,5 +142,9 @@ STATIC_URL = '/static/'
 SITE_ID = 1
 
 ACCOUNT_EMAIL_REQUIRED = False
-
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_AUTHENTICATION_METHOD = 'mobile'
+ACCOUNT_MOBILE_REQUIRED = True
+ACCOUNT_UNIQUE_MOBILE = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USERNAME_REQUIRED = False
