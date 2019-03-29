@@ -25,7 +25,7 @@ class EventList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         # Todo
-        serializer.save(host=self.request.user.userprofile)
+        serializer.save(host=self.request.user)
 
 
 class EventDetail(generics.RetrieveUpdateDestroyAPIView):

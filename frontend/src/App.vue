@@ -4,17 +4,20 @@
     <transition name="fade" mode="out-in">
       <router-view/>
     </transition>
+    <Footer/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import NavBar from '@/components/NavBar.vue'
+import Footer from '@/components/Footer.vue'
 
 export default {
   name: 'app',
   components: {
-    NavBar
+    NavBar,
+    Footer
   }
 }
 </script>

@@ -35,7 +35,7 @@
 - event detail
   - host or admin: basic info (modifiable), attendee list, check in, export to excel, ...
     - attendee list: add attendee
-    - check in: start/stop checking in, QR code, 
+    - check in: start/stop checking in, QR code
   - attendee: basic info, transport info
   - others: basic info, register
 

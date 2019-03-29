@@ -17,8 +17,8 @@
         container.
       </p>
 
-      <b-button variant="primary" href="#">I am attendee</b-button>
-      <b-button variant="success" href="#">I am host</b-button>
+      <b-button variant="primary" href="#">Login or Register</b-button>
+      <!-- <b-button variant="success" href="#">I am host</b-button> -->
     </b-jumbotron>
   </div>
 </template>
