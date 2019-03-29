@@ -8,16 +8,27 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ('mobile', 'real_name', 'email', 'events')
+        fields = ('id', 'mobile', 'real_name', 'email', 'events')
 
 
-class EventSerializer(serializers.ModelSerializer):
-    host = serializers.ReadOnlyField(source='host.user')
+class EventListSerializer(serializers.ModelSerializer):
+    host_display_info = serializers.ReadOnlyField()
+    host_id = serializers.ReadOnlyField(source='host.id')
 
     class Meta:
         model = Event
-        fields = ('id', 'title', 'host', 'description', 'start_time', 'end_time',
-                  'public', 'require_approve')
+        fields = ['id', 'title', 'host_id', 'host_display_info',
+                  'start_time', 'end_time', 'location', 'require_approve']
+
+
+class EventDetailSerializer(serializers.ModelSerializer):
+    host_display_info = serializers.ReadOnlyField()
+    host_id = serializers.ReadOnlyField(source='host.id')
+
+    class Meta:
+        model = Event
+        fields = ['id', 'title', 'host_id', 'host_display_info', 'description',
+                  'start_time', 'end_time', 'location', 'public', 'require_approve']
 
 
 class TransportSerializer(serializers.ModelSerializer):

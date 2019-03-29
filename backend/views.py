@@ -3,8 +3,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from rest_framework import generics
 from rest_framework import permissions
+from rest_framework.response import Response
 from backend.models import Event
-from backend.serializers import EventSerializer, UserProfileSerializer
+from backend.serializers import *
 from backend.permissions import IsOwnerOrReadOnly
 
 
@@ -19,18 +20,19 @@ class UserDetail(generics.RetrieveAPIView):
 
 
 class EventList(generics.ListCreateAPIView):
-    queryset = Event.objects.all()
-    serializer_class = EventSerializer
+    queryset = Event.objects.all().filter(public=True)
+    serializer_class = EventListSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
-        # Todo
-        serializer.save(host=self.request.user)
+        # user = get_user_model().objects.get(id=self.request.data.get('host_id', ''))
+        user = self.request.user
+        serializer.save(host=user)
 
 
 class EventDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Event.objects.all()
-    serializer_class = EventSerializer
+    serializer_class = EventDetailSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly)
 

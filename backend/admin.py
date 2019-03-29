@@ -60,7 +60,7 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('mobile', 'email', 'real_name', 'is_site_admin')
+    list_display = ('id', 'mobile', 'email', 'real_name', 'is_site_admin')
     list_filter = ('is_site_admin',)
     fieldsets = (
         (None, {'fields': ('mobile', 'password')}),
@@ -72,11 +72,11 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('mobile', 'real_name', 'password1', 'password2')}
+            'fields': ('mobile', 'real_name', 'email', 'password1', 'password2')}
         ),
     )
     search_fields = ('mobile', 'real_name', 'email')
-    ordering = ('id',)
+    ordering = ('date_joined',)
     filter_horizontal = ()
 
 # Now register the new UserAdmin...
