@@ -13,7 +13,7 @@
           </b-input-group>
         </b-col>
         <b-col offset-md="6" md="2" class="my-1">
-          <b-button variant="outline-info">New Event</b-button>
+          <b-button variant="outline-info" to="/event/new">New Event</b-button>
         </b-col>
 
         <b-table striped hover show-empty :busy="isLoading" :items="events"

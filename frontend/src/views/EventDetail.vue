@@ -14,7 +14,7 @@ import EventDetailAdmin from './EventDetailAdmin'
 export default {
   data () {
     return {
-      isAdmin: false
+      isAdmin: true
     }
   },
   components: {

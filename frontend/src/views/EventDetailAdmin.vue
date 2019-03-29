@@ -82,7 +82,7 @@
 
                     <b-button variant="primary" type="submit" :disable="isLoading">
                       <b-spinner small type="grow" v-show="isLoading"></b-spinner>
-                      Save
+                      {{ buttonName }}
                     </b-button>
                   </b-form>
                 </b-col>
@@ -112,28 +112,6 @@
             </b-tab>
           </b-tabs>
         </b-col>
-        <!-- <b-col col="12" md="2">
-          <nav>
-            <b-nav tabs pills sticky vertical class="sidebar">
-              <b-nav-item active>Active</b-nav-item>
-              <b-nav-item>Link</b-nav-item>
-              <b-nav-item>Another Link</b-nav-item>
-              <b-nav-item disabled>Disabled</b-nav-item>
-            </b-nav>
-          </nav>
-        </b-col>
-        <b-col col="12" md="10">
-          <h2>Event Detail</h2>
-          <b-table striped hover :busy="isLoading" :items="events" :fields="fields" primary-key="id">
-            <div slot="table-busy" class="text-center text-danger my-2">
-              <b-spinner class="align-middle" />
-              <strong>Loading...</strong>
-            </div>
-            <template slot="id" slot-scope="row">
-              <b-link :to="'/event/' + row.value">{{ row.value }}</b-link>
-            </template>
-          </b-table>
-        </b-col>-->
       </b-row>
     </b-container>
   </div>
@@ -154,9 +132,11 @@ function input2date (str) {
 
 export default {
   name: 'EventDetailAdmin',
+  props: ['newEvent'],
   data () {
     return {
       isLoading: false,
+      buttonName: 'Save',
       fields: {
         id: { sortable: true },
         title: { sortable: false },
@@ -178,13 +158,16 @@ export default {
     }
   },
   mounted () {
-    this.refresh()
+    if (this.newEvent) {
+      this.buttonName = 'Create'
+    } else {
+      this.refresh()
+    }
   },
   methods: {
     onSubmit (e) {
       e.preventDefault()
-      this.isLoading = true
-      this.axios.put('/api/event/' + this.$route.params.id + '/', {
+      const data = {
         title: this.form.title,
         description: this.form.description,
         start_time: input2date(this.form.startTime).toISOString(),
@@ -192,16 +175,35 @@ export default {
         location: this.form.location,
         public: this.form.public,
         require_approve: this.form.requireApprove
-      })
-        .then(res => {
-          if (res.status === 200) {
-            this.refresh()
-          }
-        })
-        .catch(err => {
-          this.isLoading = false
-          console.log('failed to update events\n', err)
-        })
+      }
+      if (this.newEvent) {
+        this.isLoading = true
+        this.axios.post('/api/event/', data)
+          .then(res => {
+            this.isLoading = false
+            if (res.status === 201) {
+              this.$router.push('/event/' + res.data.id)
+            } else {
+              alert(res.data)
+            }
+          })
+          .catch(err => {
+            this.isLoading = false
+            console.log('failed to create events\n', err)
+          })
+      } else {
+        this.isLoading = true
+        this.axios.put('/api/event/' + this.$route.params.id + '/', data)
+          .then(res => {
+            if (res.status === 200) {
+              this.refresh()
+            }
+          })
+          .catch(err => {
+            this.isLoading = false
+            console.log('failed to update events\n', err)
+          })
+      }
     },
     refresh () {
       this.isLoading = true
