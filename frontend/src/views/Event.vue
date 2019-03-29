@@ -3,15 +3,17 @@
     <b-container>
       <h2>Event List</h2>
       <b-row>
-        <b-col md="6" class="my-1">
-          <b-form-group label-cols-sm="3" label="Filter" class="mb-0">
-            <b-input-group>
-              <b-form-input v-model="filter" placeholder="Type to Search" />
-              <b-input-group-append>
-                <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
-              </b-input-group-append>
-            </b-input-group>
-          </b-form-group>
+        <b-col md="4" class="my-1">
+          <b-input-group>
+            <b-input-group-text slot="prepend">Filter</b-input-group-text>
+            <b-form-input v-model="filter" placeholder="Type to Search" />
+            <b-input-group-append>
+              <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
+            </b-input-group-append>
+          </b-input-group>
+        </b-col>
+        <b-col offset-md="6" md="2" class="my-1">
+          <b-button variant="outline-info">New Event</b-button>
         </b-col>
 
         <b-table striped hover show-empty :busy="isLoading" :items="events"

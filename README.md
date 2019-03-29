@@ -28,24 +28,16 @@
 2. `yarn serve`
 3. 访问`http://localhost:8080`
 
-## 数据模式
+## Views
 
-### Entities
+- home: login ? [recent event, registered event, host event] : introduction to the website
+- event: public event list, add event entry, register event
+- event detail
+  - host or admin: basic info (modifiable), attendee list, check in, export to excel, ...
+    - attendee list: add attendee
+    - check in: start/stop checking in, QR code, 
+  - attendee: basic info, transport info
+  - others: basic info, register
 
-- User
-  - registered_events[]
-  - attended_events[]
-  - unattended_events()
-  - //friends[]
-- Event
-  - title
-  - description
-  - start_time
-  - end_time
-  - created_time
-  - location
-  - event_admin[]
-  - registered_user[]
-  - signed_user[]
-- SuperEvent
-  - event[]
+- user profile: 
+- user registered event: list, sortable, filterable
