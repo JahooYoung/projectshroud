@@ -1,15 +1,73 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import User
+from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+
+class UserProfileManager(BaseUserManager):
+    def create_user(self, mobile, real_name, email, password=None):
+        """
+        Creates and saves a User with the given email, real name,
+        email and password.
+        """
+        if not mobile:
+            raise ValueError('Users must have a mobile number')
+
+        if not real_name:
+            raise ValueError('Users must have a real name')
+
+        user = self.model(
+            mobile=mobile,
+            email=self.normalize_email(email),
+            real_name=real_name,
+        )
+
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, mobile, real_name, email, password):
+        """
+        Creates and saves a superuser with the given mobile, real name,
+        email and password.
+        """
+        user = self.create_user(
+            mobile=mobile,
+            email=email,
+            real_name=real_name,
+            password=password,
+        )
+        user.is_site_admin = True
+        user.save(using=self._db)
+        return user
 
 
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    mobile = models.CharField(max_length=11, blank=False, verbose_name='手机号码')
+class UserProfile(AbstractBaseUser):
+    # user = models.OneToOneField(User, on_delete=models.CASCADE)
+    mobile = models.CharField(max_length=11, blank=False, verbose_name='手机号码', unique=True)
     real_name = models.CharField(max_length=20, blank=False, verbose_name='真实姓名')
+    email = models.EmailField('电子邮件', blank=True)
+    date_joined = models.DateField('注册时间', auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    is_site_admin = models.BooleanField(default=False)
     # IDtype, ID number, ProfileImage
+
+    USERNAME_FIELD = 'mobile'
+    EMAIL_FIELD = 'email'
+    REQUIRED_FIELDS = ['real_name', 'email']
+
+    objects = UserProfileManager()
 
     def __str__(self):
         return self.real_name
+
+    def has_perm(self, perm, obj=None):
+        return self.is_site_admin
+
+    def has_module_perms(self, app_label):
+        return self.is_site_admin
+
+    @property
+    def is_staff(self):
+        return self.is_site_admin
 
 
 class Transport(models.Model):

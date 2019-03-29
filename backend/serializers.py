@@ -3,12 +3,12 @@ from django.contrib.auth.models import User
 from backend.models import *
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserProfileSerializer(serializers.ModelSerializer):
     events = serializers.PrimaryKeyRelatedField(many=True, queryset=Event.objects.all())
 
     class Meta:
         model = UserProfile
-        fields = ('user.username', 'mobile', 'real_name', 'events')
+        fields = ('mobile', 'real_name', 'email', 'events')
 
 
 class EventSerializer(serializers.ModelSerializer):

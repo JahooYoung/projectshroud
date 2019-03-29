@@ -4,18 +4,18 @@ from django.contrib.auth import get_user_model
 from rest_framework import generics
 from rest_framework import permissions
 from backend.models import Event
-from backend.serializers import EventSerializer, UserSerializer
+from backend.serializers import EventSerializer, UserProfileSerializer
 from backend.permissions import IsOwnerOrReadOnly
 
 
 class UserList(generics.ListAPIView):
     queryset = get_user_model().objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserProfileSerializer
 
 
 class UserDetail(generics.RetrieveAPIView):
     queryset = get_user_model().objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserProfileSerializer
 
 
 class EventList(generics.ListCreateAPIView):
