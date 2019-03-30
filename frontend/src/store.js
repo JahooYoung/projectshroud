@@ -44,8 +44,9 @@ export default new Vuex.Store({
         }
       } else {
         state.user = null
-        if (state.tokenInterceptor != null) {
+        if (state.tokenInterceptor !== null) {
           axios.interceptors.request.eject(state.tokenInterceptor)
+          state.tokenInterceptor = null
         }
         if (window.localStorage) {
           window.localStorage.user = ''

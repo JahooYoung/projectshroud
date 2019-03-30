@@ -29,7 +29,7 @@
       hover
       show-empty
       :fields="fields"
-      primary-key="userprofile.id"
+      primary-key="user_info.id"
       :items="attendee"
       :busy="isLoading"
       :filter="filter"
@@ -40,11 +40,11 @@
       </div>
 
       <template slot="checked_in" slot-scope="row">
-        <font-awesome-icon v-if="row.value" :id="'checkin-popover-' + row.item.userprofile.id" icon="check-circle"/>
-        <font-awesome-icon v-else :id="'checkin-popover-' + row.item.userprofile.id" icon="times-circle"/>
-        <b-popover :target="'checkin-popover-' + row.item.userprofile.id" triggers="hover focus">
+        <font-awesome-icon v-if="row.value" :id="'checkin-popover-' + row.item.user_info.id" icon="check-circle"/>
+        <font-awesome-icon v-else :id="'checkin-popover-' + row.item.user_info.id" icon="times-circle"/>
+        <b-popover :target="'checkin-popover-' + row.item.user_info.id" triggers="hover focus">
           <template slot="title">Manually check in (click to keep)</template>
-          <b-button variant="success" @click="1" :disabled="row.value">Manually check in</b-button>
+          <b-button variant="success" @click="manualCheckIn(row.item)" :disabled="row.value">Manually check in</b-button>
         </b-popover>
       </template>
 
@@ -71,10 +71,10 @@ export default {
     return {
       isLoading: false,
       fields: [
-        { key: 'userprofile.real_name', label: 'Name' },
-        { key: 'userprofile.mobile', label: 'Mobile' },
+        { key: 'user_info.real_name', label: 'Name' },
+        { key: 'user_info.mobile', label: 'Mobile' },
         { key: 'date_registered', label: 'Registered Time' },
-        { key: 'transport', label: 'Arrive Time' },
+        { key: 'transport_info', label: 'Arrive Time' },
         { key: 'checked_in', label: 'Checked in' }
       ],
       filter: null,
@@ -95,6 +95,24 @@ export default {
         })
         .catch(err => {
           this.isLoading = false
+          console.log(err)
+        })
+    },
+    manualCheckIn (rowItem) {
+      // Todo: modify api url
+      this.axios.post('/api/register/', {
+        user_id: rowItem.user_info.id,
+        event_id: this.$route.params.id
+      })
+        .then(res => {
+          console.log(res.data)
+          if (res.status === 201) {
+            rowItem.checked_in = true
+          } else {
+            alert('Manually check in failed')
+          }
+        })
+        .catch(err => {
           console.log(err)
         })
     }

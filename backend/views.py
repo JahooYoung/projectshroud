@@ -113,7 +113,7 @@ class UserEventRegister(generics.CreateAPIView):
         data = self.request.data
         if 'user_id' in data:
             try:
-                user = get_user_model().objects.get(id=data.get('event_id'))
+                user = get_user_model().objects.get(id=data.get('user_id'))
             except Event.DoesNotExist:
                 raise ValidationError('User Not Found.')
 

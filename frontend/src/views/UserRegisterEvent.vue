@@ -55,10 +55,10 @@
 
 <script>
 const fields = [
-  { key: 'event.title', label: 'event' },
-  { key: 'event.start_time', label: 'time', sortable: true },
+  { key: 'event_info.title', label: 'event' },
+  { key: 'event_info.start_time', label: 'time', sortable: true },
   // { key: 'host_display_info', label: 'Host', sortable: true },
-  { key: 'transport', label: 'transport' },
+  { key: 'transport_info', label: 'transport' },
   { key: 'actions' }
 ]
 
