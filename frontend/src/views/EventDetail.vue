@@ -1,7 +1,10 @@
 <template>
   <div>
-    <EventDetailAdmin v-if="isAdmin"/>
-    <div v-if="!isAdmin">
+    <b-spinner v-if="pageSwitch === 0" style="width: 3rem; height: 3rem;" label="Loading..."></b-spinner>
+
+    <EventDetailAdmin v-if="pageSwitch === 2"/>
+
+    <div v-if="pageSwitch === 1">
       <!-- fill this in -->
       <h2> {{event.title}} </h2>
       <h4> location: {{event.location}} </h4>
@@ -22,7 +25,7 @@
         <b-spinner small type="grow" v-show="isLoading"></b-spinner>
         Register
       </b-button>
-      <b-button variant="danger" type="submit" :disabled="isLoading" @click="unregister" v-else>
+      <b-button variant="danger" type="submit" :disabled="isLoading || true" @click="unregister" v-else>
         <b-spinner small type="grow" v-show="isLoading"></b-spinner>
         Unregister
       </b-button>
@@ -48,8 +51,8 @@ export default {
   }),
   data () {
     return {
+      pageSwitch: 0, // 0: first time loading, 1: normal, 2: admin
       isLoading: false,
-      isAdmin: false,
       event: {
         title: '',
         description: '',
@@ -60,24 +63,28 @@ export default {
         registered: false,
         requireApprove: false
       },
-      status: 'ddd'
+      status: ''
     }
   },
   mounted () {
     this.isLoading = true
     this.axios.get('/api/event/' + this.$route.params.id)
       .then(res => {
-        this.isLoading = false
-        this.isAdmin = res.data.event_admin
         console.log(res.data)
-        this.event.title = res.data.title
-        this.event.description = res.data.description
-        this.event.startTime = date2input(new Date(res.data.start_time))
-        this.event.endTime = date2input(new Date(res.data.end_time))
-        this.event.location = res.data.location
-        this.event.public = res.data.public
-        this.event.registered = res.data.event_registered
-        this.event.requireApprove = res.data.require_approve
+        this.isLoading = false
+        if (res.data.event_admin) {
+          this.pageSwitch = 2
+        } else {
+          this.event.title = res.data.title
+          this.event.description = res.data.description
+          this.event.startTime = date2input(new Date(res.data.start_time))
+          this.event.endTime = date2input(new Date(res.data.end_time))
+          this.event.location = res.data.location
+          this.event.public = res.data.public
+          this.event.registered = res.data.event_registered
+          this.event.requireApprove = res.data.require_approve
+          this.pageSwitch = 1
+        }
       })
       .catch(err => {
         this.isLoading = false
@@ -99,12 +106,12 @@ export default {
         })
           .then(res => {
             this.isLoading = false
-            this.status = 'Register successfully'
             console.log(res.data)
             if (res.status === 201) {
-              alert('Register successfully')
+              this.status = 'Register successfully'
+              this.event.registered = true
             } else {
-              alert('>>>>>>???????<<<<<<')
+              alert(res.data)
             }
           })
           .catch(err => {
