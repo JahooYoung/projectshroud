@@ -105,14 +105,17 @@ class UserEventRegister(generics.CreateAPIView):
     serializer_class = UserRegisterEventSerializer
     permission_classes = (OpenRegistration|IsEventHostAdmin|permissions.IsAdminUser, )
 
-    def create(self, request, *args, **kwargs)::
+    def create(self, request, *args, **kwargs):
         user = request.user
         data = request.data
         if 'user_id' in data:
             user = get_user_model().objects.get(id=data['user_id'])
         if 'event_id' not in data:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'No event_id specified.'})
-        event = Event.objects.get(id=data.get('event_id'))
+        try:
+            event = Event.objects.get(id=data.get('event_id'))
+        except Event.DoesNotExists:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Event not found.'})
         if 'transport_id' not in data or data.get('transport_id') is None:
             transport = None
         else:

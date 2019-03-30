@@ -100,8 +100,9 @@ export default {
         status = "Please login first";
       }
       else {
+        console.log("id="+this.$route.params.id)
         this.axios.post('/api/register/', {
-          //event_id: this.$route.params.id,
+          event_id: this.$route.params.id,
         })
         .then(res => {
           this.isLoading = false
