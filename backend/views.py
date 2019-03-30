@@ -17,6 +17,8 @@ from rest_framework.serializers import ValidationError
 
 
 def check_is_admin(user, event):
+    if user == event.host:
+        return True
     return UserManageEvent.objects.filter(user=user, event=event).exists()
 
 
