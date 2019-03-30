@@ -110,7 +110,7 @@ class UserEventRegister(generics.CreateAPIView):
         data = request.data
         if 'user_id' in data:
             user = get_user_model().objects.get(id=data['user_id'])
-        if 'event_id' in data:
+        if 'event_id' not in data:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'No event_id specified.'})
         event = Event.objects.get(id=data.get('event_id'))
         if 'transport_id' not in data or data.get('transport_id') is None:
