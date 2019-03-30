@@ -144,7 +144,7 @@ class EventAttendeeList(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         try:
-            event = Event.objects.get(pk=kwargs.get('pk'))
+            event = Event.objects.get(pk=self.kwargs.get('pk'))
         except Event.DoesNotExist:
             return None
         return UserRegisterEvent.objects.filter(event=event)

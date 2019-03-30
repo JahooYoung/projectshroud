@@ -13,8 +13,16 @@
           </b-input-group>
         </b-col>
 
-        <b-table striped hover show-empty :busy="isLoading" :items="events"
-          :fields="fields" primary-key="id" :filter="filter" sort-by="start_time"
+        <b-table
+          striped
+          hover
+          show-empty
+          :busy="isLoading"
+          :items="events"
+          :fields="fields"
+          primary-key="event.id"
+          :filter="filter"
+          sort-by="start_time"
         >
           <div slot="table-busy" class="text-center text-danger my-2">
             <b-spinner class="align-middle" />
@@ -47,9 +55,10 @@
 
 <script>
 const fields = [
-  { key: 'title', sortable: false },
-  { key: 'start_time', sortable: true },
-  { key: 'host_display_info', label: 'Host', sortable: true },
+  { key: 'event.title', label: 'event'},
+  { key: 'event.start_time', label: 'time', sortable: true },
+  // { key: 'host_display_info', label: 'Host', sortable: true },
+  { key: 'transport', label: 'transport'},
   { key: 'actions' }
 ]
 
@@ -64,7 +73,7 @@ export default {
   },
   mounted () {
     this.isLoading = true
-    this.axios.get('/api/event/')
+    this.axios.get('/api/event/registered/')
       .then(res => {
         this.isLoading = false
         this.events = res.data

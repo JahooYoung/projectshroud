@@ -16,8 +16,15 @@
           <b-button variant="outline-info" to="/event/new">New Event</b-button>
         </b-col>
 
-        <b-table striped hover show-empty :busy="isLoading" :items="events"
-          :fields="fields" primary-key="id" :filter="filter"
+        <b-table
+          striped
+          hover
+          show-empty
+          :items="events"
+          :fields="fields"
+          primary-key="id"
+          :filter="filter"
+          :busy="isLoading"
         >
           <div slot="table-busy" class="text-center text-danger my-2">
             <b-spinner class="align-middle" />
