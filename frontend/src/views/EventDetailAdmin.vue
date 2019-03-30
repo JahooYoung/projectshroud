@@ -182,6 +182,7 @@ export default {
   },
   methods: {
     onSubmit (e) {
+      console.log('OrzJahoo');
       e.preventDefault()
       this.isLoading = true
       this.axios.put('/api/event/' + this.$route.params.id + '/', {
