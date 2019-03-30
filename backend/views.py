@@ -105,9 +105,9 @@ class UserEventRegister(generics.CreateAPIView):
     serializer_class = UserRegisterEventSerializer
     permission_classes = (OpenRegistration|IsEventHostAdmin|permissions.IsAdminUser, )
 
-    def perform_create(self, serializer):
-        user = self.request.user
-        data = self.request.data
+    def create(self, request, *args, **kwargs)::
+        user = request.user
+        data = request.data
         if 'user_id' in data:
             user = get_user_model().objects.get(id=data['user_id'])
         if 'event_id' in data:
@@ -117,7 +117,16 @@ class UserEventRegister(generics.CreateAPIView):
             transport = None
         else:
             transport = Transport.objects.get(id=data.get('transport_id'))
-        serializer.save(user=user, event=event, transport=transport)
+
+        data['user'] = user
+        data['event'] = event
+        data['transport'] = transport
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response({'msg': 'Success'}, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class AssignEventAdmin(generics.CreateAPIView):
