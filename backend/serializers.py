@@ -15,7 +15,7 @@ class EventListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ['id', 'title', 'host_id', 'host_display_info',
+        fields = ['id', 'title', 'host_id', 'host_display_info', 'checkin_enabled',
                   'start_time', 'end_time', 'location', 'require_approve']
 
 
@@ -25,22 +25,24 @@ class EventDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ['id', 'title', 'host_id', 'host_display_info', 'description',
-                  'start_time', 'end_time', 'location', 'public', 'require_approve']
+        fields = ['id', 'title', 'host_id', 'host_display_info',
+                  'description', 'checkin_enabled', 'start_time',
+                  'end_time', 'location', 'public', 'require_approve']
 
 
 class TransportSerializer(serializers.ModelSerializer):
-    user = UserProfileSerializer(read_only=True)
-    event = EventListSerializer(read_only=True)
+    user = UserProfileSerializer()
+    event = EventListSerializer()
+
     class Meta:
         model = Transport
         fields = '__all__'
 
 
 class UserRegisterEventSerializer(serializers.ModelSerializer):
-    userprofile = UserProfileSerializer(source='user', read_only=True)
-    transport = TransportSerializer(source='registered_transport', read_only=True)
-    event = EventListSerializer(read_only=True)
+    userprofile = UserProfileSerializer(source='user')
+    transport = TransportSerializer(source='registered_transport')
+    event = EventListSerializer()
 
     class Meta:
         model = UserRegisterEvent
@@ -48,9 +50,18 @@ class UserRegisterEventSerializer(serializers.ModelSerializer):
 
 
 class UserManageEventSerializer(serializers.ModelSerializer):
-    user = UserProfileSerializer(read_only=True)
-    event = EventListSerializer(read_only=True)
+    user = UserProfileSerializer()
+    event = EventListSerializer()
 
     class Meta:
         model = UserManageEvent
         fields = ['user', 'event']
+
+
+class CheckInSerializer(serializers.ModelSerializer):
+    event = EventListSerializer()
+
+    class Meta:
+        model = CheckIn
+        fields = ['token', 'event']
+

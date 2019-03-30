@@ -16,7 +16,7 @@ class IsEventHostAdminOrReadOnly(permissions.BasePermission):
         if isinstance(obj, Event):
             return (obj.host == request.user or
                     UserManageEvent.objects.filter(user=request.user, event=obj).exists())
-        elif isinstance(obj, UserRegisterEvent) or isinstance(obj, Transport):
+        elif hasattr(obj, 'event'):
             return (obj.event.host == request.user or
                     UserManageEvent.objects.filter(user=request.user, event=obj.event).exists())
 
@@ -31,9 +31,10 @@ class IsEventHostAdmin(permissions.BasePermission):
         if isinstance(obj, Event):
             return (obj.host == request.user or
                     UserManageEvent.objects.filter(user=request.user, event=obj).exists())
-        elif isinstance(obj, UserRegisterEvent) or isinstance(obj, Transport):
+        elif hasattr(obj, 'event'):
             return (obj.event.host == request.user or
                     UserManageEvent.objects.filter(user=request.user, event=obj.event).exists())
+        return False
 
 
 class IsEventRegistered(permissions.BasePermission):
@@ -46,9 +47,10 @@ class IsEventRegistered(permissions.BasePermission):
         if isinstance(obj, Event):
             return (obj.host == request.user or
                     UserRegisterEvent.objects.filter(user=request.user, event=obj).exists())
-        elif isinstance(obj, UserRegisterEvent) or isinstance(obj, Transport):
+        elif hasattr(obj, 'event'):
             return (obj.event.host == request.user or
                     UserRegisterEvent.objects.filter(user=request.user, event=obj.event).exists())
+        return False
 
 
 class IsOwner(permissions.BasePermission):
@@ -56,6 +58,8 @@ class IsOwner(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         # Read & Write permissions.
         if not request.user:
+            return False
+        if not hasattr(obj, 'user'):
             return False
         return obj.user == request.user
 
