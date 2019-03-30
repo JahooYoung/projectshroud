@@ -21,10 +21,10 @@ export default {
   },
   methods: {
     refresh () {
-      this.axios.get('/api/event/' + this.$router.id + '/attendee/')
+      this.axios.get('/api/event/' + this.$route.params.id + '/attendee/')
         .then(res => {
           console.log(res)
-          attendee = res.data
+          this.attendee = res.data
         })
     }
   }

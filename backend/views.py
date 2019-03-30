@@ -125,11 +125,11 @@ class EventDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsEventHostAdminOrReadOnly,)
 
     def get(self, request, *args, **kwargs):
-        data = self.retrieve(request, *args, **kwargs).data
         try:
             obj = Event.objects.get(pk=kwargs.get('pk'))
         except Event.DoesNotExist:
             raise Http404
+        data = self.retrieve(request, *args, **kwargs).data
 
         data['event_admin'] = check_is_admin(request.user, obj)
         data['event_registered'] = check_event_registered(request.user, obj)
@@ -142,11 +142,11 @@ class EventAttendeeList(generics.ListAPIView):
     serializer_class = UserRegisterEventSerializer
     permission_classes = (IsEventRegistered|IsEventHostAdmin, )
 
-    def get_queryset(self):
+    def get_queryset(self, *args, **kwargs):
         try:
             event = Event.objects.get(pk=kwargs.get('pk'))
         except Event.DoesNotExist:
-            raise Http404
+            return None
         return UserRegisterEvent.objects.filter(event=event)
 
 
