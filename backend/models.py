@@ -105,6 +105,7 @@ class Event(models.Model):
     registered_attendee = models.ManyToManyField(get_user_model(), through='UserRegisterEvent', related_name='registered_attendee')
     public = models.BooleanField('是否公开', default=True)
     require_approve = models.BooleanField('注册需要审核', default=False)
+    checkin_enabled = models.BooleanField('正在签到', default=False)
 
     class Meta:
         ordering = ('create_time',)
@@ -128,6 +129,15 @@ class Event(models.Model):
     #                             full=True, **options)
     #     self.highlighted = highlight(self.code, lexer, formatter)
     #     super(Snippet, self).save(*args, **kwargs)
+
+
+class CheckIn(models.Model):
+    token = models.CharField(max_length=16,
+        primary_key=True,
+        default=generate_user_uuid,
+        editable=False
+    )
+    event = models.OneToOneField(Event, on_delete=models.CASCADE)
 
 
 class Transport(models.Model):
@@ -167,6 +177,9 @@ class UserRegisterEvent(models.Model):
     date_registered = models.DateTimeField('注册时间', auto_now_add=True)
     checked_in = models.BooleanField(default=False)
 
+    class Meta:
+        unique_together = ('user', 'event')
+
     def __str__(self):
         return '人员: %s, 活动: %s, 交通信息: %s' % (self.user, self.event, self.registered_transport)
 
@@ -174,6 +187,9 @@ class UserRegisterEvent(models.Model):
 class UserManageEvent(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'event')
 
     def __str__(self):
         return '管理员: %s, 活动: %s' % (self.user, self.event)

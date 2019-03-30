@@ -142,9 +142,9 @@ class EventAttendeeList(generics.ListAPIView):
     serializer_class = UserRegisterEventSerializer
     permission_classes = (IsEventRegistered|IsEventHostAdmin, )
 
-    def get_queryset(self, *args, **kwargs):
+    def get_queryset(self):
         try:
-            event = Event.objects.get(pk=kwargs.get('pk'))
+            event = Event.objects.get(pk=self.kwargs.get('pk'))
         except Event.DoesNotExist:
             return None
         return UserRegisterEvent.objects.filter(event=event)
