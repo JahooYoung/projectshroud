@@ -123,6 +123,9 @@ class UserEventRegister(generics.CreateAPIView):
         except Event.DoesNotExist:
             raise ValidationError('Event Not found.')
 
+        if check_event_registered(user, event):
+            raise ValidationError('Already Registered.')
+
         transport = None
         if 'transport_id' in data:
             try:
