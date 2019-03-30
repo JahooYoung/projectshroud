@@ -1,17 +1,73 @@
 from rest_framework import permissions
+from backend.models import *
 
 
-class IsOwnerOrReadOnly(permissions.BasePermission):
-    """
-    Custom permission to only allow owners of an object to edit it.
-    """
+class IsEventHostAdminOrReadOnly(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
-        # Read permissions are allowed to any request,
-        # so we'll always allow GET, HEAD or OPTIONS requests.
-        # if request.method in permissions.SAFE_METHODS:
-        #     return True
+        # Read permissions: GET, HEAD or OPTIONS requests.
+        if request.method in permissions.SAFE_METHODS:
+            return True
 
-        return True
-        # Write permissions are only allowed to the owner of the snippet.
-        return obj.host == request.user
+        # Write permissions.
+        if not request.user:
+            return False
+
+        if isinstance(obj, Event):
+            return (obj.host == request.user or
+                    UserManageEvent.objects.filter(user=request.user, event=obj).exists())
+        elif isinstance(obj, UserRegisterEvent) or isinstance(obj, Transport):
+            return (obj.event.host == request.user or
+                    UserManageEvent.objects.filter(user=request.user, event=obj.event).exists())
+
+
+class IsEventHostAdmin(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        # Read & Write permissions.
+        if not request.user:
+            return False
+
+        if isinstance(obj, Event):
+            return (obj.host == request.user or
+                    UserManageEvent.objects.filter(user=request.user, event=obj).exists())
+        elif isinstance(obj, UserRegisterEvent) or isinstance(obj, Transport):
+            return (obj.event.host == request.user or
+                    UserManageEvent.objects.filter(user=request.user, event=obj.event).exists())
+
+
+class IsEventRegistered(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        # Read & Write permissions.
+        if not request.user:
+            return False
+
+        if isinstance(obj, Event):
+            return (obj.host == request.user or
+                    UserRegisterEvent.objects.filter(user=request.user, event=obj).exists())
+        elif isinstance(obj, UserRegisterEvent) or isinstance(obj, Transport):
+            return (obj.event.host == request.user or
+                    UserRegisterEvent.objects.filter(user=request.user, event=obj.event).exists())
+
+
+class IsOwner(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        # Read & Write permissions.
+        if not request.user:
+            return False
+        return obj.user == request.user
+
+
+# Whether an event is open for registration
+class OpenRegistration(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        # Read & Write permissions.
+        if not request.user:
+            return False
+        if obj.event.require_approve:
+            return False
+        return obj.user == request.user
+

@@ -4,11 +4,9 @@ from backend.models import *
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    userregisterevent = serializers.RelatedField(many=True, read_only=True)
-
     class Meta:
         model = UserProfile
-        fields = ('id', 'mobile', 'real_name', 'email', 'userregisterevent')
+        fields = ('id', 'mobile', 'real_name', 'email')
 
 
 class EventListSerializer(serializers.ModelSerializer):
@@ -32,18 +30,27 @@ class EventDetailSerializer(serializers.ModelSerializer):
 
 
 class TransportSerializer(serializers.ModelSerializer):
+    user = UserProfileSerializer(read_only=True)
+    event = EventListSerializer(read_only=True)
     class Meta:
         model = Transport
         fields = '__all__'
 
 
 class UserRegisterEventSerializer(serializers.ModelSerializer):
+    userprofile = UserProfileSerializer(source='user', read_only=True)
+    transport = TransportSerializer(source='registered_transport', read_only=True)
+    event = EventListSerializer(read_only=True)
+
     class Meta:
         model = UserRegisterEvent
-        fields = '__all__'
+        fields = ['userprofile', 'event', 'date_registered', 'transport', 'checked_in']
 
 
 class UserManageEventSerializer(serializers.ModelSerializer):
+    user = UserProfileSerializer(read_only=True)
+    event = EventListSerializer(read_only=True)
+
     class Meta:
         model = UserManageEvent
-        fields = '__all__'
+        fields = ['user', 'event']
