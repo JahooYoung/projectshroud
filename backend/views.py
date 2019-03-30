@@ -59,6 +59,16 @@ class UserRegisterEventList(generics.ListAPIView):
         return UserRegisterEvent.objects.filter(user=user)
 
 
+class UserManageEventList(generics.ListAPIView):
+    serializer_class = UserManageEventSerializer
+    permission_classes = (permissions.IsAdminUser|IsOwner, )
+
+    def get_queryset(self):
+        # user = get_user_model().objects.get(id=self.kwargs.get('pk'))
+        user = self.request.user
+        return UserManageEvent.objects.filter(user=user)
+
+
 class UserRegisterFutureEventList(generics.ListAPIView):
     serializer_class = UserRegisterEventSerializer
     permission_classes = (permissions.IsAdminUser|IsOwner, )
@@ -147,6 +157,18 @@ class EventAttendeeList(generics.ListAPIView):
         except Event.DoesNotExist:
             return None
         return UserRegisterEvent.objects.filter(event=event)
+
+
+class EventAdminList(generics.ListAPIView):
+    serializer_class = UserManageEventSerializer
+    permission_classes = (IsEventHostAdmin|permissions.IsAdminUser, )
+
+    def get_queryset(self):
+        try:
+            event = Event.objects.get(pk=self.kwargs.get('pk'))
+        except Event.DoesNotExist:
+            return None
+        return UserManageEvent.objects.filter(event=event)
 
 
 class TransportCreateView(generics.CreateAPIView):

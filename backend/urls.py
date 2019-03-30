@@ -12,6 +12,7 @@ urlpatterns = [
     path('api/register/', views.UserEventRegister.as_view()),
     path('api/assignadmin/', views.AssignEventAdmin.as_view()),
 
+    path('api/event/admins/', views.UserManageEventList.as_view()),
     path('api/event/registered/', views.UserRegisterEventList.as_view()),
     path('api/event/registered/past/', views.UserRegisterPastEventList.as_view()),
     path('api/event/registered/ongoing/', views.UserRegisterOngoingEventList.as_view()),
@@ -20,6 +21,7 @@ urlpatterns = [
     path('api/event/<pk>/', views.EventDetail.as_view()),
     path('api/event/<pk>/checkin/', views.EventCheckInToken.as_view()),
     path('api/event/<pk>/attendee/', views.EventAttendeeList.as_view()),
+    path('api/event/<pk>/admins/', views.EventAdminList.as_view()),
 
     path('api/trans/', views.TransportCreateView.as_view()),
     path('api/trans/<pk>', views.TransportView.as_view()),

@@ -15,6 +15,11 @@
 * Permission: `IsOwner`;
 * `GET` return: list of events registered by the log-in user, with serialized user profile info and transort info.
 
+#### UserManageEventList: `ListAPIView`
+* url: `api/event/admins/`;
+* Permission: `IsOwner`;
+* `GET` return: list of `UserManageEvent`s manages(admins) by the log-in user.
+
 #### UserRegister[Past|Future|Ongoing]EventList: `ListAPIView`
 * url: `api/event/registered/[past|future|ongoing]/`;
 * Just `UserRegisterEventList` with filter.
@@ -41,6 +46,12 @@
 * url: `api/event/<pk>/attendee/`;
 * Permission: `IsEventRegistered|IsEventHostAdmin`;
 * `GET`: returns the list of serialized `UserRegisterEvent` where `event` is the event specified by `<pk>`.
+* **Need Testing!!!**
+
+#### EventAdminList: `ListAPIView`
+* url: `api/event/<pk>/admins/`;
+* Permission: `IsEventHostAdmin`;
+* `GET`: returns the list of serialized `UserManageEvent` where `event` is the event specified by `<pk>`.
 * **Need Testing!!!**
 
 #### EventCheckInToken: `APIView`
