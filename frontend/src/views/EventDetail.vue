@@ -7,7 +7,7 @@
       <h4> location: {{event.location}} </h4>
       <h4> start time: {{event.startTime}} </h4>
       <h4> end time: {{event.endTime}} </h4>
-      
+
       <h4> Descripition: </h4>
       <b-container class="bv-example-row">
         <b-row class="justify-content-md-center">
@@ -17,13 +17,12 @@
           </b-col>
         </b-row>
       </b-container>
-      
-      
-      <b-button variant="primary" type="submit" :disable="isLoading" @click="register" v-if="!event.registered">
+
+      <b-button variant="primary" type="submit" :disabled="isLoading" @click="register" v-if="!event.registered">
         <b-spinner small type="grow" v-show="isLoading"></b-spinner>
         Register
       </b-button>
-      <b-button variant="primary" type="submit" :disable="isLoading" @click="unregister" v-else>
+      <b-button variant="danger" type="submit" :disabled="isLoading" @click="unregister" v-else>
         <b-spinner small type="grow" v-show="isLoading"></b-spinner>
         Unregister
       </b-button>
@@ -33,6 +32,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import EventDetailAdmin from './EventDetailAdmin/Entry'
 
 function date2input (date) {
@@ -42,12 +42,6 @@ function date2input (date) {
   return date.substr(0, date.length - 1)
 }
 
-function input2date (str) {
-  let date = new Date(str)
-  return date
-}
-
-import { mapState } from 'vuex'
 export default {
   computed: mapState({
     user: 'user'
@@ -66,15 +60,15 @@ export default {
         registered: false,
         requireApprove: false
       },
-      status: "ddd",
+      status: 'ddd'
     }
   },
-  
-  mounted() {
+  mounted () {
     this.isLoading = true
     this.axios.get('/api/event/' + this.$route.params.id)
       .then(res => {
         this.isLoading = false
+        this.isAdmin = res.data.event_admin
         console.log(res.data)
         this.event.title = res.data.title
         this.event.description = res.data.description
@@ -82,7 +76,7 @@ export default {
         this.event.endTime = date2input(new Date(res.data.end_time))
         this.event.location = res.data.location
         this.event.public = res.data.public
-        this.event.registered = false
+        this.event.registered = res.data.event_registered
         this.event.requireApprove = res.data.require_approve
       })
       .catch(err => {
@@ -92,36 +86,36 @@ export default {
   },
   methods: {
     register () {
-      status = "Registering..."
+      this.status = 'Registering...'
       this.isLoading = true
       console.log('Trying to register')
       if (this.user === null) {
         this.isLoading = false
-        status = "Please login first";
-      }
-      else {
-        console.log("id="+this.$route.params.id)
+        this.status = 'Please login first'
+      } else {
+        console.log('id=' + this.$route.params.id)
         this.axios.post('/api/register/', {
-          event_id: this.$route.params.id,
+          event_id: this.$route.params.id
         })
-        .then(res => {
-          this.isLoading = false
-          status = "Register successfully"
-          console.log(res.data);
-          if(res.status==201)
-            alert("Register successfully");
-          else
-            alert(">>>>>>???????<<<<<<");
-        })
-        .catch(err => {
-          this.isLoading = false
-          status = "Fail to register";
-          console.log(err)
-        });
+          .then(res => {
+            this.isLoading = false
+            this.status = 'Register successfully'
+            console.log(res.data)
+            if (res.status === 201) {
+              alert('Register successfully')
+            } else {
+              alert('>>>>>>???????<<<<<<')
+            }
+          })
+          .catch(err => {
+            this.isLoading = false
+            this.status = 'Fail to register'
+            console.log(err)
+          })
       }
     },
-    unregister() {
-      console.log("Not implemented yet!");
+    unregister () {
+      console.log('Not implemented yet!')
     }
   },
   components: {
