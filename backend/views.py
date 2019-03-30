@@ -189,7 +189,7 @@ class EventCheckInToken(APIView):
        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-class UserCheckinEvent(APIView):
+class UserCheckInEvent(APIView):
     # Not Tested
 
     permission_classes = (IsOwner|IsEventHostAdmin|permissions.IsAdminUser,)
