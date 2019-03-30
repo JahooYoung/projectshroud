@@ -107,6 +107,7 @@ export default {
         .then(res => {
           this.isLoading = false
           status = "Register successfully"
+          console.log(res.data);
           if(res.status==201)
             alert("Register successfully");
           else

@@ -31,8 +31,8 @@ class EventDetailSerializer(serializers.ModelSerializer):
 
 
 class TransportSerializer(serializers.ModelSerializer):
-    user = UserProfileSerializer(read_only=True)
-    event = EventListSerializer(read_only=True)
+    user = UserProfileSerializer()
+    event = EventListSerializer()
 
     class Meta:
         model = Transport
@@ -40,9 +40,9 @@ class TransportSerializer(serializers.ModelSerializer):
 
 
 class UserRegisterEventSerializer(serializers.ModelSerializer):
-    userprofile = UserProfileSerializer(source='user', read_only=True)
-    transport = TransportSerializer(source='registered_transport', read_only=True)
-    event = EventListSerializer(read_only=True)
+    userprofile = UserProfileSerializer(source='user')
+    transport = TransportSerializer(source='registered_transport')
+    event = EventListSerializer()
 
     class Meta:
         model = UserRegisterEvent
@@ -50,8 +50,8 @@ class UserRegisterEventSerializer(serializers.ModelSerializer):
 
 
 class UserManageEventSerializer(serializers.ModelSerializer):
-    user = UserProfileSerializer(read_only=True)
-    event = EventListSerializer(read_only=True)
+    user = UserProfileSerializer()
+    event = EventListSerializer()
 
     class Meta:
         model = UserManageEvent
@@ -59,7 +59,7 @@ class UserManageEventSerializer(serializers.ModelSerializer):
 
 
 class CheckInSerializer(serializers.ModelSerializer):
-    event = EventListSerializer(read_only=True)
+    event = EventListSerializer()
 
     class Meta:
         model = CheckIn
