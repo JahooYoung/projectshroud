@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import EventDetailAdmin from './EventDetailAdmin'
+import EventDetailAdmin from './EventDetailAdmin/Entry'
 
 export default {
   data () {
