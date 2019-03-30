@@ -27,7 +27,8 @@
         <b-spinner small type="grow" v-show="isLoading"></b-spinner>
         Unregister
       </b-button>
-      <h4> {{status}} </h4>
+      
+      <p>{{status}}</p>
     </div>
   </div>
 </template>
@@ -92,12 +93,12 @@ export default {
   },
   methods: {
     register () {
-      status = "Registering..."
+      this.status = "Registering..."
       this.isLoading = true
       console.log('Trying to register')
       if (this.user === null) {
         this.isLoading = false
-        status = "Please login first";
+        this.status = "Please login first";
       }
       else {
         console.log("id="+this.$route.params.id)
@@ -106,16 +107,19 @@ export default {
         })
         .then(res => {
           this.isLoading = false
-          status = "Register successfully"
           console.log(res.data);
-          if(res.status==201)
+          if(res.status==201) {
             alert("Register successfully");
-          else
+            this.status = "Register successfully"
+          }
+          else {
             alert(">>>>>>???????<<<<<<");
+            this.status = "Fail to register";
+          }
         })
         .catch(err => {
           this.isLoading = false
-          status = "Fail to register";
+          this.status = "Fail to register";
           console.log(err)
         });
       }
