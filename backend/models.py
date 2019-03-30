@@ -179,7 +179,7 @@ class Transport(models.Model):
 class UserRegisterEvent(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    registered_transport = models.ForeignKey(Transport, blank=True, null=True, on_delete=models.SET_NULL)
+    transport = models.ForeignKey(Transport, blank=True, null=True, on_delete=models.SET_NULL)
     date_registered = models.DateTimeField('注册时间', auto_now_add=True)
     checked_in = models.BooleanField(default=False)
 

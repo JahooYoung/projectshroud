@@ -31,8 +31,8 @@ class EventDetailSerializer(serializers.ModelSerializer):
 
 
 class TransportSerializer(serializers.ModelSerializer):
-    user = UserProfileSerializer()
-    event = EventListSerializer()
+    user = UserProfileSerializer(read_only=True)
+    event = EventListSerializer(read_only=True)
 
     class Meta:
         model = Transport
@@ -40,18 +40,18 @@ class TransportSerializer(serializers.ModelSerializer):
 
 
 class UserRegisterEventSerializer(serializers.ModelSerializer):
-    userprofile = UserProfileSerializer(source='user')
-    transport = TransportSerializer(source='registered_transport')
-    event = EventListSerializer()
+    user_info = UserProfileSerializer(source='user', read_only=True)
+    transport_info = TransportSerializer(source='transport', read_only=True)
+    event_info = EventListSerializer(source='event', read_only=True)
 
     class Meta:
         model = UserRegisterEvent
-        fields = ['userprofile', 'event', 'date_registered', 'transport', 'checked_in']
+        fields = ['user_info', 'event_info', 'date_registered', 'transport_info', 'checked_in']
 
 
 class UserManageEventSerializer(serializers.ModelSerializer):
-    user = UserProfileSerializer()
-    event = EventListSerializer()
+    user = UserProfileSerializer(read_only=True)
+    event = EventListSerializer(read_only=True)
 
     class Meta:
         model = UserManageEvent

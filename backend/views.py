@@ -10,6 +10,7 @@ from backend.serializers import *
 from backend.permissions import *
 from django.utils import timezone
 from django.http import Http404
+from rest_framework.serializers import ValidationError
 
 
 # Todos: QRcode, "cascade create"
@@ -105,31 +106,31 @@ class UserEventRegister(generics.CreateAPIView):
     serializer_class = UserRegisterEventSerializer
     permission_classes = (OpenRegistration|IsEventHostAdmin|permissions.IsAdminUser, )
 
-    def create(self, request, *args, **kwargs):
-        user = request.user
-        data = request.data
+    def perform_create(self, serializer):
+        user = self.request.user
+        data = self.request.data
         if 'user_id' in data:
-            user = get_user_model().objects.get(id=data['user_id'])
+            try:
+                user = get_user_model().objects.get(id=data.get('event_id'))
+            except Event.DoesNotExist:
+                raise ValidationError('User Not Found.')
+
         if 'event_id' not in data:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'No event_id specified.'})
+            raise ValidationError('No event_id specified.')
+
         try:
             event = Event.objects.get(id=data.get('event_id'))
-        except Event.DoesNotExists:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Event not found.'})
-        if 'transport_id' not in data or data.get('transport_id') is None:
-            transport = None
-        else:
-            transport = Transport.objects.get(id=data.get('transport_id'))
+        except Event.DoesNotExist:
+            raise ValidationError('Event Not found.')
 
-        data['user'] = user
-        data['event'] = event
-        data['transport'] = transport
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        transport = None
+        if 'transport_id' in data:
+            try:
+                transport = Transport.objects.get(id=data.get('transport_id'))
+            except Event.DoesNotExist:
+                raise ValidationError('Transport Not found.')
 
-        headers = self.get_success_headers(serializer.data)
-        return Response({'msg': 'Success'}, status=status.HTTP_201_CREATED, headers=headers)
+        serializer.save(user=user, event=event, transport=transport)
 
 
 class AssignEventAdmin(generics.CreateAPIView):
