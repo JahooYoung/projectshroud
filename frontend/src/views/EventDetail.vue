@@ -12,7 +12,7 @@
       <b-container class="bv-example-row">
         <b-row class="justify-content-md-center">
           <b-col cols="8">
-          {{event.description}}
+            {{event.description}}
           <!--<b-alert variant="success" show></b-alert>-->
           </b-col>
         </b-row>
@@ -101,15 +101,15 @@ export default {
       }
       else {
         this.axios.post('/api/register/', {
-          event_id: this.$route.params.id,
+          //event_id: this.$route.params.id,
         })
         .then(res => {
           this.isLoading = false
           status = "Register successfully"
-          if(res.status==200)
-            alert(status);
+          if(res.status==201)
+            alert("Register successfully");
           else
-            alert(res.data)
+            alert(">>>>>>???????<<<<<<");
         })
         .catch(err => {
           this.isLoading = false
