@@ -117,6 +117,12 @@ class Event(models.Model):
     def host_display_info(self):
         return self.host.real_name
 
+    def enable_checkin(self):
+        self.checkin_enabled = True
+
+    def disable_checkin(self):
+        self.checkin_enabled = False
+
     # def save(self, *args, **kwargs):
     #     """
     #     Use the `pygments` library to create a highlighted HTML
@@ -182,6 +188,9 @@ class UserRegisterEvent(models.Model):
 
     def __str__(self):
         return '人员: %s, 活动: %s, 交通信息: %s' % (self.user, self.event, self.registered_transport)
+
+    def checkin(self):
+        self.checked_in = True
 
 
 class UserManageEvent(models.Model):

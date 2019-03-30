@@ -15,7 +15,7 @@ class EventListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ['id', 'title', 'host_id', 'host_display_info',
+        fields = ['id', 'title', 'host_id', 'host_display_info', 'checkin_enabled',
                   'start_time', 'end_time', 'location', 'require_approve']
 
 
@@ -25,13 +25,15 @@ class EventDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ['id', 'title', 'host_id', 'host_display_info', 'description',
-                  'start_time', 'end_time', 'location', 'public', 'require_approve']
+        fields = ['id', 'title', 'host_id', 'host_display_info',
+                  'description', 'checkin_enabled', 'start_time',
+                  'end_time', 'location', 'public', 'require_approve']
 
 
 class TransportSerializer(serializers.ModelSerializer):
     user = UserProfileSerializer(read_only=True)
     event = EventListSerializer(read_only=True)
+
     class Meta:
         model = Transport
         fields = '__all__'
@@ -54,3 +56,12 @@ class UserManageEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserManageEvent
         fields = ['user', 'event']
+
+
+class CheckInSerializer(serializers.ModelSerializer):
+    event = EventListSerializer(read_only=True)
+
+    class Meta:
+        model = CheckIn
+        fields = ['token', 'event']
+

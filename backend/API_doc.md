@@ -3,7 +3,7 @@
 #### EventList: `ListCreateAPIView`
 * url: `api/event/`;
 * Permission: `IsAuthenticatedOrReadOnly`
-* `GET` return: list of public(`public=True`) events with fields: `id`, `title`, `host_id`, `host_display_info`, `start_time`, `end_time`, `location`, `require_approve`;
+* `GET` return: list of public(`public=True`) events with fields: `id`, `title`, `host_id`, `host_display_info`, `checkin_enabled`, `start_time`, `end_time`, `location`, `require_approve`;
 * `POST` require: log-in user (as `host`), along with `title`, `start_time`, `end_time`, `location`, `public`, `require_approve`;
 
 #### [Past|Future|Ongoing]EventList: `ListAPIView`
@@ -43,13 +43,40 @@
 * `GET`: returns the list of serialized `UserRegisterEvent` where `event` is the event specified by `<pk>`.
 * **Need Testing!!!**
 
+#### EventCheckInToken: `APIView`
+* url: `api/event/<pk>/checkin/`;
+* Permission: `AllowAny`;
+* `GET`: returns `{'checkin_token': 'some token'}` or `404 Not Found` or `400 Bad Request`;
+* `POST`: Not allowed;
+* **Need Testing!!!**
+
 #### TransportCreateView: `createAPIView`
 * url: `api/trans/`;
 * Permission: `IsOwner|IsEventHostAdmin`;
 * `POST`: Create a `Transport` object, requires all the required field and log-in user or specify `user_id` in data, also `event_id`.
-
+* **Need Testing!!!**
 
 #### TranpostView: `RetrieveUpdateDestroyAPIView`
 * url: `api/trans/<pk>/`;
 * Permission: `IsOwner|IsEventHostAdmin`;
 * **Need Testing!!!**
+
+#### StartCheckIn: `CreateAPIView`
+* url: `api/checkin/start/`;
+* Permission: `IsEventHostAdmin`;
+* Requires: `event_id`, log-in event admin user
+* **Need Testing!!!**
+
+#### StopCheckIn: `DestroyAPIView`
+* url: `api/checkin/stop/`;
+* Permission: `IsEventHostAdmin`;
+* Requires: `event_id`, log-in event admin user
+* **Need Testing!!!**
+
+#### UserCheckInEvent: `APIView`
+* url: `api/checkin/<pk>/` where `pk` is checkin token
+* Permission: `IsOwner|IsEventHostAdmin`;
+* Requires: log in user or `user_id` when by event admin;
+* **Need Testing!!!**
+
+***Permissions may have bugs***

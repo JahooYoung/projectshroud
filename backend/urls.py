@@ -18,10 +18,15 @@ urlpatterns = [
     path('api/event/registered/future/', views.UserRegisterFutureEventList.as_view()),
 
     path('api/event/<pk>/', views.EventDetail.as_view()),
+    path('api/event/<pk>/checkin/', views.EventCheckInToken.as_view()),
     path('api/event/<pk>/attendee/', views.EventAttendeeList.as_view()),
 
-    path('api/trans', views.TransportCreateView.as_view()),
-    path('api/trans/<pk>', views.TransportView.as_view())
+    path('api/trans/', views.TransportCreateView.as_view()),
+    path('api/trans/<pk>', views.TransportView.as_view()),
+
+    path('api/checkin/start/', views.StartCheckIn.as_view()),
+    path('api/checkin/stop/', views.StopCheckIn.as_view()),
+    path('api/checkin/<pk>/', view.UserCheckInEvent.as_view())
 
     # path('api/users/', views.UserList.as_view()),
 ]
