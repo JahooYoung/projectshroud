@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import EventDetailAdmin from './EventDetailAdmin'
+import EventDetailAdmin from './EventDetailAdmin/Entry'
 
 function date2input (date) {
   date.setMinutes(date.getMinutes() - date.getTimezoneOffset())

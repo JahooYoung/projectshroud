@@ -73,6 +73,7 @@ export default {
             this.$router.back()
           } else {
             alert(JSON.stringify(res.data))
+            this.$store.commit('setUserState', null)
           }
         })
         .catch(err => {

@@ -26,11 +26,11 @@
             <b-dropdown-item href="#">FA</b-dropdown-item>
           </b-nav-item-dropdown>
 
-            <!-- Using button-content slot -->
           <div v-if="user != null">
             <b-nav-item-dropdown right>
-              <template slot="button-content"><em>{{user}}</em></template>
-              <b-dropdown-item href="#">Profile</b-dropdown-item>
+              <template slot="button-content">{{user}}</template>
+              <b-dropdown-item to="/registered-event" exact-active-class="">Registered events</b-dropdown-item>
+              <b-dropdown-item to="/admin-event" exact-active-class="">Admin events</b-dropdown-item>
               <b-dropdown-item @click="logout()">Logout</b-dropdown-item>
             </b-nav-item-dropdown>
           </div>

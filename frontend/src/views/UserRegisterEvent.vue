@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-container>
-      <h2>Event List</h2>
+      <h2>Registered Events</h2>
       <b-row>
         <b-col md="4" class="my-1">
           <b-input-group>
@@ -12,12 +12,9 @@
             </b-input-group-append>
           </b-input-group>
         </b-col>
-        <b-col offset-md="6" md="2" class="my-1">
-          <b-button variant="outline-info" to="/event/new">New Event</b-button>
-        </b-col>
 
         <b-table striped hover show-empty :busy="isLoading" :items="events"
-          :fields="fields" primary-key="id" :filter="filter"
+          :fields="fields" primary-key="id" :filter="filter" sort-by="start_time"
         >
           <div slot="table-busy" class="text-center text-danger my-2">
             <b-spinner class="align-middle" />

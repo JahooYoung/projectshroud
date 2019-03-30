@@ -20,9 +20,25 @@ export default new Router({
       component: () => import(/* webpackChunkName: "event" */ './views/Event.vue')
     },
     {
+      path: '/event/new',
+      name: 'newEvent',
+      component: () => import(/* webpackChunkName: "event" */ './views/EventDetailAdmin/Entry.vue'),
+      props: { newEvent: true }
+    },
+    {
       path: '/event/:id',
       name: 'eventDetail',
       component: () => import(/* webpackChunkName: "event" */ './views/EventDetail.vue')
+    },
+    {
+      path: '/registered-event',
+      name: 'registeredEvent',
+      component: () => import(/* webpackChunkName: "user" */ './views/UserRegisterEvent.vue')
+    },
+    {
+      path: '/admin-event',
+      name: 'adminEvent',
+      component: () => import(/* webpackChunkName: "user" */ './views/UserAdminEvent.vue')
     },
     {
       path: '/login',

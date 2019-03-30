@@ -4,11 +4,9 @@ from backend.models import *
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    events = serializers.PrimaryKeyRelatedField(many=True, queryset=Event.objects.all())
-
     class Meta:
         model = UserProfile
-        fields = ('id', 'mobile', 'real_name', 'email', 'events')
+        fields = ('id', 'mobile', 'real_name', 'email')
 
 
 class EventListSerializer(serializers.ModelSerializer):
@@ -17,7 +15,7 @@ class EventListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ['id', 'title', 'host_id', 'host_display_info',
+        fields = ['id', 'title', 'host_id', 'host_display_info', 'checkin_enabled',
                   'start_time', 'end_time', 'location', 'require_approve']
 
 
@@ -27,23 +25,43 @@ class EventDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ['id', 'title', 'host_id', 'host_display_info', 'description',
-                  'start_time', 'end_time', 'location', 'public', 'require_approve']
+        fields = ['id', 'title', 'host_id', 'host_display_info',
+                  'description', 'checkin_enabled', 'start_time',
+                  'end_time', 'location', 'public', 'require_approve']
 
 
 class TransportSerializer(serializers.ModelSerializer):
+    user = UserProfileSerializer(read_only=True)
+    event = EventListSerializer(read_only=True)
+
     class Meta:
         model = Transport
         fields = '__all__'
 
 
 class UserRegisterEventSerializer(serializers.ModelSerializer):
+    userprofile = UserProfileSerializer(source='user', read_only=True)
+    transport = TransportSerializer(source='registered_transport', read_only=True)
+    event = EventListSerializer(read_only=True)
+
     class Meta:
         model = UserRegisterEvent
-        fields = '__all__'
+        fields = ['userprofile', 'event', 'date_registered', 'transport', 'checked_in']
 
 
 class UserManageEventSerializer(serializers.ModelSerializer):
+    user = UserProfileSerializer(read_only=True)
+    event = EventListSerializer(read_only=True)
+
     class Meta:
         model = UserManageEvent
-        fields = '__all__'
+        fields = ['user', 'event']
+
+
+class CheckInSerializer(serializers.ModelSerializer):
+    event = EventListSerializer(read_only=True)
+
+    class Meta:
+        model = CheckIn
+        fields = ['token', 'event']
+
