@@ -18,10 +18,16 @@
         </b-row>
       </b-container>
       
-      <b-button variant="primary" type="submit" :disable="isLoading" @click="register">
+      
+      <b-button variant="primary" type="submit" :disable="isLoading" @click="register" v-if="!event.registered">
         <b-spinner small type="grow" v-show="isLoading"></b-spinner>
         Register
       </b-button>
+      <b-button variant="primary" type="submit" :disable="isLoading" @click="unregister" v-else>
+        <b-spinner small type="grow" v-show="isLoading"></b-spinner>
+        Unregister
+      </b-button>
+      <h4> {{status}} </h4>
     </div>
   </div>
 </template>
@@ -41,7 +47,11 @@ function input2date (str) {
   return date
 }
 
+import { mapState } from 'vuex'
 export default {
+  computed: mapState({
+    user: 'user'
+  }),
   data () {
     return {
       isLoading: false,
@@ -53,39 +63,64 @@ export default {
         endTime: '',
         location: '',
         public: false,
+        registered: false,
         requireApprove: false
       },
+      status: "ddd",
     }
   },
   
   mounted() {
     this.isLoading = true
-      this.axios.get('/api/event/' + this.$route.params.id)
-        .then(res => {
-          this.isLoading = false
-          console.log(res.data)
-          this.event.title = res.data.title
-          this.event.description = res.data.description
-          this.event.startTime = date2input(new Date(res.data.start_time))
-          this.event.endTime = date2input(new Date(res.data.end_time))
-          this.event.location = res.data.location
-          this.event.public = res.data.public
-          this.event.requireApprove = res.data.require_approve
-        })
-        .catch(err => {
-          this.isLoading = false
-          console.log('failed to fetch events\n', err)
-        })
+    this.axios.get('/api/event/' + this.$route.params.id)
+      .then(res => {
+        this.isLoading = false
+        console.log(res.data)
+        this.event.title = res.data.title
+        this.event.description = res.data.description
+        this.event.startTime = date2input(new Date(res.data.start_time))
+        this.event.endTime = date2input(new Date(res.data.end_time))
+        this.event.location = res.data.location
+        this.event.public = res.data.public
+        this.event.registered = false
+        this.event.requireApprove = res.data.require_approve
+      })
+      .catch(err => {
+        this.isLoading = false
+        console.log('failed to fetch events\n', err)
+      })
   },
   methods: {
     register () {
+      status = "Registering..."
       this.isLoading = true
       console.log('Trying to register')
-      console.log()
-      setTimeout(err => {
+      if (this.user === null) {
         this.isLoading = false
-      }, 1000);
+        status = "Please login first";
+      }
+      else {
+        this.axios.post('/api/register/', {
+          event_id: this.$route.params.id,
+        })
+        .then(res => {
+          this.isLoading = false
+          status = "Register successfully"
+          if(res.status==200)
+            alert(status);
+          else
+            alert(res.data)
+        })
+        .catch(err => {
+          this.isLoading = false
+          status = "Fail to register";
+          console.log(err)
+        });
+      }
     },
+    unregister() {
+      console.log("Not implemented yet!");
+    }
   },
   components: {
     EventDetailAdmin
