@@ -24,7 +24,7 @@ urlpatterns = [
     path('api/event/<pk>/admins/', views.EventAdminList.as_view()),
 
     path('api/trans/', views.TransportCreateView.as_view()),
-    path('api/trans/<pk>', views.TransportView.as_view()),
+    path('api/trans/<pk>/', views.TransportView.as_view()),
 
     path('api/checkin/start/', views.StartCheckIn.as_view()),
     path('api/checkin/stop/', views.StopCheckIn.as_view()),
