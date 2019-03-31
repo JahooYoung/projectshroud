@@ -17,7 +17,7 @@ from rest_framework.serializers import ValidationError
 
 
 def check_is_admin(user, event):
-    if user == event.host:
+    if user.id == event.host.id:
         return True
     return UserManageEvent.objects.filter(user=user, event=event).exists()
 
@@ -34,7 +34,12 @@ class EventList(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         # user = get_user_model().objects.get(id=self.request.data.get('host_id', ''))
         user = self.request.user
-        serializer.save(host=user)
+        desc = ''
+
+        if 'description' in self.request.data:
+            desc = self.request.data.get('description')
+
+        serializer.save(host=user, description=desc)
 
 
 class PastEventList(generics.ListAPIView):
@@ -146,8 +151,19 @@ class AssignEventAdmin(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         data = self.request.data
-        user = get_user_model().objects.get(id=data.get('user_id'))
-        event = Event.objects.get(id=data.get('event_id'))
+        try:
+            user = get_user_model().objects.get(id=data.get('event_id'))
+        except Event.DoesNotExist:
+            raise ValidationError('User Not Found.')
+
+        try:
+            event = Event.objects.get(id=data.get('event_id'))
+        except Event.DoesNotExist:
+            raise ValidationError('Event Not found.')
+
+        if check_is_admin(user, event):
+            raise ValidationError('Is admin already.')
+
         serializer.save(user=user, event=event)
 
 
@@ -229,9 +245,6 @@ class EventCheckInToken(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Event Check-in not enabled.'})
         data = {'checkin_token': CheckIn.objects.get(event=event).token}
         return Response(status=status.HTTP_200_OK, data=data)
-
-    def post(self, request, pk, format=None):
-       return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class UserCheckInEvent(APIView):
