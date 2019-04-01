@@ -7,9 +7,10 @@
     >
       {{ checkingIn ? 'Stop' : 'Start'}} Check In
     </b-button>
-    <b-button v-if="checkingIn" :href="`http://${window.location.host}/#/checkin/${checkinToken}`">
+    <b-button v-if="checkingIn" :href="`http://${location.host}/#/checkin/${checkinToken}`">
       checkin QRcode
     </b-button>
+    <p>{{`http://${location.host}/#/checkin/${checkinToken}`}}</p>
     <!-- <b-img
       v-if="checkingIn"
       center
@@ -28,7 +29,7 @@ export default {
       isLoading: false,
       checkingIn: false,
       checkinToken: null,
-      window,
+      location: window.location
     }
   },
   mounted () {
