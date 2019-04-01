@@ -5,15 +5,14 @@ from rest_framework import generics, status
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from backend.models import Event
+from rest_framework.decorators import api_view
 from backend.serializers import *
 from backend.permissions import *
 from django.utils import timezone
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from rest_framework.serializers import ValidationError
-
-
-# Todos: QRcode, "cascade create"
+from MyQR import myqr
+import os
 
 
 def check_is_admin(user, event):
@@ -24,6 +23,29 @@ def check_is_admin(user, event):
 
 def check_event_registered(user, event):
     return UserRegisterEvent.objects.filter(user=user, event=event).exists()
+
+
+@api_view(['GET', 'POST'])
+def gen_qrcode(request):
+    if 'text' not in request.data:
+        raise serializers.ValidationError('No text provided.')
+
+    filetoken = '%s.png' % generate_event_uuid()
+
+    version, level, qr_name = myqr.run(
+        request.data.get('text'),
+        version=5,
+        level='H',
+        picture=None,
+        colorized=False,
+        contrast=1.0,
+        brightness=1.0,
+        save_name=filetoken,
+        save_dir=os.path.join(os.getcwd(), 'qr_temp')
+    )
+
+    with open(qr_name, 'rb') as qr_img:
+        return HttpResponse(qr_img.read(), content_type='image/png')
 
 
 class EventList(generics.ListCreateAPIView):

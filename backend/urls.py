@@ -28,7 +28,9 @@ urlpatterns = [
 
     path('api/checkin/start/', views.StartCheckIn.as_view()),
     path('api/checkin/<pk>/stop/', views.StopCheckIn.as_view()),
-    path('api/checkin/<pk>/', views.UserCheckInEvent.as_view())
+    path('api/checkin/<pk>/', views.UserCheckInEvent.as_view()),
+
+    path('api/qrcode/', views.gen_qrcode)
 
     # path('api/users/', views.UserList.as_view()),
 ]
