@@ -44,8 +44,11 @@ def gen_qrcode(request):
         save_dir=os.path.join(os.getcwd(), 'qr_temp')
     )
 
-    with open(qr_name, 'rb') as qr_img:
-        return HttpResponse(qr_img.read(), content_type='image/png')
+    with open(qr_name, 'rb') as f:
+        qr_img = f.read()
+    os.remove(qr_name)
+
+    return HttpResponse(qr_img, content_type='image/png')
 
 
 class EventList(generics.ListCreateAPIView):
