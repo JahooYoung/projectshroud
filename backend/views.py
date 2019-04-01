@@ -51,6 +51,16 @@ def gen_qrcode(request):
     return HttpResponse(qr_img, content_type='image/png')
 
 
+class DummyView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, format=None):
+        content = {
+            'status': 'request was permitted'
+        }
+        return Response(content)
+
+
 class EventList(generics.ListCreateAPIView):
     queryset = Event.objects.filter(public=True)
     serializer_class = EventListSerializer
