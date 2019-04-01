@@ -14,13 +14,20 @@ export default {
     if (this.user === null) {
       this.$router.push('/login')
     } else {
-      this.axios.get(`/api/checkin/${this.$route.params.token}`)
+      this.axios.get(`/api/checkin/${this.$route.params.token}/`)
         .then(res => {
           console.log(res)
           if (res.status === 200) {
-            alert('checkin success!')
+            this.axios.post(`/api/checkin/${this.$route.params.token}/`)
+              .then(res => {
+                if (res.status === 202) {
+                  alert('checkin success!')
+                } else {
+                  alert(res.data.msg)
+                }
+              })
           } else {
-            alert('checkin failed!')
+            alert(res.data.msg)
           }
         })
     }

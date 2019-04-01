@@ -7,18 +7,14 @@
     >
       {{ checkingIn ? 'Stop' : 'Start'}} Check In
     </b-button>
-    <b-button v-if="checkingIn" :href="`http://${location.host}/#/checkin/${checkinToken}`">
-      checkin QRcode
-    </b-button>
-    <p>{{`http://${location.host}/#/checkin/${checkinToken}`}}</p>
-    <!-- <b-img
+    <b-img
       v-if="checkingIn"
       center
       style="margin-top: 10px"
       height="500px"
-      src="https://picsum.photos/125/125/?image=58"
+      :src="qrcodeURL"
       alt="Center image"
-    ></b-img> -->
+    ></b-img>
   </div>
 </template>
 
@@ -29,7 +25,8 @@ export default {
       isLoading: false,
       checkingIn: false,
       checkinToken: null,
-      location: window.location
+      qrcodeURL: null,
+      location: window.location,
     }
   },
   mounted () {
@@ -64,6 +61,7 @@ export default {
             if (res.status === 201) {
               this.checkingIn = true
               this.checkinToken = res.data.checkin_token
+              this.getQrcode()
             } else {
               alert('failed to start check in')
             }
@@ -83,11 +81,27 @@ export default {
           if (res.status === 200) {
             this.checkingIn = true
             this.checkinToken = res.data.checkin_token
+            this.getQrcode()
           }
         })
         .catch(err => {
           this.isLoading = false
           console.log('failed to fetch events\n', err)
+        })
+    },
+    getQrcode () {
+      this.axios.post('/api/qrcode/', {
+        text: `http://${this.location.host}/#/checkin/${this.checkinToken}`
+      }, {
+        responseType: 'blob'
+      })
+        .then(res => {
+          console.log(res)
+          const qrcode = new Blob([res.data], {type: "image/png"})
+          this.qrcodeURL = URL.createObjectURL(qrcode)
+        })
+        .catch(err => {
+          console.log(err)
         })
     }
   }
