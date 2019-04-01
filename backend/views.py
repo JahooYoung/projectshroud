@@ -21,6 +21,10 @@ def check_is_admin(user, event):
     return UserManageEvent.objects.filter(user=user, event=event).exists()
 
 
+def check_is_admin_not_host(user, event):
+    return UserManageEvent.objects.filter(user=user, event=event).exists()
+
+
 def check_event_registered(user, event):
     return UserRegisterEvent.objects.filter(user=user, event=event).exists()
 
@@ -119,7 +123,7 @@ class UserRegisterFutureEventList(generics.ListAPIView):
     def get_queryset(self):
         # user = get_user_model().objects.get(id=self.kwargs.get('pk'))
         user = self.request.user
-        return UserRegisterEvent.objects.filter(user=user, start_time__gt=timezone.now())
+        return UserRegisterEvent.objects.filter(user=user, event__start_time__gt=timezone.now())
 
 
 class UserRegisterPastEventList(generics.ListAPIView):
@@ -129,7 +133,7 @@ class UserRegisterPastEventList(generics.ListAPIView):
     def get_queryset(self):
         # user = get_user_model().objects.get(id=self.kwargs.get('pk'))
         user = self.request.user
-        return UserRegisterEvent.objects.filter(user=user, end_time__lte=timezone.now())
+        return UserRegisterEvent.objects.filter(user=user, event__end_time__lte=timezone.now())
 
 
 class UserRegisterOngoingEventList(generics.ListAPIView):
@@ -139,7 +143,8 @@ class UserRegisterOngoingEventList(generics.ListAPIView):
     def get_queryset(self):
         # user = get_user_model().objects.get(id=self.kwargs.get('pk'))
         user = self.request.user
-        return UserRegisterEvent.objects.filter(user=user, start_time__lte=timezone.now(), end_time__gt=timezone.now())
+        return UserRegisterEvent.objects.filter(user=user, event__start_time__lte=timezone.now(),
+                                                event__end_time__gt=timezone.now())
 
 
 class UserEventRegister(generics.CreateAPIView):
@@ -183,18 +188,20 @@ class AssignEventAdmin(generics.CreateAPIView):
     permission_classes = (IsEventHostAdmin|permissions.IsAdminUser, )
 
     def perform_create(self, serializer):
+        user = self.request.user
         data = self.request.data
-        try:
-            user = get_user_model().objects.get(id=data.get('event_id'))
-        except Event.DoesNotExist:
-            raise ValidationError('User Not Found.')
+        if 'user_id' in data:
+            try:
+                user = get_user_model().objects.get(id=data.get('user_id'))
+            except Event.DoesNotExist:
+                raise ValidationError('User Not Found.')
 
         try:
             event = Event.objects.get(id=data.get('event_id'))
         except Event.DoesNotExist:
             raise ValidationError('Event Not found.')
 
-        if check_is_admin(user, event):
+        if check_is_admin_not_host(user, event):
             raise ValidationError('Is admin already.')
 
         serializer.save(user=user, event=event)
