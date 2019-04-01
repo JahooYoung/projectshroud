@@ -271,12 +271,34 @@ class UserCheckInEvent(APIView):
 
         if ure_obj.checked_in:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Already checked in.'})
-        ure_obj.checkin()
-        ure_obj.save()
+        # ure_obj.checkin()
+        # ure_obj.save()
         return Response(status=status.HTTP_200_OK)
 
     def post(self, request, pk, format=None):
-        return self.get(request, pk, format)
+        try:
+            checkinobj = CheckIn.objects.get(pk=pk)
+        except CheckIn.DoesNotExist:
+            raise Http404
+
+        event = checkinobj.event
+        if not event.checkin_enabled:
+            # Should not reach here
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Event Check-in not enabled.'})
+        user = request.user
+        if 'user_id' in request.data:
+            user = get_user_model().objects.get(id=request.data.get('user_id'))
+
+        try:
+            ure_obj = UserRegisterEvent.objects.get(user=user, event=event)
+        except UserRegisterEvent.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Not registered.'})
+
+        if ure_obj.checked_in:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Already checked in.'})
+        ure_obj.checkin()
+        ure_obj.save()
+        return Response(status=status.HTTP_202_ACCEPTED)
 
 
 class StartCheckIn(generics.CreateAPIView):

@@ -17,7 +17,7 @@ def generate_event_uuid():
 
 def generate_checkin_uuid():
     uid = str(uuid.uuid4())
-    return uid[0:8]
+    return ''.join(uid.split('-'))[0:10]
 
 
 class UserProfileManager(BaseUserManager):
@@ -143,7 +143,7 @@ class Event(models.Model):
 
 
 class CheckIn(models.Model):
-    token = models.CharField(max_length=8,
+    token = models.CharField(max_length=10,
         primary_key=True,
         default=generate_checkin_uuid,
         editable=False
