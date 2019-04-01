@@ -52,7 +52,7 @@ def gen_qrcode(request):
 
 
 class DummyView(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, format=None):
         content = {

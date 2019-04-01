@@ -30,7 +30,7 @@ urlpatterns = [
     path('api/checkin/<pk>/stop/', views.StopCheckIn.as_view()),
     path('api/checkin/<pk>/', views.UserCheckInEvent.as_view()),
 
-    path('api/dummy/', view.DummyView.as_view()),
+    path('api/dummy/', views.DummyView.as_view()),
 
     path('api/qrcode/', views.gen_qrcode)
 
