@@ -269,6 +269,7 @@ class UserCheckInEvent(APIView):
         except UserRegisterEvent.DoesNotExist:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Not registered.'})
 
+        self.check_object_permissions(request, ure_obj)
         if ure_obj.checked_in:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Already checked in.'})
         # ure_obj.checkin()
@@ -294,6 +295,7 @@ class UserCheckInEvent(APIView):
         except UserRegisterEvent.DoesNotExist:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Not registered.'})
 
+        self.check_object_permissions(request, ure_obj)
         if ure_obj.checked_in:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Already checked in.'})
         ure_obj.checkin()
