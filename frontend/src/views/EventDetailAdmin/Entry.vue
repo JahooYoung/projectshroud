@@ -11,7 +11,7 @@
               <Attendee/>
             </b-tab>
             <b-tab title="Sign in" :disabled="newEvent">
-              <SignIn/>
+              <CheckIn/>
             </b-tab>
           </b-tabs>
         </b-col>
@@ -23,7 +23,7 @@
 <script>
 import Info from './Info'
 import Attendee from './Attendee'
-import SignIn from './SignIn'
+import CheckIn from './CheckIn'
 
 export default {
   name: 'EventDetailAdmin',
@@ -31,7 +31,7 @@ export default {
   components: {
     Info,
     Attendee,
-    SignIn
+    CheckIn
   }
 }
 </script>

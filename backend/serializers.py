@@ -69,9 +69,9 @@ class UserManageEventSerializer(serializers.ModelSerializer):
 
 
 class CheckInSerializer(serializers.ModelSerializer):
-    event = EventListSerializer()
+    event_info = EventListSerializer(read_only=True)
 
     class Meta:
         model = CheckIn
-        fields = ['token', 'event']
+        fields = ['token', 'event_info']
 

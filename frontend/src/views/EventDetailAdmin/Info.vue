@@ -74,7 +74,7 @@
           </div>
         </b-form-group>
 
-        <b-button variant="primary" type="submit" :disable="isLoading">
+        <b-button variant="primary" type="submit" :disabled="isLoading">
           <b-spinner small type="grow" v-show="isLoading"></b-spinner>
           {{ buttonName }}
         </b-button>
