@@ -86,4 +86,4 @@ admin.site.register(UserProfile, UserAdmin)
 admin.site.unregister(Group)
 
 # Register your models here.
-admin.site.register([Event, UserRegisterEvent, UserManageEvent, Transport])
+admin.site.register([Event, UserRegisterEvent, UserManageEvent, Transport, CheckIn])

@@ -108,8 +108,6 @@ class UserRegisterOngoingEventList(generics.ListAPIView):
 
 
 class UserEventRegister(generics.CreateAPIView):
-    # Not Tested
-
     serializer_class = UserRegisterEventSerializer
     permission_classes = (OpenRegistration|IsEventHostAdmin|permissions.IsAdminUser, )
 
@@ -237,7 +235,7 @@ class TransportView(generics.RetrieveUpdateDestroyAPIView):
 class EventCheckInToken(APIView):
     def get(self, request, pk, format=None):
         try:
-            eventobj = CheckIn.objects.get(pk=pk)
+            event = Event.objects.get(pk=pk)
         except CheckIn.DoesNotExist:
             raise Http404
 
@@ -282,8 +280,6 @@ class UserCheckInEvent(APIView):
 
 
 class StartCheckIn(generics.CreateAPIView):
-    # Not Tested
-
     queryset = CheckIn.objects.all()
     serializer_class = CheckInSerializer
     permission_classes = (IsEventHostAdmin|permissions.IsAdminUser,)
@@ -299,8 +295,6 @@ class StartCheckIn(generics.CreateAPIView):
 
 
 class StopCheckIn(generics.DestroyAPIView):
-    # Not Tested
-
     queryset = CheckIn.objects.all()
     serializer_class = CheckInSerializer
     permission_classes = (IsEventHostAdmin|permissions.IsAdminUser,)
@@ -310,6 +304,7 @@ class StopCheckIn(generics.DestroyAPIView):
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Check-in not started.'})
         event = instance.event
         event.disable_checkin()
+        event.save()
         instance.delete()
 
 

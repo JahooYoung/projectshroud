@@ -27,6 +27,9 @@ export default {
       checkinToken: null,
     }
   },
+  mounted () {
+    this.refresh()
+  },
   methods: {
     onClick () {
       if (this.checkingIn) {
@@ -55,6 +58,7 @@ export default {
             console.log(res.data)
             if (res.status === 201) {
               this.checkingIn = true
+              this.checkinToken = res.data.checkin_token
             } else {
               alert('failed to start check in')
             }
