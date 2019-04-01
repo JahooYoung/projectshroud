@@ -41,6 +41,11 @@ export default new Router({
       component: () => import(/* webpackChunkName: "user" */ './views/UserAdminEvent.vue')
     },
     {
+      path: '/checkin/:token',
+      name: 'checkin',
+      component: () => import(/* webpackChunkName: "checkin" */ './views/CheckIn.vue')
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import(/* webpackChunkName: "login" */ './views/Login.vue')
