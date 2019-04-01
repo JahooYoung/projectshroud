@@ -26,7 +26,7 @@ export default {
       checkingIn: false,
       checkinToken: null,
       qrcodeURL: null,
-      location: window.location,
+      location: window.location
     }
   },
   mounted () {
@@ -97,7 +97,7 @@ export default {
       })
         .then(res => {
           console.log(res)
-          const qrcode = new Blob([res.data], {type: "image/png"})
+          const qrcode = new Blob([res.data], { type: 'image/png' })
           this.qrcodeURL = URL.createObjectURL(qrcode)
         })
         .catch(err => {
