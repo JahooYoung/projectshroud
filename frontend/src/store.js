@@ -18,21 +18,21 @@ Vue.use(Vuex)
 
 const readLocalStorage = store => {
   if (window.localStorage && window.localStorage.user !== '') {
-    axios.get('/api/dummy/', {
-      headers: {
-        Authorization: 'Token ' + window.localStorage.token
-      }
+    store.commit('setUserState', {
+      user: window.localStorage.user,
+      key: window.localStorage.token
     })
+    axios.get('/api/dummy/')
       .then(res => {
-        if (res.status === 200) {
-          store.commit('setUserState', {
-            user: window.localStorage.user,
-            key: window.localStorage.token
-          })
+        if (res.status !== 200) {
+          store.commit('setUserState', null)
+          alert('Please login agian!')
         }
       })
       .catch(err => {
         console.log(err)
+        store.commit('setUserState', null)
+        alert('Please login agian!')
       })
   }
 }

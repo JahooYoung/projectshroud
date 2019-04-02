@@ -13,6 +13,14 @@
             <b-tab title="Sign in" :disabled="newEvent">
               <CheckIn/>
             </b-tab>
+            <b-tab title="Event Homepage" :disabled="newEvent">
+              <EventHomepage/>
+            </b-tab>
+            <!-- <b-tab :disabled="newEvent">
+              <template slot="title">
+                <b-button variant="danger">Delete</b-button>
+              </template>
+            </b-tab> -->
           </b-tabs>
         </b-col>
       </b-row>
@@ -24,14 +32,17 @@
 import Info from './Info'
 import Attendee from './Attendee'
 import CheckIn from './CheckIn'
+import EventHomepage from './EventHomepage'
 
 export default {
   name: 'EventDetailAdmin',
   props: ['newEvent'],
   components: {
     Info,
+    Administrator,
     Attendee,
-    CheckIn
+    CheckIn,
+    EventHomepage
   }
 }
 </script>
@@ -41,7 +52,7 @@ export default {
   position: sticky;
   top: 4rem;
   z-index: 1000;
-  height: calc(100vh - 3rem);
+  height: calc(100vh - 5em);
   padding-right: 1px;
   border-right: 1px solid rgba(0, 0, 0, 0.1);
   order: 0;

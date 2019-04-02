@@ -69,6 +69,11 @@ export default {
         console.log(res.data)
         this.events = res.data
       })
+  },
+  watch: {
+    user () {
+      console.log('hello')
+    }
   }
 }
 </script>
