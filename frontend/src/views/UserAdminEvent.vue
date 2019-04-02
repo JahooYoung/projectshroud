@@ -29,8 +29,8 @@
             <strong>Loading...</strong>
           </div>
 
-          <template slot="title" slot-scope="row">
-            <b-link :to="'/event/' + row.item.id">{{ row.value }}</b-link>
+          <template slot="event_info.title" slot-scope="row">
+            <b-link :to="'/event/' + row.item.event_info.id">{{ row.value }}</b-link>
           </template>
 
           <template slot="actions" slot-scope="row">

@@ -139,7 +139,23 @@ export default {
           .then(res => {
             this.isLoading = false
             if (res.status === 201) {
-              this.$router.push('/event/' + res.data.id)
+              const eventId = res.data.id
+              this.isLoading = true
+              this.axios.post('/api/assignadmin/', {
+                event_id: eventId
+              })
+                .then(res => {
+                  this.isLoading = false
+                  if (res.status === 201) {
+                    this.$router.push('/event/' + eventId)
+                  } else {
+                    alert(JSON.stringify(res.data))
+                  }
+                })
+                .catch(err => {
+                  this.isLoading = false
+                  console.log('failed to assign admin', err)
+                })
             } else {
               alert(res.data)
             }

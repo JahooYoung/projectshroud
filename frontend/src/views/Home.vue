@@ -25,7 +25,7 @@
           <h3>Recent Events</h3>
           <b-list-group>
             <b-list-group-item
-              v-for="event in events"
+              v-for="event in futureEvents"
               :key="'recent-event-' + event.id"
               :to="`/event/${event.id}`"
               class="flex-column align-items-start"
@@ -34,13 +34,53 @@
                 <h5 class="mb-1">{{ event.title }}</h5>
                 <small>{{ (new Date(event.start_time)).toLocaleDateString() }}</small>
               </div>
-
               <p class="mb-1">
+                I don't know what to show
               </p>
-
               <small>{{ event.location }} -- {{ event.host_display_info }}</small>
             </b-list-group-item>
+          </b-list-group>
+        </b-col>
 
+        <b-col cols="4">
+          <h3>Registered Future Events</h3>
+          <b-list-group>
+            <b-list-group-item
+              v-for="event in registeredFutureEvents"
+              :key="'recent-event-' + event.id"
+              :to="`/event/${event.id}`"
+              class="flex-column align-items-start"
+            >
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ event.title }}</h5>
+                <small>{{ (new Date(event.start_time)).toLocaleDateString() }}</small>
+              </div>
+              <p class="mb-1">
+                I don't know what to show
+              </p>
+              <small>{{ event.location }} -- {{ event.host_display_info }}</small>
+            </b-list-group-item>
+          </b-list-group>
+        </b-col>
+
+        <b-col cols="4">
+          <h3>Manage Events</h3>
+          <b-list-group>
+            <b-list-group-item
+              v-for="event in manageEvents"
+              :key="'recent-event-' + event.id"
+              :to="`/event/${event.id}`"
+              class="flex-column align-items-start"
+            >
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ event.title }}</h5>
+                <small>{{ (new Date(event.start_time)).toLocaleDateString() }}</small>
+              </div>
+              <p class="mb-1">
+                I don't know what to show
+              </p>
+              <small>{{ event.location }} -- {{ event.host_display_info }}</small>
+            </b-list-group-item>
           </b-list-group>
         </b-col>
       </b-row>
@@ -57,17 +97,38 @@ export default {
   name: 'home',
   data () {
     return {
-      events: []
+      futureEvents: [],
+      registeredFutureEvents: [],
+      manageEvents: []
     }
   },
   computed: mapState({
     user: 'user'
   }),
   mounted () {
-    this.axios.get('api/event/future/')
+    this.axios.get('/api/event/future/')
       .then(res => {
         console.log(res.data)
-        this.events = res.data
+        this.futureEvents = res.data
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    this.axios.get('/api/event/registered/future/')
+      .then(res => {
+        console.log(res.data)
+        this.registeredFutureEvents = res.data.map(x => x.event_info)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    this.axios.get('/api/event/admins/')
+      .then(res => {
+        console.log(res.data)
+        this.manageEvents = res.data.map(x => x.event_info)
+      })
+      .catch(err => {
+        console.log(err)
       })
   },
   watch: {
