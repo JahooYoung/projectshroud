@@ -1,20 +1,29 @@
 <template>
   <div>
-    <b-button
-      size="lg"
-      :variant="checkingIn ? 'danger' : 'primary'"
-      @click="onClick"
-    >
-      {{ checkingIn ? 'Stop' : 'Start'}} Check In
-    </b-button>
-    <b-img
-      v-if="checkingIn"
-      center
-      style="margin-top: 10px"
-      height="500px"
-      :src="qrcodeURL"
-      alt="Center image"
-    ></b-img>
+    <b-row>
+      <b-col cols="6">
+        <b-button
+          size="lg"
+          :variant="checkingIn ? 'danger' : 'primary'"
+          @click="onClick"
+        >
+          {{ checkingIn ? 'Stop' : 'Start'}} Check In
+        </b-button>
+        <b-img
+          v-if="checkingIn && qrcodeURL"
+          center
+          style="margin-top: 10px"
+          height="500px"
+          :src="qrcodeURL"
+          alt="Center image"
+        ></b-img>
+      </b-col>
+      <b-col cols="6">
+        <textarea id="chat-log" cols="50" rows="20"></textarea><br/>
+        <input id="chat-message-input" type="text" size="50"/><br/>
+        <input id="chat-message-submit" type="button" value="Send"/>
+      </b-col>
+    </b-row>
   </div>
 </template>
 
@@ -26,11 +35,47 @@ export default {
       checkingIn: false,
       checkinToken: null,
       qrcodeURL: null,
-      location: window.location
+      location: window.location,
+      chatSocket: null
     }
   },
   mounted () {
     this.refresh()
+
+    console.log('ready to connect')
+    this.chatSocket = new WebSocket(
+        'ws://' + 'localhost:8000' +
+        '/ws/chat/lobby/');
+
+    this.chatSocket.onmessage = (e) => {
+        var data = JSON.parse(e.data);
+        var message = data['message'];
+        document.querySelector('#chat-log').value += (message + '\n');
+    };
+
+    this.chatSocket.onclose = (e) => {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#chat-message-input').focus();
+    document.querySelector('#chat-message-input').onkeyup = (e) => {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = (e) => {
+        var messageInputDom = document.querySelector('#chat-message-input');
+        var message = messageInputDom.value;
+        this.chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+
+        messageInputDom.value = '';
+    };
+  },
+  destroyed () {
+    this.chatSocket.close()
   },
   methods: {
     onClick () {
@@ -90,6 +135,7 @@ export default {
         })
     },
     getQrcode () {
+      console.log(`http://${this.location.host}/#/checkin/${this.checkinToken}`)
       this.axios.post('/api/qrcode/', {
         text: `http://${this.location.host}/#/checkin/${this.checkinToken}`
       }, {

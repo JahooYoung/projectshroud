@@ -12,6 +12,8 @@ from django.utils import timezone
 from django.http import Http404, HttpResponse
 from rest_framework.serializers import ValidationError
 from MyQR import myqr
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 import os
 
 
@@ -316,6 +318,13 @@ class UserCheckInEvent(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Already checked in.'})
         # ure_obj.checkin()
         # ure_obj.save()
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            "chat_lobby",
+            {"type": "chat_message", "message": user.real_name + ' checkin!'}
+        )
+
         return Response(status=status.HTTP_200_OK)
 
     def post(self, request, pk, format=None):
@@ -340,8 +349,8 @@ class UserCheckInEvent(APIView):
         self.check_object_permissions(request, ure_obj)
         if ure_obj.checked_in:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Already checked in.'})
-        ure_obj.checkin()
-        ure_obj.save()
+        # ure_obj.checkin()
+        # ure_obj.save()
         return Response(status=status.HTTP_202_ACCEPTED)
 
 

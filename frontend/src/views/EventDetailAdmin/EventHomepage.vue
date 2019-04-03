@@ -1,9 +1,9 @@
 <template>
   <div id="editor">
-          <textarea id="editor-left" @scroll="onScroll" v-model="input"></textarea>
-          <section class="preview">
-            <vue-markdown id="editor-right" :source="input"></vue-markdown>
-          </section>
+    <textarea id="editor-left" @scroll="onScroll" v-model="input"></textarea>
+    <section class="preview">
+      <vue-markdown id="editor-right" :source="input"></vue-markdown>
+    </section>
   </div>
 </template>
 

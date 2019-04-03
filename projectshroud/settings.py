@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'rest_auth.registration',
     'backend.apps.BackendConfig',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -148,3 +149,14 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_AUTHENTICATION_METHOD = 'mobile'
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'mobile'
 ACCOUNT_USERNAME_REQUIRED = True
+
+# Channels
+ASGI_APPLICATION = 'projectshroud.routing.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
