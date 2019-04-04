@@ -98,7 +98,7 @@ class OngoingEventList(generics.ListAPIView):
 
 class UserRegisterEventList(generics.ListAPIView):
     serializer_class = UserRegisterEventSerializer
-    permission_classes = (permissions.IsAdminUser|IsOwner, )
+    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser|IsOwner)
 
     def get_queryset(self):
         # user = get_user_model().objects.get(id=self.kwargs.get('pk'))
@@ -108,7 +108,7 @@ class UserRegisterEventList(generics.ListAPIView):
 
 class UserManageEventList(generics.ListAPIView):
     serializer_class = UserManageEventSerializer
-    permission_classes = (permissions.IsAdminUser|IsOwner, )
+    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser|IsOwner)
 
     def get_queryset(self):
         # user = get_user_model().objects.get(id=self.kwargs.get('pk'))
@@ -118,7 +118,7 @@ class UserManageEventList(generics.ListAPIView):
 
 class UserRegisterFutureEventList(generics.ListAPIView):
     serializer_class = UserRegisterEventSerializer
-    permission_classes = (permissions.IsAdminUser|IsOwner, )
+    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser|IsOwner)
 
     def get_queryset(self):
         # user = get_user_model().objects.get(id=self.kwargs.get('pk'))
@@ -128,7 +128,7 @@ class UserRegisterFutureEventList(generics.ListAPIView):
 
 class UserRegisterPastEventList(generics.ListAPIView):
     serializer_class = UserRegisterEventSerializer
-    permission_classes = (permissions.IsAdminUser|IsOwner, )
+    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser|IsOwner)
 
     def get_queryset(self):
         # user = get_user_model().objects.get(id=self.kwargs.get('pk'))
@@ -138,7 +138,7 @@ class UserRegisterPastEventList(generics.ListAPIView):
 
 class UserRegisterOngoingEventList(generics.ListAPIView):
     serializer_class = UserRegisterEventSerializer
-    permission_classes = (permissions.IsAdminUser|IsOwner, )
+    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser|IsOwner)
 
     def get_queryset(self):
         # user = get_user_model().objects.get(id=self.kwargs.get('pk'))
@@ -149,7 +149,7 @@ class UserRegisterOngoingEventList(generics.ListAPIView):
 
 class UserEventRegister(generics.CreateAPIView):
     serializer_class = UserRegisterEventSerializer
-    permission_classes = (OpenRegistration|IsEventHostAdmin|permissions.IsAdminUser, )
+    permission_classes = (permissions.IsAuthenticated, OpenRegistration|IsEventHostAdmin|permissions.IsAdminUser)
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -181,11 +181,42 @@ class UserEventRegister(generics.CreateAPIView):
         serializer.save(user=user, event=event, transport=transport)
 
 
+class UserEventUnregister(APIView):
+    queryset = UserRegisterEvent.objects.all()
+    serializer_class = UserRegisterEventSerializer
+    permission_classes = (permissions.IsAuthenticated, IsOwner|IsEventHostAdmin|permissions.IsAdminUser)
+
+    def post(self, request, format=None):
+        user = request.user
+        data = request.data
+        if 'user_id' in data:
+            try:
+                user = get_user_model().objects.get(id=data.get('user_id'))
+            except Event.DoesNotExist:
+                raise ValidationError('User Not Found.')
+
+        if 'event_id' not in data:
+            raise ValidationError('No event_id specified.')
+
+        try:
+            event = Event.objects.get(id=data.get('event_id'))
+        except Event.DoesNotExist:
+            raise ValidationError('Event Not found.')
+
+        try:
+            ure_obj = UserRegisterEvent.objects.get(user=user, event=event)
+        except UserRegisterEvent.DoesNotExist:
+            raise ValidationError('Not registered.')
+
+        use_obj.delete()
+        return Response(status=status.HTTP_200_OK)
+
+
 class AssignEventAdmin(generics.CreateAPIView):
     # Not Tested
 
     serializer_class = UserManageEventSerializer
-    permission_classes = (IsEventHostAdmin|permissions.IsAdminUser, )
+    permission_classes = (permissions.IsAuthenticated, IsEventHostAdmin|permissions.IsAdminUser)
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -195,6 +226,9 @@ class AssignEventAdmin(generics.CreateAPIView):
                 user = get_user_model().objects.get(id=data.get('user_id'))
             except Event.DoesNotExist:
                 raise ValidationError('User Not Found.')
+
+        if 'event_id' not in data:
+            raise ValidationError('No event_id specified.')
 
         try:
             event = Event.objects.get(id=data.get('event_id'))
@@ -228,7 +262,7 @@ class EventDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class EventAttendeeList(generics.ListAPIView):
     serializer_class = UserRegisterEventSerializer
-    permission_classes = (IsEventRegistered|IsEventHostAdmin|permissions.IsAdminUser, )
+    permission_classes = (permissions.IsAuthenticated, IsEventRegistered|IsEventHostAdmin|permissions.IsAdminUser)
 
     def get_queryset(self):
         try:
@@ -240,7 +274,7 @@ class EventAttendeeList(generics.ListAPIView):
 
 class EventAdminList(generics.ListAPIView):
     serializer_class = UserManageEventSerializer
-    permission_classes = (IsEventHostAdmin|permissions.IsAdminUser, )
+    permission_classes = (permissions.IsAuthenticated, IsEventHostAdmin|permissions.IsAdminUser)
 
     def get_queryset(self):
         try:
@@ -255,14 +289,21 @@ class TransportCreateView(generics.CreateAPIView):
 
     queryset = Transport.objects.all()
     serializer_class = TransportSerializer
-    permission_classes = (IsOwner|IsEventHostAdmin|permissions.IsAdminUser,)
+    permission_classes = (permissions.IsAuthenticated, IsOwner|IsEventHostAdmin|permissions.IsAdminUser)
 
     def perform_create(self, serializer):
         user = self.request.user
         data = self.request.data
         if 'user_id' in data:
             user = get_user_model().objects.get(id=data['user_id'])
-        event = Event.objects.get(id=data.get('event_id'))
+        if 'event_id' not in data:
+            raise ValidationError('No event_id specified.')
+
+        try:
+            event = Event.objects.get(id=data.get('event_id'))
+        except Event.DoesNotExist:
+            raise ValidationError('Event not found.')
+
         serializer.save(user=user, event=event)
 
 
@@ -271,7 +312,7 @@ class TransportView(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Transport.objects.all()
     serializer_class = TransportSerializer
-    permission_classes = (IsOwner|IsEventHostAdmin|permissions.IsAdminUser,)
+    permission_classes = (permissions.IsAuthenticated, IsOwner|IsEventHostAdmin|permissions.IsAdminUser)
 
 
 class EventCheckInToken(APIView):
@@ -290,7 +331,7 @@ class EventCheckInToken(APIView):
 class UserCheckInEvent(APIView):
     # Not Tested
 
-    permission_classes = (IsOwner|IsEventHostAdmin|permissions.IsAdminUser,)
+    permission_classes = (permissions.IsAuthenticated, IsOwner|IsEventHostAdmin|permissions.IsAdminUser)
 
     def get(self, request, pk, format=None):
         try:
@@ -348,10 +389,14 @@ class UserCheckInEvent(APIView):
 class StartCheckIn(generics.CreateAPIView):
     queryset = CheckIn.objects.all()
     serializer_class = CheckInSerializer
-    permission_classes = (IsEventHostAdmin|permissions.IsAdminUser,)
+    permission_classes = (permissions.IsAuthenticated, IsEventHostAdmin|permissions.IsAdminUser)
 
     def perform_create(self, serializer):
         data = self.request.data
+
+        if 'event_id' not in data:
+            raise ValidationError('No event_id specified.')
+
         event = Event.objects.get(id=data.get('event_id'))
         if event.checkin_enabled:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Check-in already started.'})
@@ -363,7 +408,7 @@ class StartCheckIn(generics.CreateAPIView):
 class StopCheckIn(generics.DestroyAPIView):
     queryset = CheckIn.objects.all()
     serializer_class = CheckInSerializer
-    permission_classes = (IsEventHostAdmin|permissions.IsAdminUser,)
+    permission_classes = (permissions.IsAuthenticated, IsEventHostAdmin|permissions.IsAdminUser)
 
     def perform_destroy(self, instance):
         if instance is None:

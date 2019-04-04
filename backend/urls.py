@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
 from backend import views
 
@@ -10,6 +10,7 @@ urlpatterns = [
     path('api/event/future/', views.FutureEventList.as_view()),
 
     path('api/register/', views.UserEventRegister.as_view()),
+    path('api/unregister/', views.UserEventUnregister.as_view()),
     path('api/assignadmin/', views.AssignEventAdmin.as_view()),
 
     path('api/event/admins/', views.UserManageEventList.as_view()),
