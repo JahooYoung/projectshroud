@@ -208,7 +208,7 @@ class UserEventUnregister(APIView):
         except UserRegisterEvent.DoesNotExist:
             raise ValidationError('Not registered.')
 
-        use_obj.delete()
+        ure_obj.delete()
         return Response(status=status.HTTP_200_OK)
 
 

@@ -21,14 +21,43 @@
         </b-row>
       </b-container>
 
-      <b-button variant="primary" type="submit" :disabled="isLoading" @click="register" v-if="!event.registered">
+
+      <b-button variant="primary" v-show="!event.registered" v-b-modal.modal-register>
         <b-spinner small type="grow" v-show="isLoading"></b-spinner>
         Register
       </b-button>
-      <b-button variant="danger" type="submit" :disabled="isLoading || true" @click="unregister" v-else>
+
+      <b-modal
+        id="modal-register"
+        ref="modal1"
+        title="Register infomation"
+        @ok="register"
+      >
+        <!-- Modal Component  @click="register" -->
+        
+        <form @submit.stop.prevent="empty_check" label="Your Name">
+          <b-form-input v-model="name" placeholder="Enter your name"></b-form-input>
+        </form>
+        <p> </p>
+        <div>
+          <b-form-group label="Transport ways">
+            <b-form-radio v-model="selected" value="plane">Plane</b-form-radio>
+            <b-form-radio v-model="selected" value="train">Train</b-form-radio>
+            <b-form-radio v-model="selected" value="others">Others</b-form-radio>
+          </b-form-group>
+        </div>
+
+      </b-modal>
+      
+
+      <b-button variant="danger" v-show="event.registered" v-b-modal.modal-unregister>
         <b-spinner small type="grow" v-show="isLoading"></b-spinner>
         Unregister
       </b-button>
+      <b-modal id="modal-unregister" ref="modal2" title="Notice" @ok="unregister">
+        <p class="my-4">Are you sure to unregister?</p>
+      </b-modal>
+
       <h4> {{status}} </h4>
     </div>
   </div>
@@ -63,7 +92,9 @@ export default {
         registered: false,
         requireApprove: false
       },
-      status: ''
+      name: '',
+      status: '',
+      selected: false
     }
   },
   mounted () {
@@ -92,6 +123,9 @@ export default {
       })
   },
   methods: {
+    empty_check() {
+
+    },
     register () {
       this.status = 'Registering...'
       this.isLoading = true
@@ -107,11 +141,13 @@ export default {
           .then(res => {
             this.isLoading = false
             console.log(res.data)
+            console.log("selected = " + this.selected);
             if (res.status === 201) {
               this.status = 'Register successfully'
               this.event.registered = true
             } else {
               alert(res.data)
+              this.status = null;
             }
           })
           .catch(err => {
@@ -122,7 +158,34 @@ export default {
       }
     },
     unregister () {
-      console.log('Not implemented yet!')
+      this.status = 'Unregistering...'
+      this.isLoading = true
+      console.log('Trying to unregister')
+      if (this.user === null) {
+        this.isLoading = false
+        this.status = 'Please login first'
+      } else {
+        console.log('id=' + this.$route.params.id)
+        this.axios.post('/api/unregister/', {
+          event_id: this.$route.params.id
+        })
+          .then(res => {
+            this.isLoading = false
+            console.log(res.data)
+            if (res.status === 200) {
+              this.status = 'Unregister successfully'
+              this.event.registered = false
+            } else {
+              alert(res.data)
+              this.status = null;
+            }
+          })
+          .catch(err => {
+            this.isLoading = false
+            this.status = 'Fail to unregister'
+            console.log(err)
+          })
+      }
     }
   },
   components: {
