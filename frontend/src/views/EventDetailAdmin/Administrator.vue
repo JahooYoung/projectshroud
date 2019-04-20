@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Attendee List</h2>
+    <h2>Administrator List</h2>
     <b-container>
       <b-row>
         <b-col md="4" class="my-1">
@@ -16,7 +16,7 @@
           <b-button variant="outline-info" href="#">Export</b-button>
         </b-col>
         <b-col offset-md="0" md="2" class="my-1">
-          <b-button variant="outline-info" href="#">Add attendee</b-button>
+          <b-button variant="outline-info" href="#">Add administrator</b-button>
         </b-col>
         <b-col offset-md="0" md="1" class="my-1">
           <b-button variant="outline-info" @click="refresh" :disabled="isLoading">Refresh</b-button>
@@ -30,7 +30,7 @@
       show-empty
       :fields="fields"
       primary-key="user_info.id"
-      :items="attendee"
+      :items="administrators"
       :busy="isLoading"
       :filter="filter"
     >
@@ -38,17 +38,6 @@
         <b-spinner class="align-middle" />
         <strong>Loading...</strong>
       </div>
-
-      <template slot="checked_in" slot-scope="row">
-        <font-awesome-icon v-if="row.value" :id="'checkin-popover-' + row.item.user_info.id" icon="check-circle"/>
-        <font-awesome-icon v-else :id="'checkin-popover-' + row.item.user_info.id" icon="times-circle"/>
-        <b-popover :target="'checkin-popover-' + row.item.user_info.id" triggers="hover focus">
-          <template slot="title">Manually check in (click to keep) (not impl.)</template>
-          <b-button variant="success" @click="manualCheckIn(row.item)" :disabled="row.value || true">
-            Manually check in
-          </b-button>
-        </b-popover>
-      </template>
 
       <template slot="actions" slot-scope="row">
         <b-button size="sm" @click="row.toggleDetails">
@@ -75,12 +64,10 @@ export default {
       fields: [
         { key: 'user_info.real_name', label: 'Name' },
         { key: 'user_info.mobile', label: 'Mobile' },
-        { key: 'date_registered', label: 'Registered Time' },
-        { key: 'transport_info', label: 'Arrive Time' },
-        { key: 'checked_in', label: 'Checked in' }
+        { key: 'user_info.email', label: 'Email' }
       ],
       filter: null,
-      attendee: []
+      administrators: []
     }
   },
   mounted () {
@@ -89,32 +76,14 @@ export default {
   methods: {
     refresh () {
       this.isLoading = true
-      this.axios.get('/api/event/' + this.$route.params.id + '/attendee/')
+      this.axios.get('/api/event/' + this.$route.params.id + '/admins/')
         .then(res => {
           this.isLoading = false
-          console.log(res)
-          this.attendee = res.data
-        })
-        .catch(err => {
-          this.isLoading = false
-          console.log(err)
-        })
-    },
-    manualCheckIn (rowItem) {
-      // Todo: modify api url
-      this.axios.post('/api/register/', {
-        user_id: rowItem.user_info.id,
-        event_id: this.$route.params.id
-      })
-        .then(res => {
           console.log(res.data)
-          if (res.status === 201) {
-            rowItem.checked_in = true
-          } else {
-            alert('Manually check in failed')
-          }
+          this.administrators = res.data
         })
         .catch(err => {
+          this.isLoading = false
           console.log(err)
         })
     }

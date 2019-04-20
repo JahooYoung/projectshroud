@@ -3,15 +3,18 @@
     <b-container fluid>
       <b-row>
         <b-col cols="12">
-          <b-tabs pills vertical nav-wrapper-class="col-2 event-detail-sidebar">
+          <b-tabs lazy pills vertical nav-wrapper-class="col-2 event-detail-sidebar">
             <b-tab title="Info" active>
               <Info :newEvent="newEvent"/>
+            </b-tab>
+            <b-tab title="Administrator" :disabled="newEvent">
+              <Administrator/>
             </b-tab>
             <b-tab title="Attendee" :disabled="newEvent">
               <Attendee/>
             </b-tab>
-            <b-tab title="Sign in" :disabled="newEvent">
-              <SignIn/>
+            <b-tab title="Checkin" :disabled="newEvent">
+              <CheckIn/>
             </b-tab>
           </b-tabs>
         </b-col>
@@ -22,8 +25,9 @@
 
 <script>
 import Info from './Info'
+import Administrator from './Administrator'
 import Attendee from './Attendee'
-import SignIn from './SignIn'
+import CheckIn from './CheckIn'
 
 export default {
   name: 'EventDetailAdmin',
@@ -31,7 +35,8 @@ export default {
   components: {
     Info,
     Attendee,
-    SignIn
+    CheckIn,
+    Administrator
   }
 }
 </script>

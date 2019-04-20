@@ -18,10 +18,22 @@ Vue.use(Vuex)
 
 const readLocalStorage = store => {
   if (window.localStorage && window.localStorage.user !== '') {
-    store.commit('setUserState', {
-      user: window.localStorage.user,
-      key: window.localStorage.token
+    axios.get('/api/dummy/', {
+      headers: {
+        Authorization: 'Token ' + window.localStorage.token
+      }
     })
+      .then(res => {
+        if (res.status === 200) {
+          store.commit('setUserState', {
+            user: window.localStorage.user,
+            key: window.localStorage.token
+          })
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 }
 
@@ -44,8 +56,9 @@ export default new Vuex.Store({
         }
       } else {
         state.user = null
-        if (state.tokenInterceptor != null) {
+        if (state.tokenInterceptor !== null) {
           axios.interceptors.request.eject(state.tokenInterceptor)
+          state.tokenInterceptor = null
         }
         if (window.localStorage) {
           window.localStorage.user = ''

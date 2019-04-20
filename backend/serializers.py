@@ -4,12 +4,15 @@ from backend.models import *
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
     class Meta:
         model = UserProfile
         fields = ('id', 'mobile', 'real_name', 'email')
 
 
 class EventListSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
+    checkin_enabled = serializers.ReadOnlyField()
     host_display_info = serializers.ReadOnlyField()
     host_id = serializers.ReadOnlyField(source='host.id')
 
@@ -20,6 +23,8 @@ class EventListSerializer(serializers.ModelSerializer):
 
 
 class EventDetailSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
+    checkin_enabled = serializers.ReadOnlyField()
     host_display_info = serializers.ReadOnlyField()
     host_id = serializers.ReadOnlyField(source='host.id')
 
@@ -31,37 +36,43 @@ class EventDetailSerializer(serializers.ModelSerializer):
 
 
 class TransportSerializer(serializers.ModelSerializer):
-    user = UserProfileSerializer()
-    event = EventListSerializer()
+    user_info = UserProfileSerializer(source='user', read_only=True)
+    event_info = EventListSerializer(source='event', read_only=True)
+    id = serializers.ReadOnlyField()
 
     class Meta:
         model = Transport
-        fields = '__all__'
+        fields = ['id', 'transport_type', 'transport_id', 'depart_station', 'depart_station',
+                  'depart_time', 'arrival_station', 'arrival_time', 'other_detail',
+                  'user_info', 'event_info']
 
 
 class UserRegisterEventSerializer(serializers.ModelSerializer):
-    userprofile = UserProfileSerializer(source='user')
-    transport = TransportSerializer(source='registered_transport')
-    event = EventListSerializer()
+    user_info = UserProfileSerializer(source='user', read_only=True)
+    transport_info = TransportSerializer(source='transport', read_only=True)
+    event_info = EventListSerializer(source='event', read_only=True)
+    date_registered = serializers.ReadOnlyField()
+    checked_in = serializers.ReadOnlyField()
 
     class Meta:
         model = UserRegisterEvent
-        fields = ['userprofile', 'event', 'date_registered', 'transport', 'checked_in']
+        fields = ['user_info', 'event_info', 'date_registered', 'transport_info', 'checked_in']
 
 
 class UserManageEventSerializer(serializers.ModelSerializer):
-    user = UserProfileSerializer()
-    event = EventListSerializer()
+    user_info = UserProfileSerializer(source='user', read_only=True)
+    event_info = EventListSerializer(source='event', read_only=True)
 
     class Meta:
         model = UserManageEvent
-        fields = ['user', 'event']
+        fields = ['user_info', 'event_info']
 
 
 class CheckInSerializer(serializers.ModelSerializer):
-    event = EventListSerializer()
+    event_info = EventListSerializer(source='event', read_only=True)
+    checkin_token = serializers.ReadOnlyField(source='token')
 
     class Meta:
         model = CheckIn
-        fields = ['token', 'event']
+        fields = ['checkin_token', 'event_info']
 

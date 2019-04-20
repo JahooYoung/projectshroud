@@ -15,6 +15,11 @@ def generate_event_uuid():
     return ''.join(uid.split('-'))[0:12]
 
 
+def generate_checkin_uuid():
+    uid = str(uuid.uuid4())
+    return ''.join(uid.split('-'))[0:10]
+
+
 class UserProfileManager(BaseUserManager):
     def create_user(self, mobile, real_name, email, password=None):
         """
@@ -138,9 +143,9 @@ class Event(models.Model):
 
 
 class CheckIn(models.Model):
-    token = models.CharField(max_length=16,
+    token = models.CharField(max_length=10,
         primary_key=True,
-        default=generate_user_uuid,
+        default=generate_checkin_uuid,
         editable=False
     )
     event = models.OneToOneField(Event, on_delete=models.CASCADE)
@@ -179,7 +184,7 @@ class Transport(models.Model):
 class UserRegisterEvent(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    registered_transport = models.ForeignKey(Transport, blank=True, null=True, on_delete=models.SET_NULL)
+    transport = models.ForeignKey(Transport, blank=True, null=True, on_delete=models.SET_NULL)
     date_registered = models.DateTimeField('注册时间', auto_now_add=True)
     checked_in = models.BooleanField(default=False)
 
@@ -187,7 +192,7 @@ class UserRegisterEvent(models.Model):
         unique_together = ('user', 'event')
 
     def __str__(self):
-        return '人员: %s, 活动: %s, 交通信息: %s' % (self.user, self.event, self.registered_transport)
+        return '人员: %s, 活动: %s, 交通信息: %s' % (self.user, self.event, self.transport)
 
     def checkin(self):
         self.checked_in = True

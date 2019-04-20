@@ -1,13 +1,16 @@
 <template>
   <div>
-    <EventDetailAdmin v-if="isAdmin"/>
-    <div v-if="!isAdmin">
+    <b-spinner v-if="pageSwitch === 0" style="width: 3rem; height: 3rem;" label="Loading..."></b-spinner>
+
+    <EventDetailAdmin v-if="pageSwitch === 2"/>
+
+    <div v-if="pageSwitch === 1">
       <!-- fill this in -->
       <h2> {{event.title}} </h2>
       <h4> location: {{event.location}} </h4>
       <h4> start time: {{event.startTime}} </h4>
       <h4> end time: {{event.endTime}} </h4>
-      
+
       <h4> Descripition: </h4>
       <b-container class="bv-example-row">
         <b-row class="justify-content-md-center">
@@ -17,13 +20,12 @@
           </b-col>
         </b-row>
       </b-container>
-      
-      
-      <b-button variant="primary" type="submit" :disable="isLoading" @click="register" v-if="!event.registered">
+
+      <b-button variant="primary" type="submit" :disabled="isLoading" @click="register" v-if="!event.registered">
         <b-spinner small type="grow" v-show="isLoading"></b-spinner>
         Register
       </b-button>
-      <b-button variant="primary" type="submit" :disable="isLoading" @click="unregister" v-else>
+      <b-button variant="danger" type="submit" :disabled="isLoading || true" @click="unregister" v-else>
         <b-spinner small type="grow" v-show="isLoading"></b-spinner>
         Unregister
       </b-button>
@@ -34,6 +36,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import EventDetailAdmin from './EventDetailAdmin/Entry'
 
 function date2input (date) {
@@ -43,20 +46,14 @@ function date2input (date) {
   return date.substr(0, date.length - 1)
 }
 
-function input2date (str) {
-  let date = new Date(str)
-  return date
-}
-
-import { mapState } from 'vuex'
 export default {
   computed: mapState({
     user: 'user'
   }),
   data () {
     return {
+      pageSwitch: 0, // 0: first time loading, 1: normal, 2: admin
       isLoading: false,
-      isAdmin: false,
       event: {
         title: '',
         description: '',
@@ -67,24 +64,28 @@ export default {
         registered: false,
         requireApprove: false
       },
-      status: "ddd",
+      status: ''
     }
   },
-  
-  mounted() {
+  mounted () {
     this.isLoading = true
     this.axios.get('/api/event/' + this.$route.params.id)
       .then(res => {
-        this.isLoading = false
         console.log(res.data)
-        this.event.title = res.data.title
-        this.event.description = res.data.description
-        this.event.startTime = date2input(new Date(res.data.start_time))
-        this.event.endTime = date2input(new Date(res.data.end_time))
-        this.event.location = res.data.location
-        this.event.public = res.data.public
-        this.event.registered = false
-        this.event.requireApprove = res.data.require_approve
+        this.isLoading = false
+        if (res.data.event_admin) {
+          this.pageSwitch = 2
+        } else {
+          this.event.title = res.data.title
+          this.event.description = res.data.description
+          this.event.startTime = date2input(new Date(res.data.start_time))
+          this.event.endTime = date2input(new Date(res.data.end_time))
+          this.event.location = res.data.location
+          this.event.public = res.data.public
+          this.event.registered = res.data.event_registered
+          this.event.requireApprove = res.data.require_approve
+          this.pageSwitch = 1
+        }
       })
       .catch(err => {
         this.isLoading = false
@@ -98,34 +99,31 @@ export default {
       console.log('Trying to register')
       if (this.user === null) {
         this.isLoading = false
-        this.status = "Please login first";
-      }
-      else {
-        console.log("id="+this.$route.params.id)
+        this.status = 'Please login first'
+      } else {
+        console.log('id=' + this.$route.params.id)
         this.axios.post('/api/register/', {
-          event_id: this.$route.params.id,
+          event_id: this.$route.params.id
         })
-        .then(res => {
-          this.isLoading = false
-          console.log(res.data);
-          if(res.status==201) {
-            alert("Register successfully");
-            this.status = "Register successfully"
-          }
-          else {
-            alert(">>>>>>???????<<<<<<");
-            this.status = "Fail to register";
-          }
-        })
-        .catch(err => {
-          this.isLoading = false
-          this.status = "Fail to register";
-          console.log(err)
-        });
+          .then(res => {
+            this.isLoading = false
+            console.log(res.data)
+            if (res.status === 201) {
+              this.status = 'Register successfully'
+              this.event.registered = true
+            } else {
+              alert(res.data)
+            }
+          })
+          .catch(err => {
+            this.isLoading = false
+            this.status = 'Fail to register'
+            console.log(err)
+          })
       }
     },
-    unregister() {
-      console.log("Not implemented yet!");
+    unregister () {
+      console.log('Not implemented yet!')
     }
   },
   components: {
