@@ -43,8 +43,15 @@
 - user registered event: list, sortable, filterable
 
 ## 数据模式
+
 See `models.py`
 
 ### 关于自定义UserProfile
 使用非Django自带的User Model，必须作为整个项目的第一次migrations
 若报错需删除数据库及`migrations`文件夹，然后`python manage.py makemigrations && python manage.py migrate`;
+
+## 前端Todo
+
+1. 将admin页面换成router-view，侧边栏作为component
+2. description单独抽出，做成markdown（顺便支持html）
+3. 用Algolia完成搜索
