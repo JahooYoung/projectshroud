@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'rest_auth.registration',
     'backend.apps.BackendConfig',
+    'algoliasearch_django',
 ]
 
 MIDDLEWARE = [
@@ -148,3 +149,9 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_AUTHENTICATION_METHOD = 'mobile'
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'mobile'
 ACCOUNT_USERNAME_REQUIRED = True
+
+# Algolia search
+ALGOLIA = {
+    'APPLICATION_ID': 'WN4Q0PFNA4',
+    'API_KEY': 'ea0e9f826c9dc709941f8260e7ca30fd'
+}

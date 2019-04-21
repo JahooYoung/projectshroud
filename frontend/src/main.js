@@ -13,6 +13,10 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import axios from 'axios'
 
+import InstantSearch from 'vue-instantsearch'
+
+Vue.use(InstantSearch)
+
 Vue.use(BootstrapVue)
 
 library.add(faTimesCircle, faCheckCircle)
