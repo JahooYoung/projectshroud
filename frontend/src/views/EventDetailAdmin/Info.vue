@@ -121,6 +121,10 @@ export default {
       this.refresh()
     }
   },
+  watch: {
+    // call again the method if the route changes
+    '$route': 'refresh'
+  },
   methods: {
     onSubmit (e) {
       e.preventDefault()
