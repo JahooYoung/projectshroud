@@ -297,6 +297,7 @@ export default {
               this.event.registered = false
             } else {
               alert(res.data)
+              this.status = null;
             }
           })
           .catch(err => {
