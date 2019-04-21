@@ -30,7 +30,7 @@
         Unregister
       </b-button>
       <b-modal id="modal-register" @ok="register" title="Basic infomation">
-        
+
         <b-form-group label="Your Name:" label-for="input-1">
           <b-form-input
             id="input-1"
@@ -38,7 +38,7 @@
             placeholder="Enter name"
           ></b-form-input>
         </b-form-group>
-        
+
         <b-form-group label="Your transport type:" label-for="input-2">
           <b-form-select
             id="input-2"
@@ -46,7 +46,7 @@
             :options="transport_options">
           </b-form-select>
         </b-form-group>
-        
+
         <b-form-group label="Your transport id:" label-for="input-3">
           <b-form-input
             id="input-3"
@@ -54,7 +54,7 @@
             placeholder="Enter transport id"
           ></b-form-input>
         </b-form-group>
-        
+
         <b-form-group label="Your depart station:" label-for="input-4">
           <b-form-input
             id="input-4"
@@ -62,7 +62,7 @@
             placeholder="Enter depart station"
           ></b-form-input>
         </b-form-group>
-        
+
         <b-form-group label="Your depart_time:" label-for="input-5">
           <b-form-input
             type="datetime-local"
@@ -71,7 +71,7 @@
             placeholder="Enter depart time"
           ></b-form-input>
         </b-form-group>
-        
+
         <b-form-group label="Your arrival_station:" label-for="input-6">
           <b-form-input
             id="input-6"
@@ -79,7 +79,7 @@
             placeholder="Enter arrival station"
           ></b-form-input>
         </b-form-group>
-        
+
         <b-form-group label="Your arrival time:" label-for="input-7">
           <b-form-input
             type="datetime-local"
@@ -88,7 +88,7 @@
             placeholder="Enter arrival time"
           ></b-form-input>
         </b-form-group>
-        
+
         <b-form-group label="Other detail:" label-for="input-8">
           <b-form-input
             id="input-8"
@@ -149,13 +149,13 @@ export default {
         depart_time: date2input(new Date()),
         arrival_station: '',
         arrival_time: date2input(new Date()),
-        other_detail: '',
+        other_detail: ''
       },
       transport_options: [
         { value: 'Flight', text: '航班' },
         { value: 'Train', text: '列车' },
         { value: 'Other', text: '其他' },
-        { value: null, text: '未决定'}
+        { value: null, text: '未决定' }
       ],
       event: {
         title: '',
@@ -167,7 +167,7 @@ export default {
         registered: false,
         requireApprove: false
       },
-      status: '',
+      status: ''
     }
   },
   mounted () {
@@ -198,21 +198,19 @@ export default {
   },
   methods: {
 
-    realRegister(id) {
+    realRegister (id) {
       var info = {
         event_id: this.$route.params.id
       }
-      if (id !== null)
-        info.transport_id = id
-      
+      if (id !== null) { info.transport_id = id }
+
       this.axios.post('/api/register/', info)
         .then(res => {
           this.event.registered = true
-          this.isLoading = false;
+          this.isLoading = false
           if (res.status === 201) {
             this.status = 'Register successfully'
-          }
-          else {
+          } else {
             this.status = 'Fail to register: status != 201'
             alert(JSON.stringify(res.data))
           }
@@ -224,19 +222,24 @@ export default {
         })
     },
     register (evt) {
-      if (!this.acceptedTerms || (this.attendee.transport_type !== null &&
-                                  (this.attendee.transport_id === '' || this.attendee.arrival_time === ''))) {
-        if (!this.acceptedTerms)
-          alert('Pleast accept the terms first');
-        else {
-          if (this.attendee.transport_id === '')
+      if (!this.acceptedTerms ||
+         (this.attendee.transport_type !== null &&
+         (this.attendee.transport_id === '' || this.attendee.arrival_time === ''))
+      ) {
+        if (!this.acceptedTerms) {
+          alert('Pleast accept the terms first')
+        } else {
+          if (this.attendee.transport_id === '') {
             alert('Please give transport id')
-          else if (this.attendee.arrival_time === '')
-            alert('Pleast give arrival time')
+          } else {
+            if (this.attendee.arrival_time === '') {
+              alert('Pleast give arrival time')
+            }
+          }
         }
         this.status = 'Fail to register'
         evt.preventDefault()
-        return;
+        return
       }
       this.status = 'Registering...'
       this.isLoading = true
@@ -255,12 +258,12 @@ export default {
             depart_time: input2date(this.attendee.depart_time).toISOString(),
             arrival_station: this.attendee.arrival_station,
             arrival_time: input2date(this.attendee.arrival_time).toISOString(),
-            other_detail: this.attendee.other_detail,
+            other_detail: this.attendee.other_detail
           })
             .then(res => {
               console.log(res.data)
               if (res.status === 201) {
-                this.realRegister(res.data.id);
+                this.realRegister(res.data.id)
               } else {
                 this.isLoading = false
                 this.status = 'Fail to provide transport: status != 201'
@@ -297,7 +300,7 @@ export default {
               this.event.registered = false
             } else {
               alert(res.data)
-              this.status = null;
+              this.status = null
             }
           })
           .catch(err => {
