@@ -17,6 +17,7 @@
         </b-col>
 
         <b-table
+          id="event-list-table"
           striped
           hover
           show-empty
@@ -25,6 +26,8 @@
           primary-key="id"
           :filter="filter"
           :busy="isLoading"
+          :per-page="perPage"
+          :current-page="currentPage"
         >
           <div slot="table-busy" class="text-center text-danger my-2">
             <b-spinner class="align-middle" />
@@ -50,6 +53,18 @@
           </template>
         </b-table>
 
+        <b-col cols="12">
+          <div class="mt-3">
+            <b-pagination
+              v-model="currentPage"
+              :total-rows="rows"
+              :per-page="perPage"
+              align="center"
+              aria-controls="event-list-table"
+            ></b-pagination>
+          </div>
+        </b-col>
+
       </b-row>
     </b-container>
   </div>
@@ -69,7 +84,9 @@ export default {
       isLoading: false,
       filter: null,
       fields,
-      events: []
+      events: [],
+      perPage: 10,
+      currentPage: 1
     }
   },
   mounted () {
@@ -84,6 +101,11 @@ export default {
         this.isLoading = false
         console.log('failed to fetch events\n', err)
       })
+  },
+  computed: {
+    rows() {
+      return this.events.length
+    }
   }
 }
 </script>
