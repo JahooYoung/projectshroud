@@ -8,7 +8,7 @@ from rest_framework import generics, status
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from backend.serializers import *
 from backend.permissions import *
 from backend.utils.qrcode import text_to_qr
@@ -18,12 +18,12 @@ from rest_framework.serializers import ValidationError
 
 
 def check_is_admin(user, event):
-    if user.id == event.host.id:
+    if user.is_site_admin:
         return True
     return UserManageEvent.objects.filter(user=user, event=event).exists()
 
 
-def check_is_admin_not_host(user, event):
+def check_is_admin_not_site_admin(user, event):
     return UserManageEvent.objects.filter(user=user, event=event).exists()
 
 
@@ -34,24 +34,28 @@ def check_event_registered(user, event):
 @api_view(['GET', 'POST'])
 def activate_user(request):
     if 'id' not in request.data:
-        raise serializers.ValidationError('No id provided.')
+        raise ValidationError('No id provided.')
 
     if 'token' not in request.data:
-        raise serializers.ValidationError('No token provided.')
+        raise ValidationError('No token provided.')
 
     try:
         user = get_user_model().objects.get(id=request.data.get('id'))
     except get_user_model().DoesNotExist:
-        raise serializers.ValidationError('User Not Found.')
+        raise ValidationError('User Not Found.')
 
-    if user.activate_token == request.data.get('token'):
+    if user.is_activated:
+        raise ValidationError('Already activated.')
+
+    if user.activate_token is not None and user.activate_token == request.data.get('token'):
         user.activate()
         return Response(status=status.HTTP_200_OK)
 
-    raise serializers.ValidationError('Invalid token.')
+    raise ValidationError('Invalid token.')
 
 
 @api_view(['GET'])
+@permission_classes((permissions.IsAuthenticated, IsSiteAdminOrSelf))
 def send_activation(request):
     user = request.user
     data = request.GET
@@ -63,7 +67,10 @@ def send_activation(request):
 
     if user is None or isinstance(user, AnonymousUser):
         raise ValidationError('No User Specified.')
+    if user.is_activated:
+        raise ValidationError('Already activated.')
 
+    user.generate_activate_token()
     send_activation_email(user)
     return Response(status=status.HTTP_200_OK)
 
@@ -71,7 +78,7 @@ def send_activation(request):
 @api_view(['GET', 'POST'])
 def gen_qrcode(request):
     if 'text' not in request.data:
-        raise serializers.ValidationError('No text provided.')
+        raise ValidationError('No text provided.')
 
     text = request.data.get('text')
     qr_img = text_to_qr(text)
@@ -84,7 +91,8 @@ class DummyView(APIView):
 
     def get(self, request, format=None):
         content = {
-            'status': 'request was permitted'
+            'status': 'request was permitted',
+            'is_activated': request.user.is_activated
         }
         return Response(content)
 
@@ -92,7 +100,7 @@ class DummyView(APIView):
 class EventList(generics.ListCreateAPIView):
     queryset = Event.objects.filter(public=True)
     serializer_class = EventListSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsActivatedOrReadOnly)
 
     def perform_create(self, serializer):
         # user = get_user_model().objects.get(id=self.request.data.get('host_id', ''))
@@ -104,8 +112,9 @@ class EventList(generics.ListCreateAPIView):
 
         event_obj = serializer.save(host=user, description=desc)
 
-        ume_obj = UserManageEvent(user=user, event=evnet_obj)
-        ume_obj.save()
+        # done in frontend
+        # ume_obj = UserManageEvent(user=user, event=event_obj)
+        # ume_obj.save()
 
 
 class PastEventList(generics.ListAPIView):
@@ -125,7 +134,7 @@ class OngoingEventList(generics.ListAPIView):
 
 class UserRegisterEventList(generics.ListAPIView):
     serializer_class = UserRegisterEventSerializer
-    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser|IsOwner)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrSelf)
 
     def get_queryset(self):
         # user = get_user_model().objects.get(id=self.kwargs.get('pk'))
@@ -135,7 +144,7 @@ class UserRegisterEventList(generics.ListAPIView):
 
 class UserManageEventList(generics.ListAPIView):
     serializer_class = UserManageEventSerializer
-    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser|IsOwner)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrSelf)
 
     def get_queryset(self):
         # user = get_user_model().objects.get(id=self.kwargs.get('pk'))
@@ -145,7 +154,7 @@ class UserManageEventList(generics.ListAPIView):
 
 class UserRegisterFutureEventList(generics.ListAPIView):
     serializer_class = UserRegisterEventSerializer
-    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser|IsOwner)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrSelf)
 
     def get_queryset(self):
         # user = get_user_model().objects.get(id=self.kwargs.get('pk'))
@@ -155,7 +164,7 @@ class UserRegisterFutureEventList(generics.ListAPIView):
 
 class UserRegisterPastEventList(generics.ListAPIView):
     serializer_class = UserRegisterEventSerializer
-    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser|IsOwner)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrSelf)
 
     def get_queryset(self):
         # user = get_user_model().objects.get(id=self.kwargs.get('pk'))
@@ -165,7 +174,7 @@ class UserRegisterPastEventList(generics.ListAPIView):
 
 class UserRegisterOngoingEventList(generics.ListAPIView):
     serializer_class = UserRegisterEventSerializer
-    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser|IsOwner)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrSelf)
 
     def get_queryset(self):
         # user = get_user_model().objects.get(id=self.kwargs.get('pk'))
@@ -176,7 +185,7 @@ class UserRegisterOngoingEventList(generics.ListAPIView):
 
 class UserEventRegister(generics.CreateAPIView):
     serializer_class = UserRegisterEventSerializer
-    permission_classes = (permissions.IsAuthenticated, OpenRegistration|IsEventHostAdmin|permissions.IsAdminUser)
+    permission_classes = (permissions.IsAuthenticated, IsActivated)
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -198,6 +207,9 @@ class UserEventRegister(generics.CreateAPIView):
         if check_event_registered(user, event):
             raise ValidationError('Already Registered.')
 
+        if event.require_approve and not check_is_admin(user, event):
+            raise ValidationError('Not Authorized: Need event admin authority.')
+
         transport = None
         if 'transport_id' in data:
             try:
@@ -211,7 +223,7 @@ class UserEventRegister(generics.CreateAPIView):
 class UserEventUnregister(APIView):
     queryset = UserRegisterEvent.objects.all()
     serializer_class = UserRegisterEventSerializer
-    permission_classes = (permissions.IsAuthenticated, IsOwner|IsEventHostAdmin|permissions.IsAdminUser)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrSelf|IsSiteAdminOrEventManager)
 
     def post(self, request, format=None):
         user = request.user
@@ -221,14 +233,6 @@ class UserEventUnregister(APIView):
                 user = get_user_model().objects.get(id=data.get('user_id'))
             except Event.DoesNotExist:
                 raise ValidationError('User Not Found.')
-
-        if 'event_id' not in data:
-            raise ValidationError('No event_id specified.')
-
-        try:
-            event = Event.objects.get(id=data.get('event_id'))
-        except Event.DoesNotExist:
-            raise ValidationError('Event Not found.')
 
         try:
             ure_obj = UserRegisterEvent.objects.get(user=user, event=event)
@@ -246,7 +250,7 @@ class AssignEventAdmin(generics.CreateAPIView):
     # Not Tested
 
     serializer_class = UserManageEventSerializer
-    permission_classes = (permissions.IsAuthenticated, IsEventHostAdmin|permissions.IsAdminUser)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -257,15 +261,7 @@ class AssignEventAdmin(generics.CreateAPIView):
             except Event.DoesNotExist:
                 raise ValidationError('User Not Found.')
 
-        if 'event_id' not in data:
-            raise ValidationError('No event_id specified.')
-
-        try:
-            event = Event.objects.get(id=data.get('event_id'))
-        except Event.DoesNotExist:
-            raise ValidationError('Event Not found.')
-
-        if check_is_admin_not_host(user, event):
+        if check_is_admin(user, event):
             raise ValidationError('Is admin already.')
 
         serializer.save(user=user, event=event)
@@ -292,7 +288,7 @@ class EventDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class EventAttendeeList(generics.ListAPIView):
     serializer_class = UserRegisterEventSerializer
-    permission_classes = (permissions.IsAuthenticated, IsEventRegistered|IsEventHostAdmin|permissions.IsAdminUser)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
 
     def get_queryset(self):
         try:
@@ -304,7 +300,7 @@ class EventAttendeeList(generics.ListAPIView):
 
 class EventAdminList(generics.ListAPIView):
     serializer_class = UserManageEventSerializer
-    permission_classes = (permissions.IsAuthenticated, IsEventHostAdmin|permissions.IsAdminUser)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
 
     def get_queryset(self):
         try:
@@ -319,20 +315,13 @@ class TransportCreateView(generics.CreateAPIView):
 
     queryset = Transport.objects.all()
     serializer_class = TransportSerializer
-    permission_classes = (permissions.IsAuthenticated, IsOwner|IsEventHostAdmin|permissions.IsAdminUser)
+    permission_classes = (permissions.IsAuthenticated, IsSiteAdminOrSelf|IsSiteAdminOrEventManager)
 
     def perform_create(self, serializer):
         user = self.request.user
         data = self.request.data
         if 'user_id' in data:
             user = get_user_model().objects.get(id=data['user_id'])
-        if 'event_id' not in data:
-            raise ValidationError('No event_id specified.')
-
-        try:
-            event = Event.objects.get(id=data.get('event_id'))
-        except Event.DoesNotExist:
-            raise ValidationError('Event not found.')
 
         serializer.save(user=user, event=event)
 
@@ -361,7 +350,7 @@ class EventCheckInToken(APIView):
 class UserCheckInEvent(APIView):
     # Not Tested
 
-    permission_classes = (permissions.IsAuthenticated, IsOwner|IsEventHostAdmin|permissions.IsAdminUser)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsOwner|IsEventHostAdmin|permissions.IsAdminUser)
 
     def get(self, request, pk, format=None):
         try:
@@ -419,14 +408,10 @@ class UserCheckInEvent(APIView):
 class StartCheckIn(generics.CreateAPIView):
     queryset = CheckIn.objects.all()
     serializer_class = CheckInSerializer
-    permission_classes = (permissions.IsAuthenticated, IsEventHostAdmin|permissions.IsAdminUser)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
 
     def perform_create(self, serializer):
         data = self.request.data
-
-        if 'event_id' not in data:
-            raise ValidationError('No event_id specified.')
-
         event = Event.objects.get(id=data.get('event_id'))
         if event.checkin_enabled:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Check-in already started.'})
@@ -438,7 +423,7 @@ class StartCheckIn(generics.CreateAPIView):
 class StopCheckIn(generics.DestroyAPIView):
     queryset = CheckIn.objects.all()
     serializer_class = CheckInSerializer
-    permission_classes = (permissions.IsAuthenticated, IsEventHostAdmin|permissions.IsAdminUser)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsEventHostAdmin|permissions.IsAdminUser)
 
     def perform_destroy(self, instance):
         if instance is None:

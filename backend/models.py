@@ -95,10 +95,16 @@ class UserProfile(AbstractBaseUser):
 
     def activate(self):
         self.is_activated = True
+        self.generate_uuid = ''
+        self.save()
+
+    def generate_activate_token(self):
+        self.activate_token = generate_uuid()
+        self.save()
 
     @property
     def is_staff(self):
-        return (self.is_site_admin and self.is_active)
+        return bool(self.is_site_admin and self.is_active)
 
 
 class Event(models.Model):

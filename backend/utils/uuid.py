@@ -5,6 +5,7 @@ def generate_uuid():
     uid = str(uuid.uuid4())
     return ''.join(uid.split('-'))
 
+
 def generate_user_uuid():
     uid = str(uuid.uuid4())
     return ''.join(uid.split('-'))[0:16]
