@@ -10,7 +10,7 @@ class IsEventHostAdminOrReadOnly(permissions.BasePermission):
             return True
 
         # Write permissions.
-        if not request.user:
+        if not request.user or not request.user.is_activated:
             return False
 
         if isinstance(obj, Event):
@@ -25,7 +25,7 @@ class IsEventHostAdmin(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         # Read & Write permissions.
-        if not request.user:
+        if not request.user or not request.user.is_activated:
             return False
 
         if isinstance(obj, Event):
@@ -41,7 +41,7 @@ class IsEventRegistered(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         # Read & Write permissions.
-        if not request.user:
+        if not request.user or not request.user.is_activated:
             return False
 
         if isinstance(obj, Event):
@@ -57,7 +57,7 @@ class IsOwner(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         # Read & Write permissions.
-        if not request.user:
+        if not request.user or not request.user.is_activated:
             return False
         if not hasattr(obj, 'user'):
             return False
@@ -69,7 +69,7 @@ class OpenRegistration(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         # Read & Write permissions.
-        if not request.user:
+        if not request.user or not request.user.is_activated:
             return False
         if obj.event.require_approve:
             return False

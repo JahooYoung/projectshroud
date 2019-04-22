@@ -33,7 +33,10 @@ urlpatterns = [
 
     path('api/dummy/', views.DummyView.as_view()),
 
-    path('api/qrcode/', views.gen_qrcode)
+    path('api/qrcode/', views.gen_qrcode),
+
+    path('api/activate/', views.activate_user),
+    path('api/send/activation', views.send_activation)
 
     # path('api/users/', views.UserList.as_view()),
 ]

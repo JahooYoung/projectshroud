@@ -1,36 +1,26 @@
-import uuid
+from backend.utils.uuid import *
+from backend.utils.email import send_activation_email
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth import get_user_model
-
-
-def generate_user_uuid():
-    uid = str(uuid.uuid4())
-    return ''.join(uid.split('-'))[0:16]
-
-
-def generate_event_uuid():
-    uid = str(uuid.uuid4())
-    return ''.join(uid.split('-'))[0:12]
-
-
-def generate_checkin_uuid():
-    uid = str(uuid.uuid4())
-    return ''.join(uid.split('-'))[0:10]
+import os
 
 
 class UserProfileManager(BaseUserManager):
-    def create_user(self, mobile, real_name, email, password=None):
+    def create_user(self, mobile, real_name, email, password=None, is_su=False):
         """
         Creates and saves a User with the given email, real name,
         email and password.
         """
         if not mobile:
-            raise ValueError('Users must have a mobile number')
+            raise ValueError('User must have a mobile number')
 
         if not real_name:
-            raise ValueError('Users must have a real name')
+            raise ValueError('User must have a real name')
+
+        if not email:
+            raise ValueError('User must have a valid email')
 
         user = self.model(
             mobile=mobile,
@@ -40,6 +30,7 @@ class UserProfileManager(BaseUserManager):
 
         user.set_password(password)
         user.save(using=self._db)
+
         return user
 
     def create_superuser(self, mobile, real_name, email, password):
@@ -52,8 +43,10 @@ class UserProfileManager(BaseUserManager):
             email=email,
             real_name=real_name,
             password=password,
+            is_su=True
         )
         user.is_site_admin = True
+        user.activate()
         user.save(using=self._db)
         return user
 
@@ -67,11 +60,14 @@ class UserProfile(AbstractBaseUser):
     )
     mobile = models.CharField(max_length=11, blank=False, verbose_name='手机号码', unique=True)
     real_name = models.CharField(max_length=20, blank=False, verbose_name='真实姓名')
-    email = models.EmailField('电子邮件', blank=True)
+    email = models.EmailField('电子邮件', blank=False, unique=True)
     date_joined = models.DateField('注册时间', auto_now_add=True)
     is_active = models.BooleanField(default=True)
     is_site_admin = models.BooleanField(default=False)
+    is_activated = models.BooleanField(default=False)
     # IDtype, ID number, ProfileImage
+
+    activate_token = models.CharField(max_length=32, default=generate_uuid)
 
     USERNAME_FIELD = 'mobile'
     EMAIL_FIELD = 'email'
@@ -83,14 +79,26 @@ class UserProfile(AbstractBaseUser):
         return self.real_name
 
     def has_perm(self, perm, obj=None):
-        return self.is_site_admin
+        if not self.is_active:
+            return False
+        if obj is None:
+            return self.is_site_admin
+        if isinstance(obj, Event):
+            return (obj.host == self or
+                    UserManageEvent.objects.filter(user=request.user, event=obj).exists())
+        if hasattr(obj, 'user'):
+            return obj.user == self
+        return False
 
     def has_module_perms(self, app_label):
-        return self.is_site_admin
+        return self.is_staff
+
+    def activate(self):
+        self.is_activated = True
 
     @property
     def is_staff(self):
-        return self.is_site_admin
+        return (self.is_site_admin and self.is_active)
 
 
 class Event(models.Model):

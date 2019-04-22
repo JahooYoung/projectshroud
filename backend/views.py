@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
+from django.utils import timezone
+from django.http import Http404, HttpResponse
+
 from rest_framework import generics, status
 from rest_framework import permissions
 from rest_framework.response import Response
@@ -8,11 +11,10 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from backend.serializers import *
 from backend.permissions import *
-from django.utils import timezone
-from django.http import Http404, HttpResponse
+from backend.utils.qrcode import text_to_qr
+from backend.utils.email import send_activation_email
+
 from rest_framework.serializers import ValidationError
-from MyQR import myqr
-import os
 
 
 def check_is_admin(user, event):
@@ -30,27 +32,49 @@ def check_event_registered(user, event):
 
 
 @api_view(['GET', 'POST'])
+def activate_user(request):
+    if 'id' not in request.data:
+        raise serializers.ValidationError('No id provided.')
+
+    if 'token' not in request.data:
+        raise serializers.ValidationError('No token provided.')
+
+    try:
+        user = get_user_model().objects.get(id=request.data.get('id'))
+    except get_user_model().DoesNotExist:
+        raise serializers.ValidationError('User Not Found.')
+
+    if user.activate_token == request.data.get('token'):
+        user.activate()
+        return Response(status=status.HTTP_200_OK)
+
+    raise serializers.ValidationError('Invalid token.')
+
+
+@api_view(['GET'])
+def send_activation(request):
+    user = request.user
+    data = request.GET
+    if 'user_id' in data:
+        try:
+            user = get_user_model().objects.get(id=data.get('user_id'))
+        except Event.DoesNotExist:
+            raise ValidationError('User Not Found.')
+
+    if user is None or isinstance(user, AnonymousUser):
+        raise ValidationError('No User Specified.')
+
+    send_activation_email(user)
+    return Response(status=status.HTTP_200_OK)
+
+
+@api_view(['GET', 'POST'])
 def gen_qrcode(request):
     if 'text' not in request.data:
         raise serializers.ValidationError('No text provided.')
 
-    filetoken = '%s.png' % generate_event_uuid()
-
-    version, level, qr_name = myqr.run(
-        request.data.get('text'),
-        version=5,
-        level='H',
-        picture=None,
-        colorized=False,
-        contrast=1.0,
-        brightness=1.0,
-        save_name=filetoken,
-        save_dir=os.path.join(os.getcwd(), 'qr_temp')
-    )
-
-    with open(qr_name, 'rb') as f:
-        qr_img = f.read()
-    os.remove(qr_name)
+    text = request.data.get('text')
+    qr_img = text_to_qr(text)
 
     return HttpResponse(qr_img, content_type='image/png')
 
@@ -78,7 +102,10 @@ class EventList(generics.ListCreateAPIView):
         if 'description' in self.request.data:
             desc = self.request.data.get('description')
 
-        serializer.save(host=user, description=desc)
+        event_obj = serializer.save(host=user, description=desc)
+
+        ume_obj = UserManageEvent(user=user, event=evnet_obj)
+        ume_obj.save()
 
 
 class PastEventList(generics.ListAPIView):

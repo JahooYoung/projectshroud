@@ -7,7 +7,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     class Meta:
         model = UserProfile
-        fields = ('id', 'mobile', 'real_name', 'email')
+        fields = ('id', 'mobile', 'real_name', 'email', 'is_activated')
 
 
 class EventListSerializer(serializers.ModelSerializer):
