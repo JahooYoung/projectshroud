@@ -100,22 +100,6 @@ class IsEventHostAdmin(permissions.BasePermission):
         return False
 
 
-class IsEventRegistered(permissions.BasePermission):
-
-    def has_object_permission(self, request, view, obj):
-        # Read & Write permissions.
-        if not is_active_user(user):
-            return False
-
-        if isinstance(obj, Event):
-            return (obj.host == request.user or
-                    UserRegisterEvent.objects.filter(user=request.user, event=obj).exists())
-        elif hasattr(obj, 'event'):
-            return (obj.event.host == request.user or
-                    UserRegisterEvent.objects.filter(user=request.user, event=obj.event).exists())
-        return False
-
-
 class IsOwner(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
@@ -126,15 +110,4 @@ class IsOwner(permissions.BasePermission):
             return False
         return obj.user == request.user
 
-
-# Whether an event is open for registration
-class OpenRegistration(permissions.BasePermission):
-
-    def has_object_permission(self, request, view, obj):
-        # Read & Write permissions.
-        if not is_active_user(user):
-            return False
-        if obj.event.require_approve:
-            return False
-        return obj.user == request.user
 
