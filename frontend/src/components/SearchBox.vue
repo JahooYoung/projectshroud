@@ -1,6 +1,6 @@
 <template>
   <ais-instant-search :search-client="searchClient" index-name="event_index">
-    <ais-search-box show-loading-indicator id="search-box">
+    <ais-search-box id="search-box">
       <search-input/>
     </ais-search-box>
     <!-- <ais-search-box>

@@ -5,30 +5,37 @@
     <EventDetailAdmin v-if="pageSwitch === 2"/>
 
     <div v-if="pageSwitch === 1">
-      <!-- fill this in -->
-      <h2> {{event.title}} </h2>
-      <h4> location: {{event.location}} </h4>
-      <h4> start time: {{event.startTime}} </h4>
-      <h4> end time: {{event.endTime}} </h4>
 
-      <h4> Descripition: </h4>
-      <b-container class="bv-example-row">
-        <b-row class="justify-content-md-center">
-          <b-col cols="8">
-            {{event.description}}
-          <!--<b-alert variant="success" show></b-alert>     @click="register"@click="unregister"-->
+      <b-container>
+        <b-row>
+          <b-col cols="9">
+            <b-card header="Conference Description">
+              <b-card-title>
+                {{event.title}}
+              </b-card-title>
+              <p style="text-align: left;">{{event.description}}</p>
+            </b-card>
+          </b-col>
+          <b-col cols="3">
+            <b-card header="Conference Information" style="position: fixed; margin-right: 3em;">
+              location: {{event.location}} <br/>
+              start time: {{ new Date(event.startTime).toLocaleString() }} <br/>
+              end time: {{ new Date(event.endTime).toLocaleString() }}
+
+              <b-button v-b-modal.modal-register variant="primary" type="submit" :disabled="isLoading" v-show="!event.registered">
+                <b-spinner small type="grow" v-show="isLoading"></b-spinner>
+                Register
+              </b-button>
+
+              <b-button v-b-modal.modal-unregister variant="danger" type="submit" :disabled="isLoading" v-show="event.registered">
+                <b-spinner small type="grow" v-show="isLoading"></b-spinner>
+                Unregister
+              </b-button>
+            </b-card>
           </b-col>
         </b-row>
       </b-container>
-      <b-button v-b-modal.modal-register variant="primary" type="submit" :disabled="isLoading" v-show="!event.registered">
-        <b-spinner small type="grow" v-show="isLoading"></b-spinner>
-        Register
-      </b-button>
 
-      <b-button v-b-modal.modal-unregister variant="danger" type="submit" :disabled="isLoading" v-show="event.registered">
-        <b-spinner small type="grow" v-show="isLoading"></b-spinner>
-        Unregister
-      </b-button>
       <b-modal id="modal-register" @ok="register" title="Basic infomation">
 
         <b-form-group label="Your Name:" label-for="input-1">

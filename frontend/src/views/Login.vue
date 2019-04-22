@@ -57,6 +57,13 @@ export default {
       }
     }
   },
+  // beforeRouteEnter (to, from, next) {
+  //   next(vm => {
+  //     if (vm.$store.state.user !== null) {
+  //       vm.$router.back()
+  //     }
+  //   })
+  // },
   methods: {
     onSubmit (evt) {
       evt.preventDefault()

@@ -1,6 +1,7 @@
 <template>
   <div>
-    <b-container fluid>
+    <SideBar />
+    <!-- <b-container fluid>
       <b-row>
         <b-col cols="12">
           <b-tabs lazy pills vertical nav-wrapper-class="col-2 event-detail-sidebar">
@@ -19,7 +20,7 @@
           </b-tabs>
         </b-col>
       </b-row>
-    </b-container>
+    </b-container> -->
   </div>
 </template>
 
@@ -28,6 +29,7 @@ import Info from './Info'
 import Administrator from './Administrator'
 import Attendee from './Attendee'
 import CheckIn from './CheckIn'
+import SideBar from '@/components/SideBar.vue'
 
 export default {
   name: 'EventDetailAdmin',
@@ -36,7 +38,8 @@ export default {
     Info,
     Attendee,
     CheckIn,
-    Administrator
+    Administrator,
+    SideBar
   }
 }
 </script>
