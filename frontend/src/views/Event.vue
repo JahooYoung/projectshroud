@@ -3,20 +3,43 @@
     <b-container>
       <h2>Event List</h2>
       <b-row>
-        <b-col md="4" class="my-1">
+        <b-col
+          md="4"
+          class="my-1"
+        >
           <b-input-group>
-            <b-input-group-text slot="prepend">Filter</b-input-group-text>
-            <b-form-input v-model="filter" placeholder="Type to Search" />
+            <b-input-group-text slot="prepend">
+              Filter
+            </b-input-group-text>
+            <b-form-input
+              v-model="filter"
+              placeholder="Type to Search"
+            />
             <b-input-group-append>
-              <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
+              <b-button
+                :disabled="!filter"
+                @click="filter = ''"
+              >
+                Clear
+              </b-button>
             </b-input-group-append>
           </b-input-group>
         </b-col>
-        <b-col offset-md="6" md="2" class="my-1">
-          <b-button variant="outline-info" to="/event/new">New Event</b-button>
+        <b-col
+          offset-md="6"
+          md="2"
+          class="my-1"
+        >
+          <b-button
+            variant="outline-info"
+            to="/event/new"
+          >
+            New Event
+          </b-button>
         </b-col>
 
         <b-table
+          id="event-list-table"
           striped
           hover
           show-empty
@@ -25,31 +48,66 @@
           primary-key="id"
           :filter="filter"
           :busy="isLoading"
+          :per-page="perPage"
+          :current-page="currentPage"
         >
-          <div slot="table-busy" class="text-center text-danger my-2">
+          <div
+            slot="table-busy"
+            class="text-center text-danger my-2"
+          >
             <b-spinner class="align-middle" />
             <strong>Loading...</strong>
           </div>
 
-          <template slot="title" slot-scope="row">
-            <b-link :to="'/event/' + row.item.id">{{ row.value }}</b-link>
+          <template
+            slot="title"
+            slot-scope="row"
+          >
+            <b-link :to="'/event/' + row.item.id">
+              {{ row.value }}
+            </b-link>
           </template>
 
-          <template slot="actions" slot-scope="row">
-            <b-button size="sm" @click="row.toggleDetails">
+          <template
+            slot="actions"
+            slot-scope="row"
+          >
+            <b-button
+              size="sm"
+              @click="row.toggleDetails"
+            >
               {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
             </b-button>
           </template>
 
-          <template slot="row-details" slot-scope="row">
+          <template
+            slot="row-details"
+            slot-scope="row"
+          >
             <b-card>
               <ul>
-                <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
+                <li
+                  v-for="(value, key) in row.item"
+                  :key="key"
+                >
+                  {{ key }}: {{ value }}
+                </li>
               </ul>
             </b-card>
           </template>
         </b-table>
 
+        <b-col cols="12">
+          <div class="mt-3">
+            <b-pagination
+              v-model="currentPage"
+              :total-rows="rows"
+              :per-page="perPage"
+              align="center"
+              aria-controls="event-list-table"
+            />
+          </div>
+        </b-col>
       </b-row>
     </b-container>
   </div>
@@ -69,7 +127,9 @@ export default {
       isLoading: false,
       filter: null,
       fields,
-      events: []
+      events: [],
+      perPage: 10,
+      currentPage: 1
     }
   },
   mounted () {
@@ -84,6 +144,11 @@ export default {
         this.isLoading = false
         console.log('failed to fetch events\n', err)
       })
+  },
+  computed: {
+    rows () {
+      return this.events.length
+    }
   }
 }
 </script>

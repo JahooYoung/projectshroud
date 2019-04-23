@@ -9,7 +9,11 @@
           label="Title"
           label-for="titleInput"
         >
-          <b-form-input v-model="form.title" id="titleInput" required></b-form-input>
+          <b-form-input
+            v-model="form.title"
+            id="titleInput"
+            required
+          />
         </b-form-group>
         <b-form-group
           id="descriptionInputGroup"
@@ -18,7 +22,12 @@
           label="Description"
           label-for="descriptionInput"
         >
-          <b-form-textarea v-model="form.description" rows="8" id="descriptionInput" required></b-form-textarea>
+          <b-form-textarea
+            v-model="form.description"
+            rows="8"
+            id="descriptionInput"
+            required
+          />
         </b-form-group>
         <b-form-group
           id="startTimeInputGroup"
@@ -27,7 +36,12 @@
           label="Start time"
           label-for="startTimeInput"
         >
-          <b-form-input v-model="form.startTime" id="startTimeInput" type="datetime-local" required></b-form-input>
+          <b-form-input
+            v-model="form.startTime"
+            id="startTimeInput"
+            type="datetime-local"
+            required
+          />
         </b-form-group>
         <b-form-group
           id="endTimeInputGroup"
@@ -36,7 +50,12 @@
           label="End time"
           label-for="endTimeInput"
         >
-          <b-form-input v-model="form.endTime" id="endTimeInput" type="datetime-local" required></b-form-input>
+          <b-form-input
+            v-model="form.endTime"
+            id="endTimeInput"
+            type="datetime-local"
+            required
+          />
         </b-form-group>
         <b-form-group
           id="locationInputGroup"
@@ -45,7 +64,11 @@
           label="Location"
           label-for="locationInput"
         >
-          <b-form-input v-model="form.location" id="locationInput" required></b-form-input>
+          <b-form-input
+            v-model="form.location"
+            id="locationInput"
+            required
+          />
         </b-form-group>
 
         <b-form-group
@@ -56,8 +79,11 @@
           label-for="publicInput"
         >
           <div style="text-align: left;">
-            <b-form-checkbox size="lg" v-model="form.public" switch>
-            </b-form-checkbox>
+            <b-form-checkbox
+              size="lg"
+              v-model="form.public"
+              switch
+            />
           </div>
         </b-form-group>
 
@@ -69,13 +95,24 @@
           label-for="publicInput"
         >
           <div style="text-align: left;">
-            <b-form-checkbox size="lg" v-model="form.requireApprove" switch>
-            </b-form-checkbox>
+            <b-form-checkbox
+              size="lg"
+              v-model="form.requireApprove"
+              switch
+            />
           </div>
         </b-form-group>
 
-        <b-button variant="primary" type="submit" :disabled="isLoading">
-          <b-spinner small type="grow" v-show="isLoading"></b-spinner>
+        <b-button
+          variant="primary"
+          type="submit"
+          :disabled="isLoading"
+        >
+          <b-spinner
+            small
+            type="grow"
+            v-show="isLoading"
+          />
           {{ buttonName }}
         </b-button>
       </b-form>
@@ -98,7 +135,12 @@ function input2date (str) {
 
 export default {
   name: 'Info',
-  props: ['newEvent'],
+  props: {
+    newEvent: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
       isLoading: false,
@@ -122,7 +164,6 @@ export default {
     }
   },
   watch: {
-    // call again the method if the route changes
     '$route': 'refresh'
   },
   methods: {
@@ -143,6 +184,11 @@ export default {
           .then(res => {
             this.isLoading = false
             if (res.status === 201) {
+              // this.$bvToast.toast(`Event "${res.data.title}" created successfully`, {
+              //   title: `Success`,
+              //   autoHideDelay: 5000,
+              //   solid: true
+              // })
               const eventId = res.data.id
               this.isLoading = true
               this.axios.post('/api/assignadmin/', {
@@ -161,7 +207,7 @@ export default {
                   console.log('failed to assign admin', err)
                 })
             } else {
-              alert(res.data)
+              alert(JSON.stringify(res.data))
             }
           })
           .catch(err => {
@@ -173,6 +219,11 @@ export default {
         this.axios.put('/api/event/' + this.$route.params.id + '/', data)
           .then(res => {
             if (res.status === 200) {
+              this.$bvToast.toast(`Event "${res.data.title}" saved successfully`, {
+                title: `Success`,
+                autoHideDelay: 5000,
+                solid: true
+              })
               this.refresh()
             }
           })

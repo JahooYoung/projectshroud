@@ -1,54 +1,82 @@
 <template>
   <div>
     <b-form @submit="onSubmit">
-
       <b-container>
         <b-row>
-          <b-col cols="12" offset-md="3" md="6" offset-lg="4" lg="4">
+          <b-col
+            cols="12"
+            offset-md="3"
+            md="6"
+            offset-lg="4"
+            lg="4"
+          >
             <b-form-group
               id="usernameInputGroup"
               label="Username:"
               label-for="usernameInput"
-              >
+            >
               <b-form-input
                 id="usernameInput"
                 type="text"
                 v-model="form.username"
                 v-focus
-                required/>
+                required
+              />
             </b-form-group>
           </b-col>
         </b-row>
         <b-row>
-          <b-col cols="12" offset-md="3" md="6" offset-lg="4" lg="4">
+          <b-col
+            cols="12"
+            offset-md="3"
+            md="6"
+            offset-lg="4"
+            lg="4"
+          >
             <b-form-group
               id="passwordInputGroup"
               label="Password:"
               label-for="passwordInput"
-              >
+            >
               <b-form-input
                 id="passwordInput"
                 type="password"
                 v-model="form.password"
-                required/>
+                required
+              />
             </b-form-group>
           </b-col>
         </b-row>
         <b-row>
-          <b-col cols="12" offset-md="3" md="6" offset-lg="4" lg="4">
-            <b-button type="submit" variant="primary">Login</b-button>
-            <b-button to="/register" variant="danger">Register</b-button>
+          <b-col
+            cols="12"
+            offset-md="3"
+            md="6"
+            offset-lg="4"
+            lg="4"
+          >
+            <b-button
+              type="submit"
+              variant="primary"
+            >
+              Login
+            </b-button>
+            <b-button
+              to="/register"
+              variant="danger"
+            >
+              Register
+            </b-button>
           </b-col>
         </b-row>
       </b-container>
-
     </b-form>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'login',
+  name: 'Login',
   data () {
     return {
       form: {
@@ -57,6 +85,13 @@ export default {
       }
     }
   },
+  // beforeRouteEnter (to, from, next) {
+  //   next(vm => {
+  //     if (vm.$store.state.user !== null) {
+  //       vm.$router.back()
+  //     }
+  //   })
+  // },
   methods: {
     onSubmit (evt) {
       evt.preventDefault()

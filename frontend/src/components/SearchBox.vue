@@ -1,7 +1,10 @@
 <template>
-  <ais-instant-search :search-client="searchClient" index-name="event_index">
-    <ais-search-box show-loading-indicator id="search-box">
-      <search-input/>
+  <ais-instant-search
+    :search-client="searchClient"
+    index-name="event_index"
+  >
+    <ais-search-box id="search-box">
+      <search-input />
     </ais-search-box>
     <!-- <ais-search-box>
       <div slot-scope="{ currentRefinement, isSearchStalled, refine }">
@@ -36,29 +39,26 @@
                     :key="item.objectId"
                     :to="`/event/${item.id}`"
                   >
-                    <h5 v-html="highlight(item._highlightResult.title)">
-                    </h5>
-                    <p v-html="highlight(item._snippetResult.description)">
-                    </p>
+                    <h5 v-html="highlight(item._highlightResult.title)" />
+                    <p v-html="highlight(item._snippetResult.description)" />
                   </b-list-group-item>
                 </b-list-group>
                 <ais-pagination />
               </div>
               <div v-else>
-                There are no hits found for: <q>{{query}}</q>
+                There are no hits found for: <q>{{ query }}</q>
               </div>
-              <ais-powered-by/>
+              <ais-powered-by />
             </div>
           </b-popover>
         </ais-hits>
-        <div v-else>
-        </div>
+        <div v-else />
       </template>
     </ais-state-results>
     <ais-configure
-      :attributesToSnippet="['description']"
+      :attributes-to-snippet.camel="['description']"
       :hits-per-page.camel="5"
-      snippetEllipsisText="..."
+      :snippet-ellipsis-text.camel="'...'"
     />
   </ais-instant-search>
 </template>
