@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import Vuelidate from 'vuelidate'
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -18,6 +19,8 @@ import InstantSearch from 'vue-instantsearch'
 Vue.use(InstantSearch)
 
 Vue.use(BootstrapVue)
+
+Vue.use(Vuelidate)
 
 library.add(faTimesCircle, faCheckCircle)
 Vue.component('font-awesome-icon', FontAwesomeIcon)

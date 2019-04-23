@@ -209,7 +209,7 @@ class UserEventUnregister(APIView):
             raise ValidationError('Not registered.')
 
         if ure_obj.transport is not None:
-            use_obj.transport.delete()
+            ure_obj.transport.delete()
 
         ure_obj.delete()
         return Response(status=status.HTTP_200_OK)
