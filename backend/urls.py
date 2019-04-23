@@ -6,6 +6,7 @@ urlpatterns = [
     path('', views.index),
     path('api/users/<pk>/', views.UserView.as_view()),
 
+    path('api/github-push/', views.github_push),
     path('api/event/', views.EventList.as_view()),
     path('api/event/past/', views.PastEventList.as_view()),
     path('api/event/ongoing/', views.OngoingEventList.as_view()),
