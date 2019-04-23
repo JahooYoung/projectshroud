@@ -151,7 +151,7 @@ SITE_ID = 1
 
 ACCOUNT_ADAPTER = 'backend.adapters.AccountAdapter'
 ACCOUNT_EMAIL_REQUIRED = False
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_VERIFICATION = 'None'
 ACCOUNT_AUTHENTICATION_METHOD = 'mobile'
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'mobile'
 ACCOUNT_USERNAME_REQUIRED = True
@@ -165,8 +165,14 @@ ALGOLIA = {
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.testshroud.top'
-EMAIL_PORT = 25
+EMAIL_USE_SSL = True
+EMAIL_PORT = 465
 EMAIL_HOST_USER = 'noreply@testshroud.top'
 EMAIL_HOST_PASSWORD = '5LingFournoreply'
 DEFAULT_FROM_EMAIL = 'noreply <%s>' % EMAIL_HOST_USER
 
+SITE_OFFICIAL_NAME = 'TESTSHROUD'
+SITE_HOST_NAME = 'localhost:8000'
+SITE_DOMAIN_NAME = 'testshroud.top'
+
+USER_ACTIVATE_URL = '/#/send/activation/'
