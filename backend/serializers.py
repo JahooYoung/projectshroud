@@ -32,7 +32,8 @@ class EventDetailSerializer(serializers.ModelSerializer):
         model = Event
         fields = ['id', 'title', 'host_id', 'host_display_info',
                   'description', 'checkin_enabled', 'start_time',
-                  'end_time', 'location', 'public', 'require_approve']
+                  'end_time', 'location', 'public', 'require_approve'
+                  'require_application', 'require_attachment']
 
 
 class TransportSerializer(serializers.ModelSerializer):
@@ -52,11 +53,13 @@ class UserRegisterEventSerializer(serializers.ModelSerializer):
     transport_info = TransportSerializer(source='transport', read_only=True)
     event_info = EventListSerializer(source='event', read_only=True)
     date_registered = serializers.ReadOnlyField()
+    date_approved = serializers.ReadOnlyField()
     checked_in = serializers.ReadOnlyField()
 
     class Meta:
         model = UserRegisterEvent
-        fields = ['user_info', 'event_info', 'date_registered', 'transport_info', 'checked_in']
+        fields = ['user_info', 'event_info', 'date_registered', 'transport_info', 'checked_in',
+                  'date_approved', 'application_text', 'approved']
 
 
 class UserManageEventSerializer(serializers.ModelSerializer):

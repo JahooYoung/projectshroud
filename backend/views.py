@@ -12,7 +12,7 @@ from rest_framework.decorators import api_view, permission_classes
 from backend.serializers import *
 from backend.permissions import *
 from backend.utils.qrcode import text_to_qr
-from backend.utils.email import send_activation_email
+from backend.utils.email import *
 
 from rest_framework.serializers import ValidationError
 
@@ -29,6 +29,10 @@ def check_is_admin_not_site_admin(user, event):
 
 def check_event_registered(user, event):
     return UserRegisterEvent.objects.filter(user=user, event=event).exists()
+
+
+def check_event_register_approved(user, event):
+    return UserRegisterEvent.objects.filter(user=user, event=event, approved=True).exists()
 
 
 @api_view(['GET', 'POST'])
@@ -95,6 +99,12 @@ class DummyView(APIView):
             'is_activated': request.user.is_activated
         }
         return Response(content)
+
+
+class UserView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrSelf)
 
 
 class EventList(generics.ListCreateAPIView):
@@ -205,19 +215,65 @@ class UserEventRegister(generics.CreateAPIView):
             raise ValidationError('Event Not found.')
 
         if check_event_registered(user, event):
-            raise ValidationError('Already Registered.')
+            if check_event_register_approved(user, event):
+                raise ValidationError('Already Registered.')
+            else:
+                raise ValidationError('Already applied, waiting for approval.')
 
-        if event.require_approve and not check_is_admin(user, event):
-            raise ValidationError('Not Authorized: Need event admin authority.')
+        if event.require_approve:
+            if event.require_application:
+                if 'application_text' not in data or data.get('application_text') == '':
+                    raise ValidationError('Need to provide application info.')
+            serializers.save(user=user, event=event, transport=None, approved=False)
+            send_registered_email(user, event, approved=True)
 
-        transport = None
-        if 'transport_id' in data:
-            try:
-                transport = Transport.objects.get(id=data.get('transport_id'))
-            except Event.DoesNotExist:
-                raise ValidationError('Transport Not found.')
+        else:
+            transport = None
+            if 'transport_id' in data:
+                try:
+                    transport = Transport.objects.get(id=data.get('transport_id'))
+                except Event.DoesNotExist:
+                    raise ValidationError('Transport Not found.')
 
-        serializer.save(user=user, event=event, transport=transport)
+            serializer.save(user=user, event=event, transport=transport)
+            send_registered_email(user, event, approved=True)
+
+
+class ApproveEventRegister(APIView):
+    queryset = UserRegisterEvent.objects.all()
+    serializer_class = UserRegisterEventSerializer
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
+
+    def post(self, request, format=None):
+        data = request.data
+        if 'approve' not in data:
+            raise ValidationError('Need to provide "approve" (Boolean) field.')
+
+        approve = data['approve']
+        if 'user_id' not in data:
+            raise ValidationError('No user specified.')
+        try:
+            user = get_user_model().objects.get(id=data.get('user_id'))
+        except get_user_model().DoesNotExist:
+            raise ValidationError('User Not Found.')
+
+        event = Event.objects.get(id=data.get('event_id'))
+
+        try:
+            ure_obj = UserRegisterEvent.objects.get(user=user, event=event)
+        except UserRegisterEvent.DoesNotExist:
+            raise ValidationError('Not registered/applied.')
+
+        if approve:
+            if ure_obj.approved:
+                raise ValidationError('Already Approved.')
+            ure_obj.approve()
+
+        if not approve:
+            ure_obj.disapprove()
+            ure_obj.delete()
+
+        return Response(status=status.HTTP_200_OK)
 
 
 class UserEventUnregister(APIView):
@@ -229,14 +285,10 @@ class UserEventUnregister(APIView):
         user = request.user
         data = request.data
         if 'user_id' in data:
-            try:
-                user = get_user_model().objects.get(id=data.get('user_id'))
-            except Event.DoesNotExist:
-                raise ValidationError('User Not Found.')
+            user = get_user_model().objects.get(id=data.get('user_id'))
 
-        try:
-            ure_obj = UserRegisterEvent.objects.get(user=user, event=event)
-        except UserRegisterEvent.DoesNotExist:
+        event = Event.objects.get(id=data.get('event_id'))
+        if not check_event_registered(user, event):
             raise ValidationError('Not registered.')
 
         if ure_obj.transport is not None:
@@ -261,6 +313,7 @@ class AssignEventAdmin(generics.CreateAPIView):
             except Event.DoesNotExist:
                 raise ValidationError('User Not Found.')
 
+        event = Event.objects.get(id=data.get('event_id'))
         if check_is_admin(user, event):
             raise ValidationError('Is admin already.')
 

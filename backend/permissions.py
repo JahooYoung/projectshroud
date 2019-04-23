@@ -12,7 +12,7 @@ def is_activated_user(user):
             user
             and not isinstance(user, AnonymousUser)
             and user.is_activated
-            )
+        )
 
 class IsActivated(permissions.BasePermission):
 

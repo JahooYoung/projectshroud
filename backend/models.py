@@ -1,9 +1,10 @@
 from backend.utils.uuid import *
-from backend.utils.email import send_activation_email
+from backend.utils.email import *
 from django.db import models
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth import get_user_model
+from rest_framework.serializers import ValidationError
 import os
 
 
@@ -65,7 +66,13 @@ class UserProfile(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_site_admin = models.BooleanField(default=False)
     is_activated = models.BooleanField(default=False)
-    # IDtype, ID number, ProfileImage
+
+    # profile_image = models.ImageField(
+    #                         upload_to=os.path.join(FILE_ROOT, 'avatar'),
+    #                         default=os.path.join(FILE_ROOT, 'avatar/default.png'),
+    #                         height_field=100, width_field=100
+    #                    )
+    # IDtype, ID number
 
     activate_token = models.CharField(max_length=32, default=generate_uuid)
 
@@ -124,6 +131,8 @@ class Event(models.Model):
     registered_attendee = models.ManyToManyField(get_user_model(), through='UserRegisterEvent', related_name='registered_attendee')
     public = models.BooleanField('是否公开', default=True)
     require_approve = models.BooleanField('注册需要审核', default=False)
+    require_application = models.BooleanField('需要填写申请信息', default=False)
+    require_attachment = models.BooleanField('需要提交申请文件', default=False)
     checkin_enabled = models.BooleanField('正在签到', default=False)
 
     class Meta:
@@ -200,7 +209,15 @@ class UserRegisterEvent(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     transport = models.ForeignKey(Transport, blank=True, null=True, on_delete=models.SET_NULL)
     date_registered = models.DateTimeField('注册时间', auto_now_add=True)
+    date_approved = models.DateTimeField('批准时间')
     checked_in = models.BooleanField(default=False)
+
+    application_text = models.TextField()
+    # attachment = models.FileField(
+    #                         max_length=None,
+    #                         upload_to='user',
+    #                     )
+    approved = models.BooleanField()
 
     class Meta:
         unique_together = ('user', 'event')
@@ -210,6 +227,15 @@ class UserRegisterEvent(models.Model):
 
     def checkin(self):
         self.checked_in = True
+
+    def approve(self):
+        self.approved = True
+        send_approve_or_reject_email(user, event)
+
+    def reject(self):
+        if self.approved:
+            raise ValidationError('Cannot reject an already approved event registration.')
+        send_approve_or_reject_email(user, event, approved=False)
 
 
 class UserManageEvent(models.Model):

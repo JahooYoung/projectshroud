@@ -25,3 +25,14 @@ def send_activation_email(user):
     msg.attach_alternative(content, "text/html")
 
     return msg.send()
+
+
+def send_approve_or_reject_email(user, event, approved=True):
+    # Todo
+    return True
+
+
+def send_registered_email(user, event, approved=True):
+    # Todo
+    return True
+

@@ -4,12 +4,15 @@ from backend import views
 
 urlpatterns = [
     path('', views.index),
+    path('api/users/<pk>/', views.UserView.as_view()),
+
     path('api/event/', views.EventList.as_view()),
     path('api/event/past/', views.PastEventList.as_view()),
     path('api/event/ongoing/', views.OngoingEventList.as_view()),
     path('api/event/future/', views.FutureEventList.as_view()),
 
     path('api/register/', views.UserEventRegister.as_view()),
+    path('api/approve/', views.ApproveEventRegister.as_view()),
     path('api/unregister/', views.UserEventUnregister.as_view()),
     path('api/assignadmin/', views.AssignEventAdmin.as_view()),
 
@@ -35,10 +38,9 @@ urlpatterns = [
 
     path('api/qrcode/', views.gen_qrcode),
 
+    # Activation email
     path('api/activate/', views.activate_user),
     path('api/send/activation', views.send_activation)
-
-    # path('api/users/', views.UserList.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
