@@ -1,10 +1,15 @@
 <template>
   <div>
     <b-form @submit="onSubmit">
-
       <b-container fluid>
         <b-row>
-          <b-col cols="12" offset-md="3" md="6" offset-lg="4" lg="4">
+          <b-col
+            cols="12"
+            offset-md="3"
+            md="6"
+            offset-lg="4"
+            lg="4"
+          >
             <b-form-group
               id="mobileInputGroup"
               label="Mobile:"
@@ -16,12 +21,19 @@
                 id="mobileInput"
                 type="text"
                 v-model="form.mobile"
-                required/>
+                required
+              />
             </b-form-group>
           </b-col>
         </b-row>
         <b-row>
-          <b-col cols="12" offset-md="3" md="6" offset-lg="4" lg="4">
+          <b-col
+            cols="12"
+            offset-md="3"
+            md="6"
+            offset-lg="4"
+            lg="4"
+          >
             <b-form-group
               id="passwordInputGroup"
               label="Password:"
@@ -33,12 +45,19 @@
                 id="passwordInput"
                 type="password"
                 v-model="form.password"
-                required/>
+                required
+              />
             </b-form-group>
           </b-col>
         </b-row>
         <b-row>
-          <b-col cols="12" offset-md="3" md="6" offset-lg="4" lg="4">
+          <b-col
+            cols="12"
+            offset-md="3"
+            md="6"
+            offset-lg="4"
+            lg="4"
+          >
             <b-form-group
               id="RepeatPasswordInputGroup"
               label="Repeat password:"
@@ -50,12 +69,19 @@
                 id="repeatPasswordInput"
                 type="password"
                 v-model="form.repeatPassword"
-                required/>
+                required
+              />
             </b-form-group>
           </b-col>
         </b-row>
         <b-row>
-          <b-col cols="12" offset-md="3" md="6" offset-lg="4" lg="4">
+          <b-col
+            cols="12"
+            offset-md="3"
+            md="6"
+            offset-lg="4"
+            lg="4"
+          >
             <b-form-group
               id="realNameInputGroup"
               label="Real name:"
@@ -67,12 +93,19 @@
                 id="realNameInput"
                 type="realName"
                 v-model="form.realName"
-                required/>
+                required
+              />
             </b-form-group>
           </b-col>
         </b-row>
         <b-row>
-          <b-col cols="12" offset-md="3" md="6" offset-lg="4" lg="4">
+          <b-col
+            cols="12"
+            offset-md="3"
+            md="6"
+            offset-lg="4"
+            lg="4"
+          >
             <b-form-group
               id="emailInputGroup"
               label="Email:"
@@ -84,24 +117,35 @@
                 id="emailInput"
                 type="email"
                 v-model="form.email"
-                required/>
+                required
+              />
             </b-form-group>
           </b-col>
         </b-row>
         <b-row>
-          <b-col cols="12" offset-md="3" md="6" offset-lg="4" lg="4">
-            <b-button type="submit" variant="primary">Register</b-button>
+          <b-col
+            cols="12"
+            offset-md="3"
+            md="6"
+            offset-lg="4"
+            lg="4"
+          >
+            <b-button
+              type="submit"
+              variant="primary"
+            >
+              Register
+            </b-button>
           </b-col>
         </b-row>
       </b-container>
-
     </b-form>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'login',
+  name: 'Login',
   data () {
     return {
       form: {

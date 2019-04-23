@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <hr/>
+    <hr>
     This is footer
   </footer>
 </template>

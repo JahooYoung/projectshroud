@@ -5,8 +5,7 @@
       variant="light"
       label="Spinning"
       class="mr-sm-2"
-    >
-    </b-spinner>
+    />
     <b-form-input
       class="mr-sm-2"
       type="search"

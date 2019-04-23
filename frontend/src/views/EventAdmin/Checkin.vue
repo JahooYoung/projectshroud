@@ -5,7 +5,7 @@
       :variant="checkingIn ? 'danger' : 'primary'"
       @click="onClick"
     >
-      {{ checkingIn ? 'Stop' : 'Start'}} Check In
+      {{ checkingIn ? 'Stop' : 'Start' }} Check In
     </b-button>
     <b-img
       v-if="checkingIn"
@@ -14,7 +14,7 @@
       height="500px"
       :src="qrcodeURL"
       alt="Center image"
-    ></b-img>
+    />
   </div>
 </template>
 
@@ -31,6 +31,9 @@ export default {
   },
   mounted () {
     this.refresh()
+  },
+  watch: {
+    '$route': 'refresh'
   },
   methods: {
     onClick () {
