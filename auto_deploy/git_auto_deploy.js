@@ -3,11 +3,22 @@ const createHandler = require('github-webhook-handler')
 const spawn = require('child_process').spawn
 
 function run_cmd(cmd, args, callback) {
-  var child = spawn(cmd, args);
-  var resp = '';
+  const child = spawn(cmd, args)
+  let resp = ''
+  let finished = 0
 
-  child.stderr.on('data', function(buffer) { resp += buffer.toString(); });
-  child.stderr.on('end', function() { callback (resp) });
+  child.stderr.on('data', buffer => resp += buffer.toString())
+  child.stdout.on('data', buffer => resp += buffer.toString())
+  child.stderr.on('end', () => {
+    if (++finished === 2) {
+      callback(resp)
+    }
+  })
+  child.stdout.on('end', () => {
+    if (++finished === 2) {
+      callback(resp)
+    }
+  })
 }
 
 const handler = createHandler({
@@ -30,7 +41,18 @@ handler.on('push', function (event) {
   console.log('Received a push event for %s to %s',
     event.payload.repository.name,
     event.payload.ref)
-  if (event.payload.ref === 'refs/heads/site') {
-    run_cmd('sh', ['./git_auto_deploy.sh'], text => console.log(text));
+  if (event.payload.ref !== 'refs/heads/site') {
+    return
   }
+  let frontendUpdated = false
+  ['added', 'removed', 'modified'].forEach(ele => {
+    event.payload.commits.[ele].forEach(file => {
+      if (/^frontend/.test(file))
+        frontendUpdated = true
+    })
+  })
+  const args = []
+  if (frontendUpdated)
+    args.push('yarn')
+  run_cmd('sh', ['./git_auto_deploy.sh', ...args], text => console.log(text))
 })

@@ -1,4 +1,5 @@
 from MyQR import myqr
+from backend.utils.uuid import generate_event_uuid
 import os
 
 
