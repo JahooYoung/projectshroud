@@ -6,7 +6,7 @@ while getopts ":f:b" opt
 do
     case $opt in
         f)
-        if [ {$OPTARG}x = 'build'x ]; then
+        if [ {$OPTARG} == 'build' ]; then
             echo "Building frontend"
             (cd frontend; yarn build)
         elif [ {$OPTARG}x = 'install'x ]; then
