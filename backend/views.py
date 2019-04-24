@@ -18,6 +18,8 @@ from rest_framework.serializers import ValidationError
 
 
 def check_is_admin(user, event):
+    if not isinstance(user, get_user_model()):
+        return False
     if user.is_site_admin:
         return True
     return UserManageEvent.objects.filter(user=user, event=event).exists()
