@@ -46,7 +46,7 @@ handler.on('push', function (event) {
   }
   let frontendUpdated = false
   ['added', 'removed', 'modified'].forEach(ele => {
-    event.payload.commits.[ele].forEach(file => {
+    event.payload.commits[ele].forEach(file => {
       if (/^frontend/.test(file))
         frontendUpdated = true
     })
