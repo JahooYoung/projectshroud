@@ -16,6 +16,7 @@ do
         ;;
         b)
         if [ {$OPTARG}x = 'migrate'x ]; then
+            echo "Migrating backend"
             source /home/pyweb/bin/activate
             python manage.py makemigrations
             python manage.py migrate
