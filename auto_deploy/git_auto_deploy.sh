@@ -2,7 +2,7 @@ cd /home/projectshroud
 git checkout site
 git reset --hard HEAD
 git pull
-while getopts ":f:b:" opt
+while getopts ":f:b" opt
 do
     case $opt in
         f)
@@ -15,13 +15,11 @@ do
         fi
         ;;
         b)
-        if [ {$OPTARG}x = 'migrate'x ]; then
-            echo "Migrating backend"
-            source /home/pyweb/bin/activate
-            python manage.py makemigrations
-            python manage.py migrate
-            deactivate
-        fi
+        echo "Migrating backend"
+        source /home/pyweb/bin/activate
+        python manage.py makemigrations
+        python manage.py migrate
+        deactivate
         ;;
     esac
 done
