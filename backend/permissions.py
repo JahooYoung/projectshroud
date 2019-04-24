@@ -20,7 +20,7 @@ def is_activated_user(user):
 class IsAdminUser(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        return (request.user and user.is_staff)
+        return (request.user and request.user.is_staff)
 
     def has_object_permission(self, request, view, object):
         return self.has_permission(request, view)
