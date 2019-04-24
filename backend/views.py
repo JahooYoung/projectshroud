@@ -302,6 +302,7 @@ class UserEventUnregister(APIView):
         if not check_event_registered(user, event):
             raise ValidationError('Not registered.')
 
+        ure_obj = UserRegisterEvent.objects.get(user=user, event=event)
         if ure_obj.transport is not None:
             ure_obj.transport.delete()
 
