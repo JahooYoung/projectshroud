@@ -4,6 +4,8 @@ from rest_framework.serializers import ValidationError
 
 
 def is_site_admin(user):
+    if isinstance(user, AnonymousUser):
+        return False
     return user.is_staff
 
 
@@ -73,7 +75,7 @@ class IsEventHostAdminOrReadOnly(permissions.BasePermission):
             return True
 
         # Write permissions.
-        if not is_active_user(user):
+        if not is_activated_user(request.user):
             return False
 
         if isinstance(obj, Event):
@@ -88,7 +90,7 @@ class IsEventHostAdmin(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         # Read & Write permissions.
-        if not is_active_user(user):
+        if not is_activated_user(request.user):
             return False
 
         if isinstance(obj, Event):
@@ -104,7 +106,7 @@ class IsOwner(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         # Read & Write permissions.
-        if not is_active_user(user):
+        if not is_activated_user(request.user):
             return False
         if not hasattr(obj, 'user'):
             return False
