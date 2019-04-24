@@ -1,4 +1,5 @@
 cd /home/projectshroud
+git checkout site
 git reset --hard HEAD
 git pull
 if [ $1x = "yarn"x ]; then
