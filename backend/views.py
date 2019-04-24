@@ -400,7 +400,7 @@ class TransportView(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Transport.objects.all()
     serializer_class = TransportSerializer
-    permission_classes = (permissions.IsAuthenticated, IsOwner|IsEventHostAdmin|permissions.IsAdminUser)
+    permission_classes = (permissions.IsAuthenticated, IsOwner|IsEventHostAdmin|IsAdminUser)
 
 
 class EventCheckInToken(APIView):
@@ -419,7 +419,7 @@ class EventCheckInToken(APIView):
 class UserCheckInEvent(APIView):
     # Not Tested
 
-    permission_classes = (permissions.IsAuthenticated, IsActivated, IsOwner|IsEventHostAdmin|permissions.IsAdminUser)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsOwner|IsEventHostAdmin|IsAdminUser)
 
     def get(self, request, pk, format=None):
         try:
@@ -492,7 +492,7 @@ class StartCheckIn(generics.CreateAPIView):
 class StopCheckIn(generics.DestroyAPIView):
     queryset = CheckIn.objects.all()
     serializer_class = CheckInSerializer
-    permission_classes = (permissions.IsAuthenticated, IsActivated, IsEventHostAdmin|permissions.IsAdminUser)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsEventHostAdmin|IsAdminUser)
 
     def perform_destroy(self, instance):
         if instance is None:
