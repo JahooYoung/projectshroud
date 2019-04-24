@@ -209,15 +209,15 @@ class UserRegisterEvent(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     transport = models.ForeignKey(Transport, blank=True, null=True, on_delete=models.SET_NULL)
     date_registered = models.DateTimeField('注册时间', auto_now_add=True)
-    date_approved = models.DateTimeField('批准时间')
+    date_approved = models.DateTimeField('批准时间', null=True)
     checked_in = models.BooleanField(default=False)
 
-    application_text = models.TextField()
+    application_text = models.TextField(default='')
     # attachment = models.FileField(
     #                         max_length=None,
     #                         upload_to='user',
     #                     )
-    approved = models.BooleanField()
+    approved = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('user', 'event')

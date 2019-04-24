@@ -96,16 +96,24 @@ AUTH_USER_MODEL = 'backend.UserProfile'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',   # 数据库引擎
-        'NAME': 'shrouddb',
-	    'USER': environ.get('MYSQL_USER'),                # 数据库用户名
-        'PASSWORD': environ.get('MYSQL_PSW'),             # 密码
-        'HOST': 'localhost',    # 主机
-        'PORT': '3306',         # 数据库使用的端口
+if environ.get('DJANGO_DB') == 'mysql':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',   # 数据库引擎
+            'NAME': 'shrouddb',
+    	    'USER': environ.get('MYSQL_USER'),                # 数据库用户名
+            'PASSWORD': environ.get('MYSQL_PSW'),             # 密码
+            'HOST': 'localhost',    # 主机
+            'PORT': '3306',         # 数据库使用的端口
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 
 
 # Password validation

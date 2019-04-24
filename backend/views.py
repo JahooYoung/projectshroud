@@ -244,7 +244,7 @@ class UserEventRegister(generics.CreateAPIView):
                 except Event.DoesNotExist:
                     raise ValidationError('Transport Not found.')
 
-            serializer.save(user=user, event=event, transport=transport)
+            serializer.save(user=user, event=event, transport=transport, approved=True)
             send_registered_email(user, event, approved=True)
 
 
