@@ -32,7 +32,7 @@ class EventDetailSerializer(serializers.ModelSerializer):
         model = Event
         fields = ['id', 'title', 'host_id', 'host_display_info',
                   'description', 'checkin_enabled', 'start_time',
-                  'end_time', 'location', 'public', 'require_approve'
+                  'end_time', 'location', 'public', 'require_approve',
                   'require_application', 'require_attachment']
 
 
