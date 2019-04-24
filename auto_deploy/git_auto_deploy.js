@@ -41,21 +41,36 @@ handler.on('push', event => {
   console.log('Received a push event for %s to %s',
     event.payload.repository.name,
     event.payload.ref);
-  if (event.payload.ref !== 'refs/heads/site') {
+  if (event.payload.ref !== 'refs/heads/site')
     return;
-  }
+
   let frontendUpdated = false;
+  let frontendDependencyUpdated = false;
+  let backendDependencyUpdated = false;
+  let backendModelsUpdated = false;
   event.payload.commits.forEach(commit => {
     ['added', 'removed', 'modified'].forEach(ele => {
       commit[ele].forEach(file => {
-        if (/^frontend/.test(file))
+        if (file.match('frontend'))
           frontendUpdated = true;
+        if (file.match('frontend/package.json') || file.match('frontend/yarn.lock'))
+          frontendDependencyUpdated = true;
+        if (file.match('backend/models.py'))
+          backendModelsUpdated = true;
+        if (file.match('requirements.pip'))
+          backendDependencyUpdated = true;
       });
     });
   });
 
   const args = [];
-  if (frontendUpdated)
-    args.push('yarn');
+  if (frontendDependencyUpdated)
+    args.push('-y');
+  else if (frontendUpdated)
+    args.push('-f');
+  if (backendDependencyUpdated)
+    args.push('-p');
+  if (backendModelsUpdated)
+    args.push('-b');
   run_cmd('sh', ['./git_auto_deploy.sh', ...args], text => console.log(text));
 });
