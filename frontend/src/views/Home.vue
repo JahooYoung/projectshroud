@@ -1,7 +1,14 @@
 <template>
   <div class="home">
-    <b-jumbotron v-if="user === null" fluid container-fluid bg-variant="light">
-      <template slot="header">Academic Conference</template>
+    <b-jumbotron
+      v-if="user === null"
+      fluid
+      container-fluid
+      bg-variant="light"
+    >
+      <template slot="header">
+        Academic Conference
+      </template>
 
       <template slot="lead">
         This is a simple hero unit, a simple jumbotron-style component for calling extra attention to
@@ -15,7 +22,12 @@
         container.
       </p>
 
-      <b-button variant="primary" to="/login">Login or Register</b-button>
+      <b-button
+        variant="primary"
+        to="/login"
+      >
+        Login or Register
+      </b-button>
       <!-- <b-button variant="success" href="#">I am host</b-button> -->
     </b-jumbotron>
 
@@ -31,7 +43,9 @@
               class="flex-column align-items-start"
             >
               <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ event.title }}</h5>
+                <h5 class="mb-1">
+                  {{ event.title }}
+                </h5>
                 <small>{{ (new Date(event.start_time)).toLocaleDateString() }}</small>
               </div>
               <p class="mb-1">
@@ -52,7 +66,9 @@
               class="flex-column align-items-start"
             >
               <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ event.title }}</h5>
+                <h5 class="mb-1">
+                  {{ event.title }}
+                </h5>
                 <small>{{ (new Date(event.start_time)).toLocaleDateString() }}</small>
               </div>
               <p class="mb-1">
@@ -73,7 +89,9 @@
               class="flex-column align-items-start"
             >
               <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ event.title }}</h5>
+                <h5 class="mb-1">
+                  {{ event.title }}
+                </h5>
                 <small>{{ (new Date(event.start_time)).toLocaleDateString() }}</small>
               </div>
               <p class="mb-1">
@@ -94,7 +112,7 @@
 import { mapState } from 'vuex'
 
 export default {
-  name: 'home',
+  name: 'Home',
   data () {
     return {
       futureEvents: [],

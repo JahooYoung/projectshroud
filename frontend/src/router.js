@@ -22,13 +22,41 @@ export default new Router({
     {
       path: '/event/new',
       name: 'newEvent',
-      component: () => import(/* webpackChunkName: "event" */ './views/EventDetailAdmin/Entry.vue'),
+      component: () => import(/* webpackChunkName: "eventadmin" */ './views/EventAdmin/Info.vue'),
       props: { newEvent: true }
     },
     {
       path: '/event/:id',
       name: 'eventDetail',
       component: () => import(/* webpackChunkName: "event" */ './views/EventDetail.vue')
+    },
+    {
+      path: '/event/:id/admin',
+      name: 'eventAdmin',
+      component: () => import(/* webpackChunkName: "eventadmin" */ './views/EventAdmin/Layout.vue'),
+      redirect: to => to.path + '/info',
+      children: [
+        {
+          path: 'info',
+          name: 'eventAdminInfo',
+          component: () => import(/* webpackChunkName: "eventadmin" */ './views/EventAdmin/Info.vue')
+        },
+        {
+          path: 'administrator',
+          name: 'eventAdminAdministrator',
+          component: () => import(/* webpackChunkName: "eventadmin" */ './views/EventAdmin/Administrator.vue')
+        },
+        {
+          path: 'attendee',
+          name: 'eventAdminAttendee',
+          component: () => import(/* webpackChunkName: "eventadmin" */ './views/EventAdmin/Attendee.vue')
+        },
+        {
+          path: 'checkin',
+          name: 'eventAdminCheckin',
+          component: () => import(/* webpackChunkName: "eventadmin" */ './views/EventAdmin/Checkin.vue')
+        }
+      ]
     },
     {
       path: '/registered-event',

@@ -1,8 +1,11 @@
 <template>
   <div id="app">
-    <NavBar/>
-    <transition name="fade" mode="out-in">
-      <router-view/>
+    <NavBar />
+    <transition
+      name="fade"
+      mode="out-in"
+    >
+      <router-view />
     </transition>
     <!-- <Footer/> -->
   </div>
@@ -11,13 +14,28 @@
 <script>
 // @ is an alias to /src
 import NavBar from '@/components/NavBar.vue'
-import Footer from '@/components/Footer.vue'
+// import Footer from '@/components/Footer.vue'
 
 export default {
-  name: 'app',
+  name: 'App',
   components: {
-    NavBar,
-    Footer
+    NavBar
+    // Footer
+  },
+  created () {
+    this.axios.interceptors.response.use(x => x, err => {
+      if (err.message === 'Network Error') {
+        this.$bvToast.toast('Fail to connect server', {
+          title: 'Network Error',
+          variant: 'secondary',
+          autoHideDelay: 4000,
+          solid: true
+        })
+      }
+      //! this should be the only `console.log` of network request
+      console.log(err.response)
+      return Promise.reject(err)
+    })
   }
 }
 </script>
