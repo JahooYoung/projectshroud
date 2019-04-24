@@ -312,7 +312,7 @@ export default {
       if (transportId !== null) {
         info.transport_id = transportId
       }
-      this.axios.post('/api/register/', info)
+      return this.axios.post('/api/register/', info)
         .then(res => {
           this.event.registered = true
           this.makeToast(true, 'Register successfully')
@@ -322,7 +322,6 @@ export default {
             this.makeToast(false, err.response.data.detail)
           }
         })
-        .then(this.stopLoading)
     },
     register (evt) {
       if (!this.acceptedTerms ||
@@ -348,6 +347,7 @@ export default {
       this.isLoading = true
       if (this.attendee.transport_type === null) {
         this.postRegister(null)
+          .then(this.stopLoading)
         return
       }
       this.axios.post('/api/trans/', {
@@ -361,7 +361,7 @@ export default {
         other_detail: this.attendee.other_detail
       })
         .then(res => {
-          this.postRegister(res.data.id)
+          return this.postRegister(res.data.id)
         })
         .catch(err => {
           if (err.response) {

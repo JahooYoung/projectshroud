@@ -3,41 +3,40 @@
     <b-container>
       <h2>Event List</h2>
       <b-row>
-        <b-col
-          md="4"
-          class="my-1"
-        >
-          <b-input-group>
-            <b-input-group-text slot="prepend">
-              Filter
-            </b-input-group-text>
-            <b-form-input
-              v-model="filter"
-              placeholder="Type to Search"
-            />
-            <b-input-group-append>
-              <b-button
-                :disabled="!filter"
-                @click="filter = ''"
-              >
-                Clear
-              </b-button>
-            </b-input-group-append>
-          </b-input-group>
-        </b-col>
-        <b-col
-          offset-md="6"
-          md="2"
-          class="my-1"
-        >
+        <b-input-group class="w-25 my-3">
+          <!-- <b-input-group-text slot="prepend">
+            Filter
+          </b-input-group-text> -->
+          <b-form-input
+            v-model="filter"
+            placeholder="Type to Search"
+          />
+          <b-input-group-append>
+            <b-button
+              :disabled="!filter"
+              @click="filter = ''"
+            >
+              Clear
+            </b-button>
+          </b-input-group-append>
+        </b-input-group>
+        <div class="ml-auto my-3">
+          <!-- <b-button
+            class="mr-2"
+            variant="outline-info"
+            to="/event/new"
+          >
+            New Event
+          </b-button> -->
           <b-button
             variant="outline-info"
             to="/event/new"
           >
             New Event
           </b-button>
-        </b-col>
+        </div>
 
+        <!-- <hr/> -->
         <b-table
           id="event-list-table"
           striped
