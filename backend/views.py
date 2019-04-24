@@ -350,25 +350,29 @@ class EventDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class EventAttendeeList(generics.ListAPIView):
     serializer_class = UserRegisterEventSerializer
-    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
+    permission_classes = (permissions.IsAuthenticated, IsActivated)
 
     def get_queryset(self):
         try:
             event = Event.objects.get(pk=self.kwargs.get('pk'))
         except Event.DoesNotExist:
             return None
+        if not check_is_admin(self.request.user, event):
+            raise ValidationError('Not Authorized.')
         return UserRegisterEvent.objects.filter(event=event)
 
 
 class EventAdminList(generics.ListAPIView):
     serializer_class = UserManageEventSerializer
-    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
+    permission_classes = (permissions.IsAuthenticated, IsActivated)
 
     def get_queryset(self):
         try:
             event = Event.objects.get(pk=self.kwargs.get('pk'))
         except Event.DoesNotExist:
             return None
+        if not check_is_admin(self.request.user, event):
+            raise ValidationError('Not Authorized.')
         return UserManageEvent.objects.filter(event=event)
 
 
