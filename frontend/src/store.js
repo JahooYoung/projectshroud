@@ -2,13 +2,15 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 
+Vue.prototype.axios = axios
+
 let userToken = ''
 
 axios.interceptors.request.use(config => {
   // only receive json
   config.headers['Content-Type'] = 'application/json'
-  // all status code are valid
-  config.validateStatus = status => true
+  // // all status code are valid
+  // config.validateStatus = status => status >= 200 && status < 300
   // handle csrftoken
   config.headers['X-Requested-With'] = 'XMLHttpRequest'
   const regex = /.*csrftoken=([^;.]*).*$/
@@ -19,7 +21,13 @@ axios.interceptors.request.use(config => {
   return config
 })
 
-Vue.use(Vuex)
+Vue.prototype.hasStatus = statusList => {
+  return {
+    validateStatus (status) {
+      return statusList.indexOf(status) !== -1
+    }
+  }
+}
 
 const readLocalStorage = store => {
   if (window.localStorage && window.localStorage.user !== '') {
@@ -28,19 +36,15 @@ const readLocalStorage = store => {
       key: window.localStorage.token
     })
     axios.get('/api/dummy/')
-      .then(res => {
-        if (res.status !== 200) {
-          store.commit('setUserState', null)
-          alert('Please login agian!')
-        }
-      })
       .catch(err => {
         console.log(err)
         store.commit('setUserState', null)
-        alert('Please login agian!')
+        alert('Your signin seems expired, please login agian!')
       })
   }
 }
+
+Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {

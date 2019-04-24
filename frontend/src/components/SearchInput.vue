@@ -1,9 +1,15 @@
 <template>
   <b-nav-form>
+    <b-spinner
+      v-if="state.isSearchStalled"
+      variant="light"
+      label="Spinning"
+      class="mr-sm-2"
+    />
     <b-form-input
       class="mr-sm-2"
       type="search"
-      placeholder="Search"
+      placeholder="Search..."
       v-model="query"
     />
   </b-nav-form>
@@ -16,13 +22,6 @@ import _ from 'lodash'
 
 export default {
   mixins: [createWidgetMixin({ connector: connectSearchBox })],
-  props: {
-    delay: {
-      type: Number,
-      default: 500,
-      required: false
-    }
-  },
   data () {
     return {
       localQuery: '',
