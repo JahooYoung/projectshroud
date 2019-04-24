@@ -36,9 +36,9 @@ class IsSiteAdminOrSelf(permissions.BasePermission):
 
     def has_permission(self, request, view):
         user = request.user
-        if 'user_id' in self.request.data:
+        if 'user_id' in request.data:
             try:
-                theuser = get_user_model().objects.get(id=self.request.data.get('user_id'))
+                theuser = get_user_model().objects.get(id=request.data.get('user_id'))
             except get_user_model().DoesNotExist:
                 raise ValidationError('User Not Found.')
             if not is_site_admin(user) and user != theuser:
