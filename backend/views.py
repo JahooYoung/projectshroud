@@ -337,7 +337,7 @@ class EventDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = Event.objects.all()
     serializer_class = EventDetailSerializer
-    permission_classes = (IsEventHostAdminOrReadOnly|permissions.IsAdminUser,)
+    permission_classes = (IsEventHostAdminOrReadOnly|IsAdminUser,)
 
     def get(self, request, *args, **kwargs):
         try:
