@@ -48,25 +48,20 @@ def github_push(request):
 
 @api_view(['GET', 'POST'])
 def activate_user(request):
-    if 'id' not in request.data:
-        raise ValidationError('No id provided.')
-
     if 'token' not in request.data:
         raise ValidationError('No token provided.')
 
     try:
-        user = get_user_model().objects.get(id=request.data.get('id'))
+        user = get_user_model().objects.get(activate_token=request.data.get('token'))
     except get_user_model().DoesNotExist:
-        raise ValidationError('User Not Found.')
+        raise ValidationError('Invalid token.')
 
     if user.is_activated:
         raise ValidationError('Already activated.')
 
-    if user.activate_token is not None and user.activate_token == request.data.get('token'):
+    if user.activate_token is not None:
         user.activate()
         return Response(status=status.HTTP_200_OK)
-
-    raise ValidationError('Invalid token.')
 
 
 @api_view(['GET'])
