@@ -66,11 +66,23 @@
 <script>
 import algoliasearch from 'algoliasearch/lite'
 import 'instantsearch.css/themes/algolia-min.css'
+import {
+  AisInstantSearch, AisSearchBox, AisStateResults, AisConfigure,
+  AisHits, AisPoweredBy, AisPagination
+} from 'vue-instantsearch'
 import SearchInput from './SearchInput'
 
 export default {
+  name: 'SearchBox',
   components: {
-    SearchInput
+    SearchInput,
+    AisInstantSearch,
+    AisSearchBox,
+    AisStateResults,
+    AisConfigure,
+    AisHits,
+    AisPoweredBy,
+    AisPagination
   },
   data () {
     return {

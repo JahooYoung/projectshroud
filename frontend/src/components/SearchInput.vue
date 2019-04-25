@@ -18,7 +18,7 @@
 <script>
 import { connectSearchBox } from 'instantsearch.js/es/connectors'
 import { createWidgetMixin } from 'vue-instantsearch'
-import _ from 'lodash'
+import _ from 'lodash/function'
 
 export default {
   mixins: [createWidgetMixin({ connector: connectSearchBox })],

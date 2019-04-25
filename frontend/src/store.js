@@ -58,6 +58,7 @@ export default new Vuex.Store({
         }
       } else {
         state.user = null
+        state.userActivated = false
         userToken = null
         if (window.localStorage) {
           window.localStorage.user = ''

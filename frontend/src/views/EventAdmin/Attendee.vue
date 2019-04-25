@@ -125,8 +125,18 @@
 </template>
 
 <script>
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faTimesCircle, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+library.add(faTimesCircle, faCheckCircle)
+// Vue.component('font-awesome-icon', FontAwesomeIcon)
+
 export default {
   name: 'EventAdminAttendee',
+  components: {
+    FontAwesomeIcon
+  },
   data () {
     return {
       fields: [
