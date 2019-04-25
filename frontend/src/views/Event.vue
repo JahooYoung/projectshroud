@@ -123,7 +123,6 @@ const fields = [
 export default {
   data () {
     return {
-      isLoading: false,
       filter: null,
       fields,
       events: [],
@@ -131,17 +130,10 @@ export default {
       currentPage: 1
     }
   },
-  mounted () {
-    this.isLoading = true
+  created () {
     this.axios.get('/api/event/')
       .then(res => {
-        this.isLoading = false
         this.events = res.data
-        console.log(res.data)
-      })
-      .catch(err => {
-        this.isLoading = false
-        console.log('failed to fetch events\n', err)
       })
   },
   computed: {

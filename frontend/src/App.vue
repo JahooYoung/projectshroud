@@ -15,13 +15,13 @@
 <script>
 // @ is an alias to /src
 import { whiteList } from '@/router'
-import Utils from '@/components/Utils.vue'
+// import Utils from '@/components/Utils.vue'
 import NavBar from '@/components/NavBar.vue'
 // import Footer from '@/components/Footer.vue'
 
 export default {
   name: 'App',
-  mixins: [Utils],
+  // mixins: [Utils],
   components: {
     NavBar
     // Footer
@@ -33,6 +33,7 @@ export default {
       if (whiteList.indexOf(to.name) === -1) {
         if (!this.checkActivated()) {
           next(false)
+          this.$nprogress.setComplete()
         } else {
           next()
         }

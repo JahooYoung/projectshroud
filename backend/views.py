@@ -235,7 +235,7 @@ class UserEventRegister(generics.CreateAPIView):
             if event.require_application:
                 if 'application_text' not in data or data.get('application_text') == '':
                     raise ValidationError('Need to provide application info.')
-            serializers.save(user=user, event=event, transport=None, approved=False)
+            serializer.save(user=user, event=event, transport=None, approved=False)
             send_registered_email(user, event, approved=True)
 
         else:

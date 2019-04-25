@@ -7,11 +7,6 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'Utils',
-  data () {
-    return {
-      isLoading: false
-    }
-  },
   computed: mapState(['user', 'userActivated']),
   methods: {
     checkLogin () {
@@ -42,12 +37,6 @@ export default {
         return false
       }
       return true
-    },
-    startLoading () {
-      this.isLoading = true
-    },
-    stopLoading () {
-      this.isLoading = false
     }
   }
 }

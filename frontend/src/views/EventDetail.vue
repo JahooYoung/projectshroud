@@ -193,8 +193,6 @@
 </template>
 
 <script>
-import Utils from '@/components/Utils.vue'
-
 function date2input (date) {
   date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
   date.setSeconds(0, 0)
@@ -209,7 +207,6 @@ function input2date (str) {
 
 export default {
   name: 'EventDetail',
-  mixins: [Utils],
   data () {
     return {
       firstLoading: true,
@@ -262,7 +259,6 @@ export default {
       })
     },
     refresh () {
-      this.isLoading = true
       return this.axios.get('/api/event/' + this.$route.params.id)
         .then(res => {
           this.event.title = res.data.title
@@ -281,7 +277,6 @@ export default {
             this.makeToast(false, err.response)
           }
         })
-        .then(this.stopLoading)
     },
     postRegister (transportId) {
       const info = {
@@ -322,10 +317,8 @@ export default {
         return
       }
 
-      this.isLoading = true
       if (this.attendee.transport_type === null) {
         this.postRegister(null)
-          .then(this.stopLoading)
         return
       }
       this.axios.post('/api/trans/', {
@@ -346,10 +339,8 @@ export default {
             this.makeToast(false, err.response.data.detail)
           }
         })
-        .then(this.stopLoading)
     },
     unregister () {
-      this.isLoading = true
       this.axios.post('/api/unregister/', {
         event_id: this.$route.params.id
       })
@@ -362,7 +353,6 @@ export default {
             this.makeToast(false, err.response.data.detail)
           }
         })
-        .then(this.stopLoading)
     }
   }
 }
