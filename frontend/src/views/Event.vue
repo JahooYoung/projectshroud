@@ -21,18 +21,19 @@
           </b-input-group-append>
         </b-input-group>
         <div class="ml-auto my-3">
-          <!-- <b-button
+          <b-button
             class="mr-2"
             variant="outline-info"
             to="/event/new"
           >
             New Event
-          </b-button> -->
+          </b-button>
           <b-button
             variant="outline-info"
-            to="/event/new"
+            @click="refresh"
+            :disabled="isLoading"
           >
-            New Event
+            Refresh
           </b-button>
         </div>
 
@@ -130,15 +131,20 @@ export default {
       currentPage: 1
     }
   },
-  created () {
-    this.axios.get('/api/event/')
-      .then(res => {
-        this.events = res.data
-      })
-  },
   computed: {
     rows () {
       return this.events.length
+    }
+  },
+  created () {
+    this.refresh()
+  },
+  methods: {
+    refresh () {
+      this.axios.get('/api/event/')
+        .then(res => {
+          this.events = res.data
+        })
     }
   }
 }

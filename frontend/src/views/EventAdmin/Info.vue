@@ -164,7 +164,6 @@ export default {
       configs: {
         start: {
           enableTime: true,
-          minDate: new Date(),
           maxDate: null
         },
         end: {
@@ -212,9 +211,10 @@ export default {
         require_approve: this.form.requireApprove
       }
       if (this.newEvent) {
+        let eventId
         this.axios.post('/api/event/', data)
           .then(res => {
-            const eventId = res.data.id
+            eventId = res.data.id
             return this.axios.post('/api/assignadmin/', {
               event_id: eventId
             })
@@ -222,7 +222,6 @@ export default {
           .then(res => {
             this.$router.push('/event/' + eventId)
           })
-          .catch(() => {})
       } else {
         this.axios.put('/api/event/' + this.$route.params.id + '/', data)
           .then(res => {
@@ -233,7 +232,6 @@ export default {
             })
             this.updateForm(res.data)
           })
-          .catch(() => {})
       }
     },
     refresh () {

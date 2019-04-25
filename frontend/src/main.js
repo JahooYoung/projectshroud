@@ -5,7 +5,7 @@ import store from './store'
 import axios from 'axios'
 
 import NProgress from './plugins/nprogress'
-import UserStatus from "./plugins/userStatus";
+import UserStatus from './plugins/userStatus'
 
 import BootstrapVue from 'bootstrap-vue'
 // import BVConfig from 'bootstrap-vue/es/bv-config'

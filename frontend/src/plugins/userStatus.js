@@ -1,6 +1,6 @@
 import { mapState } from 'vuex'
 
-function UserStatus() {}
+function UserStatus () {}
 
 UserStatus.install = function (Vue, options = {}) {
   if (this.installed) {

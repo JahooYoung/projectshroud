@@ -24,7 +24,6 @@
           <b-nav-item to="/event">
             Event
           </b-nav-item>
-          <!-- <b-nav-item to="#" disabled>Disabled</b-nav-item> -->
         </b-navbar-nav>
 
         <!-- Right aligned nav items -->
@@ -41,16 +40,10 @@
             right
           >
             <b-dropdown-item href="#">
-              EN
+              English
             </b-dropdown-item>
             <b-dropdown-item href="#">
-              ES
-            </b-dropdown-item>
-            <b-dropdown-item href="#">
-              RU
-            </b-dropdown-item>
-            <b-dropdown-item href="#">
-              FA
+              简体中文
             </b-dropdown-item>
           </b-nav-item-dropdown>
 
@@ -77,7 +70,7 @@
               >
                 Admin events
               </b-dropdown-item>
-              <b-dropdown-item @click="logout()">
+              <b-dropdown-item @click="logout">
                 Logout
               </b-dropdown-item>
             </b-nav-item-dropdown>
@@ -94,7 +87,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import SearchBox from './SearchBox'
 
 export default {
@@ -102,21 +94,12 @@ export default {
   components: {
     SearchBox
   },
-  computed: mapState({
-    user: 'user'
-  }),
   methods: {
     logout () {
-      const commit = this.$store.commit
-      const router = this.$router
       this.axios.post('/api/auth/logout/')
         .then(res => {
-          commit('setUserState', null)
-          router.push('/')
-        })
-        .catch(err => {
-          alert('fail to logout!')
-          console.log(err)
+          this.$store.commit('setUserState', null)
+          this.$router.push('/')
         })
     }
   }

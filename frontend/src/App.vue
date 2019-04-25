@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="nprogress-container"></div>
+    <div class="nprogress-container" />
     <NavBar />
     <transition
       name="fade"
@@ -90,7 +90,7 @@ export default {
             })
           }
         })
-        .catch(err => {
+        .catch(() => {
           this.$store.commit('setUserState', null)
           this.$store.commit('setUserActivation', false)
           this.$bvToast.toast('Your signin seems expired, click here to login again!', {

@@ -6,14 +6,14 @@ const defaults = {
   http: true
 }
 
-function install(Vue, options = {}) {
+function install (Vue, options = {}) {
   if (this.installed) {
     return
   }
   this.installed = true
 
   Object.defineProperty(Vue.prototype, '$nprogress', {
-    get: function get() {
+    get: function get () {
       return this.$root._nprogress
     }
   })
@@ -40,15 +40,15 @@ function install(Vue, options = {}) {
 
       const store = this.$options.store
 
-      function setComplete() {
+      function setComplete () {
         requestsTotal = 0
         requestsCompleted = 0
         np.done()
         store.commit('setLoading', false)
       }
 
-      function initProgress() {
-        if (0 === requestsTotal) {
+      function initProgress () {
+        if (requestsTotal === 0) {
           setTimeout(() => np.start(), latencyThreshold)
           store.commit('setLoading', true)
         }
@@ -56,7 +56,7 @@ function install(Vue, options = {}) {
         np.set(requestsCompleted / requestsTotal)
       }
 
-      function increase() {
+      function increase () {
         // Finish progress bar 50 ms later
         setTimeout(() => {
           ++requestsCompleted
@@ -116,7 +116,7 @@ function install(Vue, options = {}) {
   })
 }
 
-function NProgress(options) {
+function NProgress (options) {
   this.app = null
   this.configure(options || {})
 }

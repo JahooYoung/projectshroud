@@ -127,7 +127,7 @@ export default {
       administrators: []
     }
   },
-  mounted () {
+  created () {
     this.refresh()
   },
   watch: {
@@ -137,10 +137,8 @@ export default {
     refresh () {
       this.axios.get('/api/event/' + this.$route.params.id + '/admins/')
         .then(res => {
-          console.log(res.data)
           this.administrators = res.data
         })
-        .catch(() => {})
     }
   }
 }

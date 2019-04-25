@@ -3,33 +3,17 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-
 export default {
-  computed: mapState({
-    user: 'user'
-  }),
-  mounted () {
+  created () {
     if (this.user === null) {
       this.$router.push('/login')
-    } else {
-      this.axios.get(`/api/checkin/${this.$route.params.token}/`)
-        .then(res => {
-          console.log(res)
-          if (res.status === 200) {
-            this.axios.post(`/api/checkin/${this.$route.params.token}/`)
-              .then(res => {
-                if (res.status === 202) {
-                  alert('checkin success!')
-                } else {
-                  alert(res.data.msg)
-                }
-              })
-          } else {
-            alert(res.data.msg)
-          }
-        })
+      return
     }
+    const token = this.$route.params.token
+    this.axios.get(`/api/checkin/${token}/`)
+      .then(res => this.axios.post(`/api/checkin/${token}/`))
+      .then(res => alert('Checkin successfully'))
+      .catch(err => err.response && alert(err.response.data.msg))
   }
 }
 </script>
