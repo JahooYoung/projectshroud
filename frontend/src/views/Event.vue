@@ -21,18 +21,19 @@
           </b-input-group-append>
         </b-input-group>
         <div class="ml-auto my-3">
-          <!-- <b-button
+          <b-button
             class="mr-2"
             variant="outline-info"
             to="/event/new"
           >
             New Event
-          </b-button> -->
+          </b-button>
           <b-button
             variant="outline-info"
-            to="/event/new"
+            @click="refresh"
+            :disabled="isLoading"
           >
-            New Event
+            Refresh
           </b-button>
         </div>
 
@@ -123,7 +124,6 @@ const fields = [
 export default {
   data () {
     return {
-      isLoading: false,
       filter: null,
       fields,
       events: [],
@@ -131,22 +131,20 @@ export default {
       currentPage: 1
     }
   },
-  mounted () {
-    this.isLoading = true
-    this.axios.get('/api/event/')
-      .then(res => {
-        this.isLoading = false
-        this.events = res.data
-        console.log(res.data)
-      })
-      .catch(err => {
-        this.isLoading = false
-        console.log('failed to fetch events\n', err)
-      })
-  },
   computed: {
     rows () {
       return this.events.length
+    }
+  },
+  created () {
+    this.refresh()
+  },
+  methods: {
+    refresh () {
+      this.axios.get('/api/event/')
+        .then(res => {
+          this.events = res.data
+        })
     }
   }
 }

@@ -168,20 +168,13 @@ export default {
         real_name: this.form.realName
       })
         .then(res => {
-          if (res.status === 201) {
-            this.$store.commit('setUserState', {
-              user: this.form.mobile,
-              key: res.data.key
-            })
-            this.$router.back()
-          } else {
-            alert(JSON.stringify(res.data))
-          }
+          this.$store.commit('setUserState', {
+            user: this.form.mobile,
+            key: res.data.key
+          })
+          this.$router.back()
         })
-        .catch(err => {
-          console.log(err)
-          alert('register failed')
-        })
+        .catch(err => err.response && alert(JSON.stringify(err.response.data)))
     }
   }
 }

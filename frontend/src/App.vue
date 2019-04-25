@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <div class="nprogress-container" />
     <NavBar />
     <transition
       name="fade"
@@ -13,34 +14,101 @@
 
 <script>
 // @ is an alias to /src
+import { whiteList } from '@/router'
+// import Utils from '@/components/Utils.vue'
 import NavBar from '@/components/NavBar.vue'
 // import Footer from '@/components/Footer.vue'
 
 export default {
   name: 'App',
+  // mixins: [Utils],
   components: {
     NavBar
     // Footer
   },
   created () {
-    this.axios.interceptors.response.use(x => x, err => {
-      if (err.message === 'Network Error') {
+    this.checkUserActivation()
+
+    this.$router.beforeEach((to, from, next) => {
+      if (whiteList.indexOf(to.name) === -1) {
+        if (!this.checkActivated()) {
+          next(false)
+          this.$nprogress.setComplete()
+        } else {
+          next()
+        }
+      } else {
+        if (this.user && (to.name === 'login' || to.name === 'register')) {
+          next('/')
+        } else {
+          next()
+        }
+      }
+    })
+
+    this.axios.interceptors.response.use(res => res, err => {
+      if (!err.response) {
         this.$bvToast.toast('Fail to connect server', {
           title: 'Network Error',
           variant: 'secondary',
           autoHideDelay: 4000,
           solid: true
         })
+      } else {
+        //! this should be the only `console.log` of network request
+        console.log(err.response)
+        if (err.response.data.detail) {
+          this.$bvToast.toast(err.response.data.detail, {
+            title: 'Error',
+            variant: 'secondary',
+            autoHideDelay: 4000,
+            solid: true
+          })
+        }
       }
-      //! this should be the only `console.log` of network request
-      console.log(err.response)
       return Promise.reject(err)
     })
+  },
+  watch: {
+    'user': 'checkUserActivation'
+  },
+  methods: {
+    checkUserActivation () {
+      if (!this.user) {
+        return
+      }
+      this.axios.get('/api/dummy/')
+        .then(res => {
+          this.$store.commit('setUserActivation', res.data.is_activated)
+          if (!res.data.is_activated) {
+            this.$bvToast.toast('Click here to activate your account!', {
+              title: 'Account not activated',
+              variant: 'warning',
+              autoHideDelay: 10000,
+              solid: true,
+              to: '/user-profile'
+            })
+          }
+        })
+        .catch(() => {
+          this.$store.commit('setUserState', null)
+          this.$store.commit('setUserActivation', false)
+          this.$bvToast.toast('Your signin seems expired, click here to login again!', {
+            title: 'Error',
+            variant: 'danger',
+            autoHideDelay: 10000,
+            solid: true,
+            to: '/login'
+          })
+        })
+    }
   }
 }
 </script>
 
 <style>
+@import '~nprogress/nprogress.css';
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

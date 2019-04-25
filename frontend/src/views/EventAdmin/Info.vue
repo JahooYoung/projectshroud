@@ -151,7 +151,6 @@ export default {
   },
   data () {
     return {
-      isLoading: false,
       buttonName: 'Save',
       form: {
         title: '',
@@ -164,16 +163,17 @@ export default {
       },
       configs: {
         start: {
-          minDate: new Date(),
+          enableTime: true,
           maxDate: null
         },
         end: {
+          enableTime: true,
           minDate: null
         }
       }
     }
   },
-  mounted () {
+  created () {
     if (this.newEvent) {
       this.buttonName = 'Create'
     } else {
@@ -190,9 +190,6 @@ export default {
     onEndChange (selectedDates, dateStr, instance) {
       this.$set(this.configs.start, 'maxDate', dateStr)
     },
-    stopLoading () {
-      this.isLoading = false
-    },
     updateForm (data) {
       this.form.title = data.title
       this.form.description = data.description
@@ -202,10 +199,8 @@ export default {
       this.form.public = data.public
       this.form.requireApprove = data.require_approve
     },
-    onSubmit (e) {
-      e.preventDefault()
-      this.isLoading = true
-      console.log(this.form.startTime)
+    onSubmit (evt) {
+      evt.preventDefault()
       const data = {
         title: this.form.title,
         description: this.form.description,
@@ -216,27 +211,17 @@ export default {
         require_approve: this.form.requireApprove
       }
       if (this.newEvent) {
+        let eventId
         this.axios.post('/api/event/', data)
           .then(res => {
-            const eventId = res.data.id
+            eventId = res.data.id
             return this.axios.post('/api/assignadmin/', {
               event_id: eventId
             })
-              .then(res => {
-                this.$router.push('/event/' + eventId)
-              })
-              .catch(err => {
-                if (err.response) {
-                  alert(JSON.stringify(err.response.data))
-                }
-              })
           })
-          .catch(err => {
-            if (err.response) {
-              alert(JSON.stringify(err.response.data))
-            }
+          .then(res => {
+            this.$router.push('/event/' + eventId)
           })
-          .then(this.stopLoading)
       } else {
         this.axios.put('/api/event/' + this.$route.params.id + '/', data)
           .then(res => {
@@ -247,24 +232,11 @@ export default {
             })
             this.updateForm(res.data)
           })
-          .catch(err => {
-            if (err.response) {
-              alert(JSON.stringify(err.response.data))
-            }
-          })
-          .then(this.stopLoading)
       }
     },
     refresh () {
-      this.isLoading = true
       this.axios.get('/api/event/' + this.$route.params.id)
         .then(res => this.updateForm(res.data))
-        .catch(err => {
-          if (err.response) {
-            alert(JSON.parse(err.response.data))
-          }
-        })
-        .then(this.stopLoading)
     }
   }
 }
