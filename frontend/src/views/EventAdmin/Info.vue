@@ -151,7 +151,6 @@ export default {
   },
   data () {
     return {
-      isLoading: false,
       buttonName: 'Save',
       form: {
         title: '',
@@ -192,9 +191,6 @@ export default {
     onEndChange (selectedDates, dateStr, instance) {
       this.$set(this.configs.start, 'maxDate', dateStr)
     },
-    stopLoading () {
-      this.isLoading = false
-    },
     updateForm (data) {
       this.form.title = data.title
       this.form.description = data.description
@@ -206,7 +202,6 @@ export default {
     },
     onSubmit (evt) {
       evt.preventDefault()
-      this.isLoading = true
       const data = {
         title: this.form.title,
         description: this.form.description,
@@ -228,7 +223,6 @@ export default {
             this.$router.push('/event/' + eventId)
           })
           .catch(() => {})
-          .then(this.stopLoading)
       } else {
         this.axios.put('/api/event/' + this.$route.params.id + '/', data)
           .then(res => {
@@ -240,14 +234,11 @@ export default {
             this.updateForm(res.data)
           })
           .catch(() => {})
-          .then(this.stopLoading)
       }
     },
     refresh () {
-      this.isLoading = true
       this.axios.get('/api/event/' + this.$route.params.id)
         .then(res => this.updateForm(res.data))
-        .then(this.stopLoading)
     }
   }
 }

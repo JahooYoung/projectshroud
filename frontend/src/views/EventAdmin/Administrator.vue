@@ -118,7 +118,6 @@
 export default {
   data () {
     return {
-      isLoading: false,
       fields: [
         { key: 'user_info.real_name', label: 'Name' },
         { key: 'user_info.mobile', label: 'Mobile' },
@@ -136,15 +135,12 @@ export default {
   },
   methods: {
     refresh () {
-      this.isLoading = true
       this.axios.get('/api/event/' + this.$route.params.id + '/admins/')
         .then(res => {
-          this.isLoading = false
           console.log(res.data)
           this.administrators = res.data
         })
         .catch(() => {})
-        .then(() => { this.isLoading = false })
     }
   }
 }

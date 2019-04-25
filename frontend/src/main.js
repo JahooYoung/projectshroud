@@ -2,8 +2,10 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import axios from 'axios'
 
-import NProgress from './nprogress'
+import NProgress from './plugins/nprogress'
+import UserStatus from "./plugins/userStatus";
 
 import BootstrapVue from 'bootstrap-vue'
 // import BVConfig from 'bootstrap-vue/es/bv-config'
@@ -30,17 +32,19 @@ library.add(faTimesCircle, faCheckCircle)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.use(NProgress, {
-  latencyThreshold: 0, // Number of ms before progressbar starts showing, default: 100,
+  latencyThreshold: 200, // Number of ms before progressbar starts showing, default: 100,
   router: true, // Show progressbar when navigating routes, default: true
-  http: true, // Show progressbar when doing Vue.http, default: true
-  showSpinner: false
+  http: true, // Show progressbar when doing Vue.http or axios, default: true
+  axios
 })
+
+Vue.use(UserStatus)
 
 Vue.config.productionTip = false
 
 new Vue({
   router,
   store,
-  nprogress: new NProgress(),
+  nprogress: new NProgress({ showSpinner: false }),
   render: h => h(App)
 }).$mount('#app')
