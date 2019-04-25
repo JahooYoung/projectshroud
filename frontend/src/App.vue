@@ -92,7 +92,6 @@ export default {
         })
         .catch(() => {
           this.$store.commit('setUserState', null)
-          this.$store.commit('setUserActivation', false)
           this.$bvToast.toast('Your signin seems expired, click here to login again!', {
             title: 'Error',
             variant: 'danger',

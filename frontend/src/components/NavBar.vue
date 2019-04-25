@@ -87,12 +87,15 @@
 </template>
 
 <script>
-import SearchBox from './SearchBox'
+import SearchBoxLoading from './SearchBoxLoading.vue'
 
 export default {
   name: 'NavBar',
   components: {
-    SearchBox
+    SearchBox: () => ({
+      component: import('./SearchBox.vue'),
+      loading: SearchBoxLoading
+    })
   },
   methods: {
     logout () {
