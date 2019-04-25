@@ -321,7 +321,7 @@ class AssignEventAdmin(generics.CreateAPIView):
                 raise ValidationError('User Not Found.')
 
         event = Event.objects.get(id=data.get('event_id'))
-        if check_is_admin(user, event):
+        if check_is_admin_not_site_admin(user, event):
             raise ValidationError('Is admin already.')
 
         serializer.save(user=user, event=event)
