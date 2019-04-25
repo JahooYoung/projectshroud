@@ -20,8 +20,9 @@
               <p
                 v-if="event.title !== ''"
                 style="text-align: left;"
+                v-html="event.description.replace('\n', '<br/>')"
               >
-                {{ event.description }}
+                <!-- {{ event.description }} -->
               </p>
             </b-card>
           </b-col>
@@ -35,20 +36,18 @@
             >
               <b-card-body>
                 <h6> {{ event.title }} </h6>
-                at {{ event.location }} <br>
-                from {{ new Date(event.startTime).toLocaleString() }} <br>
-                to {{ new Date(event.endTime).toLocaleString() }} <br>
+                <strong>At</strong> {{ event.location }} <br>
+                <strong>From</strong> {{ new Date(event.startTime).toLocaleString() }} <br>
+                <strong>To</strong> {{ new Date(event.endTime).toLocaleString() }} <br>
               </b-card-body>
 
               <b-list-group flush>
                 <b-list-group-item>
                   <b-button
-                    v-b-modal.modal-register
+                    v-if="!event.registered"
                     variant="primary"
-                    type="submit"
                     :disabled="isLoading"
-                    v-show="!event.registered"
-                    @click="checkLogin"
+                    @click="checkActivated() && $bvModal.show('modal-register')"
                   >
                     <b-spinner
                       small
@@ -58,12 +57,10 @@
                     Register
                   </b-button>
                   <b-button
-                    v-b-modal.modal-unregister
+                    v-else
                     variant="danger"
-                    type="submit"
                     :disabled="isLoading"
-                    v-show="event.registered"
-                    @click="checkLogin"
+                    @click="checkActivated() && $bvModal.show('modal-unregister')"
                   >
                     <b-spinner
                       small
@@ -78,7 +75,7 @@
                     variant="dark"
                     :to="`/event/${$route.params.id}/admin`"
                   >
-                    Manage your event
+                    Manage this event
                   </b-button>
                 </b-list-group-item>
               </b-list-group>
@@ -181,15 +178,6 @@
             placeholder="Enter other detail"
           />
         </b-form-group>
-
-        <b-form-checkbox
-          id="checkbox-1"
-          name="checkbox-1"
-          v-model="acceptedTerms"
-          unchecked-value="not_accepted"
-        >
-          I've know what the conference is, and know what may happen after register.
-        </b-form-checkbox>
       </b-modal>
       <b-modal
         id="modal-unregister"
@@ -205,7 +193,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import Utils from '@/components/Utils.vue'
 
 function date2input (date) {
   date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
@@ -220,13 +208,11 @@ function input2date (str) {
 }
 
 export default {
-  computed: mapState({
-    user: 'user'
-  }),
+  name: 'EventDetail',
+  mixins: [Utils],
   data () {
     return {
       firstLoading: true,
-      isLoading: false,
       isAdmin: false,
       attendee: {
         name: '',
@@ -267,9 +253,6 @@ export default {
     '$route': 'refresh'
   },
   methods: {
-    stopLoading () {
-      this.isLoading = false
-    },
     makeToast (succeed, message) {
       this.$bvToast.toast(message, {
         title: succeed ? 'Succeed' : 'Error',
@@ -299,11 +282,6 @@ export default {
           }
         })
         .then(this.stopLoading)
-    },
-    checkLogin () {
-      if (this.user === null) {
-        this.$router.push('/login')
-      }
     },
     postRegister (transportId) {
       const info = {

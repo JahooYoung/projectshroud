@@ -4,7 +4,8 @@ import axios from 'axios'
 
 Vue.prototype.axios = axios
 
-let userToken = ''
+const CSRFRegex = /.*csrftoken=([^;.]*).*$/
+let userToken = null
 
 axios.interceptors.request.use(config => {
   // only receive json
@@ -13,21 +14,20 @@ axios.interceptors.request.use(config => {
   // config.validateStatus = status => status >= 200 && status < 300
   // handle csrftoken
   config.headers['X-Requested-With'] = 'XMLHttpRequest'
-  const regex = /.*csrftoken=([^;.]*).*$/
-  config.headers['X-CSRFToken'] = document.cookie.match(regex) === null ? null : document.cookie.match(regex)[1]
-  if (userToken !== '') {
-    config.headers['Authorization'] = 'Token ' + userToken
-  }
+  const match = document.cookie.match(CSRFRegex)
+  config.headers['X-CSRFToken'] = match && match[1]
+  // handle authorization
+  config.headers['Authorization'] = userToken && `Token ${userToken}`
   return config
 })
 
-Vue.prototype.hasStatus = statusList => {
-  return {
-    validateStatus (status) {
-      return statusList.indexOf(status) !== -1
-    }
-  }
-}
+// Vue.prototype.hasStatus = statusList => {
+//   return {
+//     validateStatus (status) {
+//       return statusList.indexOf(status) !== -1
+//     }
+//   }
+// }
 
 const readLocalStorage = store => {
   if (window.localStorage && window.localStorage.user !== '') {
@@ -35,12 +35,7 @@ const readLocalStorage = store => {
       user: window.localStorage.user,
       key: window.localStorage.token
     })
-    axios.get('/api/dummy/')
-      .catch(err => {
-        console.log(err)
-        store.commit('setUserState', null)
-        alert('Your signin seems expired, please login agian!')
-      })
+    store.commit('setUserActivation', true)
   }
 }
 
@@ -48,7 +43,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: null
+    user: null,
+    userActivated: false
   },
   mutations: {
     setUserState (state, userState) {
@@ -61,12 +57,15 @@ export default new Vuex.Store({
         }
       } else {
         state.user = null
-        userToken = ''
+        userToken = null
         if (window.localStorage) {
           window.localStorage.user = ''
           window.localStorage.token = ''
         }
       }
+    },
+    setUserActivation (state, activated) {
+      state.userActivated = activated
     }
   },
   actions: {

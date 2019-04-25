@@ -4,7 +4,7 @@
       fixed="top"
       toggleable="md"
       type="dark"
-      variant="info"
+      variant="dark"
       id="nav"
     >
       <b-navbar-brand to="/">
@@ -54,11 +54,17 @@
             </b-dropdown-item>
           </b-nav-item-dropdown>
 
-          <div v-if="user != null">
+          <div v-if="user !== null">
             <b-nav-item-dropdown right>
               <template slot="button-content">
                 {{ user }}
               </template>
+              <b-dropdown-item
+                to="/user-profile"
+                exact-active-class=""
+              >
+                Your Profile
+              </b-dropdown-item>
               <b-dropdown-item
                 to="/registered-event"
                 exact-active-class=""

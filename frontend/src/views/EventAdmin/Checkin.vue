@@ -3,8 +3,14 @@
     <b-button
       size="lg"
       :variant="checkingIn ? 'danger' : 'primary'"
+      :disabled="isLoading"
       @click="onClick"
     >
+      <b-spinner
+        small
+        type="grow"
+        v-show="isLoading"
+      />
       {{ checkingIn ? 'Stop' : 'Start' }} Check In
     </b-button>
     <b-img

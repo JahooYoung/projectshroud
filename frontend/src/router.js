@@ -1,15 +1,15 @@
 import Vue from 'vue'
+import store from './store'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: () => import(/* webpackChunkName: "event" */ './views/Home.vue')
     },
     {
       path: '/event',
@@ -74,6 +74,11 @@ export default new Router({
       component: () => import(/* webpackChunkName: "checkin" */ './views/CheckIn.vue')
     },
     {
+      path: '/user-profile',
+      name: 'userProfile',
+      component: () => import(/* webpackChunkName: "user" */ './views/UserProfile.vue')
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import(/* webpackChunkName: "login" */ './views/Login.vue')
@@ -82,10 +87,14 @@ export default new Router({
       path: '/register',
       name: 'register',
       component: () => import(/* webpackChunkName: "register" */ './views/Register.vue')
-    // },
-    // {
-    //   path: '*',
-    //   component: () => import(/* webpackChunkName: "notfound" */ './views/NotFound.vue')
+    },
+    {
+      path: '*',
+      component: () => import(/* webpackChunkName: "notfound" */ './views/NotFound.vue')
     }
   ]
 })
+
+export const whiteList = ['home', 'login', 'register', 'event', 'eventDetail', 'userProfile']
+
+export default router
