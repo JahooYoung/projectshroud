@@ -2,24 +2,32 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 
-let userToken = ''
+Vue.prototype.axios = axios
+
+const CSRFRegex = /.*csrftoken=([^;.]*).*$/
+let userToken = null
 
 axios.interceptors.request.use(config => {
   // only receive json
   config.headers['Content-Type'] = 'application/json'
-  // all status code are valid
-  config.validateStatus = status => true
+  // // all status code are valid
+  // config.validateStatus = status => status >= 200 && status < 300
   // handle csrftoken
   config.headers['X-Requested-With'] = 'XMLHttpRequest'
-  const regex = /.*csrftoken=([^;.]*).*$/
-  config.headers['X-CSRFToken'] = document.cookie.match(regex) === null ? null : document.cookie.match(regex)[1]
-  if (userToken !== '') {
-    config.headers['Authorization'] = 'Token ' + userToken
-  }
+  const match = document.cookie.match(CSRFRegex)
+  config.headers['X-CSRFToken'] = match && match[1]
+  // handle authorization
+  config.headers['Authorization'] = userToken && `Token ${userToken}`
   return config
 })
 
-Vue.use(Vuex)
+// Vue.prototype.hasStatus = statusList => {
+//   return {
+//     validateStatus (status) {
+//       return statusList.indexOf(status) !== -1
+//     }
+//   }
+// }
 
 const readLocalStorage = store => {
   if (window.localStorage && window.localStorage.user !== '') {
@@ -27,24 +35,16 @@ const readLocalStorage = store => {
       user: window.localStorage.user,
       key: window.localStorage.token
     })
-    axios.get('/api/dummy/')
-      .then(res => {
-        if (res.status !== 200) {
-          store.commit('setUserState', null)
-          alert('Please login agian!')
-        }
-      })
-      .catch(err => {
-        console.log(err)
-        store.commit('setUserState', null)
-        alert('Please login agian!')
-      })
+    store.commit('setUserActivation', true)
   }
 }
 
+Vue.use(Vuex)
+
 export default new Vuex.Store({
   state: {
-    user: null
+    user: null,
+    userActivated: false
   },
   mutations: {
     setUserState (state, userState) {
@@ -57,12 +57,15 @@ export default new Vuex.Store({
         }
       } else {
         state.user = null
-        userToken = ''
+        userToken = null
         if (window.localStorage) {
           window.localStorage.user = ''
           window.localStorage.token = ''
         }
       }
+    },
+    setUserActivation (state, activated) {
+      state.userActivated = activated
     }
   },
   actions: {
