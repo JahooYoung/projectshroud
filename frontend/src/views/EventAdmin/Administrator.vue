@@ -143,10 +143,8 @@ export default {
           console.log(res.data)
           this.administrators = res.data
         })
-        .catch(err => {
-          this.isLoading = false
-          console.log(err)
-        })
+        .catch(() => {})
+        .then(() => { this.isLoading = false })
     }
   }
 }

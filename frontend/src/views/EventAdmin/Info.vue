@@ -164,16 +164,18 @@ export default {
       },
       configs: {
         start: {
+          enableTime: true,
           minDate: new Date(),
           maxDate: null
         },
         end: {
+          enableTime: true,
           minDate: null
         }
       }
     }
   },
-  mounted () {
+  created () {
     if (this.newEvent) {
       this.buttonName = 'Create'
     } else {
@@ -202,10 +204,9 @@ export default {
       this.form.public = data.public
       this.form.requireApprove = data.require_approve
     },
-    onSubmit (e) {
-      e.preventDefault()
+    onSubmit (evt) {
+      evt.preventDefault()
       this.isLoading = true
-      console.log(this.form.startTime)
       const data = {
         title: this.form.title,
         description: this.form.description,
@@ -222,20 +223,11 @@ export default {
             return this.axios.post('/api/assignadmin/', {
               event_id: eventId
             })
-              .then(res => {
-                this.$router.push('/event/' + eventId)
-              })
-              .catch(err => {
-                if (err.response) {
-                  alert(JSON.stringify(err.response.data))
-                }
-              })
           })
-          .catch(err => {
-            if (err.response) {
-              alert(JSON.stringify(err.response.data))
-            }
+          .then(res => {
+            this.$router.push('/event/' + eventId)
           })
+          .catch(() => {})
           .then(this.stopLoading)
       } else {
         this.axios.put('/api/event/' + this.$route.params.id + '/', data)
@@ -247,11 +239,7 @@ export default {
             })
             this.updateForm(res.data)
           })
-          .catch(err => {
-            if (err.response) {
-              alert(JSON.stringify(err.response.data))
-            }
-          })
+          .catch(() => {})
           .then(this.stopLoading)
       }
     },
@@ -259,11 +247,6 @@ export default {
       this.isLoading = true
       this.axios.get('/api/event/' + this.$route.params.id)
         .then(res => this.updateForm(res.data))
-        .catch(err => {
-          if (err.response) {
-            alert(JSON.parse(err.response.data))
-          }
-        })
         .then(this.stopLoading)
     }
   }

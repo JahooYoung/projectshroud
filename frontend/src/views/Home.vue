@@ -109,10 +109,11 @@
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
-import { mapState } from 'vuex'
+import Utils from '@/components/Utils.vue'
 
 export default {
   name: 'Home',
+  mixins: [Utils],
   data () {
     return {
       futureEvents: [],
@@ -120,10 +121,7 @@ export default {
       manageEvents: []
     }
   },
-  computed: mapState({
-    user: 'user'
-  }),
-  mounted () {
+  created () {
     this.axios.get('/api/event/future/')
       .then(res => {
         console.log(res.data)
@@ -132,6 +130,9 @@ export default {
       .catch(err => {
         console.log(err)
       })
+    if (!this.userActivated) {
+      return
+    }
     this.axios.get('/api/event/registered/future/')
       .then(res => {
         console.log(res.data)
