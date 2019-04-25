@@ -12,7 +12,7 @@ def send_activation_email(user):
     id = user.id
     name = user.real_name
     token = user.activate_token
-    activation_link = 'http://%s%s?id=%s&token=%s' % (site_host, activate_url, id, token)
+    activation_link = 'http://%s%s?token=%s' % (site_host, activate_url, token)
 
     subject = '请激活您的%s账户' % site_name
     content = '<p>亲爱的 <strong>%s</strong> 您好:</p>\n' % name
