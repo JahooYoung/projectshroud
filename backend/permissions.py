@@ -16,10 +16,23 @@ def is_activated_user(user):
             and user.is_activated
         )
 
+
+class IsAdminUser(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        return (request.user and request.user.is_staff)
+
+    def has_object_permission(self, request, view, object):
+        return self.has_permission(request, view)
+
+
 class IsActivated(permissions.BasePermission):
 
     def has_permission(self, request, view):
         return is_activated_user(request.user)
+
+    def has_object_permission(self, request, view, object):
+        return self.has_permission(request, view)
 
 
 class IsActivatedOrReadOnly(permissions.BasePermission):
@@ -30,6 +43,9 @@ class IsActivatedOrReadOnly(permissions.BasePermission):
         if is_activated_user(request.user):
             return True
         return False
+
+    def has_object_permission(self, request, view, object):
+        return self.has_permission(request, view)
 
 
 class IsSiteAdminOrSelf(permissions.BasePermission):
@@ -45,6 +61,9 @@ class IsSiteAdminOrSelf(permissions.BasePermission):
                 return False
 
         return True
+
+    def has_object_permission(self, request, view, object):
+        return self.has_permission(request, view)
 
 
 class IsSiteAdminOrEventManager(permissions.BasePermission):
@@ -65,6 +84,9 @@ class IsSiteAdminOrEventManager(permissions.BasePermission):
             raise ValidationError('Event Not Found.')
 
         return UserManageEvent.objects.filter(user=user, event=event).exists()
+
+    def has_object_permission(self, request, view, object):
+        return self.has_permission(request, view)
 
 
 class IsEventHostAdminOrReadOnly(permissions.BasePermission):
