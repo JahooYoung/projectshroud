@@ -122,6 +122,7 @@ class Event(models.Model):
     )
     title = models.CharField(max_length=50, blank=False, default='', verbose_name='活动名称')
     description = models.TextField('描述', blank=True)
+    description_html = models.TextField(blank=True)
     create_time = models.DateTimeField('创建时间', auto_now_add=True)
     start_time = models.DateTimeField('开始时间')
     end_time = models.DateTimeField('结束时间')
