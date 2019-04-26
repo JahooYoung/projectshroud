@@ -1,16 +1,16 @@
 <template>
   <b-nav-form>
     <b-spinner
-      v-if="state.isSearchStalled"
+      v-if="state && state.isSearchStalled"
       variant="light"
       label="Spinning"
       class="mr-sm-2"
     />
     <b-form-input
+      v-model="query"
       class="mr-sm-2"
       type="search"
       placeholder="Search..."
-      v-model="query"
     />
   </b-nav-form>
 </template>
@@ -28,8 +28,6 @@ export default {
       refine: null
     }
   },
-  methods: {
-  },
   computed: {
     query: {
       get () {
@@ -45,6 +43,8 @@ export default {
         this.refine()
       }
     }
+  },
+  methods: {
   }
 }
 </script>

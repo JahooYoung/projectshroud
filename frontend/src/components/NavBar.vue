@@ -1,11 +1,11 @@
 <template>
   <div class="navbar-div">
     <b-navbar
+      id="nav"
       fixed="top"
       toggleable="md"
       type="dark"
       variant="dark"
-      id="nav"
     >
       <b-navbar-brand to="/">
         NavBar
@@ -14,8 +14,8 @@
       <b-navbar-toggle target="nav_collapse" />
 
       <b-collapse
-        is-nav
         id="nav_collapse"
+        is-nav
       >
         <b-navbar-nav>
           <b-nav-item to="/">

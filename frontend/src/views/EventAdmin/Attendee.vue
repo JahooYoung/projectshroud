@@ -34,8 +34,8 @@
           </b-button>
           <b-button
             variant="outline-info"
-            @click="refresh"
             :disabled="isLoading"
+            @click="refresh"
           >
             Refresh
           </b-button>
@@ -54,9 +54,9 @@
         >
           <div
             slot="table-busy"
-            class="text-center text-danger my-2"
+            class="text-center text-primary my-2"
           >
-            <b-spinner class="align-middle" />
+            <b-spinner class="align-middle mr-2" />
             <strong>Loading...</strong>
           </div>
 
@@ -83,8 +83,8 @@
               </template>
               <b-button
                 variant="success"
-                @click="manualCheckIn(row.item)"
                 :disabled="row.value || true"
+                @click="manualCheckIn(row.item)"
               >
                 Manually check in
               </b-button>

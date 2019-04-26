@@ -7,9 +7,9 @@
       @click="onClick"
     >
       <b-spinner
+        v-show="isLoading"
         small
         type="grow"
-        v-show="isLoading"
       />
       {{ checkingIn ? 'Stop' : 'Start' }} Check In
     </b-button>
@@ -26,6 +26,7 @@
 
 <script>
 export default {
+  name: 'EventAdminCheckin',
   data () {
     return {
       checkingIn: false,
@@ -34,11 +35,11 @@ export default {
       location: window.location
     }
   },
-  created () {
-    this.refresh()
-  },
   watch: {
     '$route': 'refresh'
+  },
+  created () {
+    this.refresh()
   },
   methods: {
     onClick () {

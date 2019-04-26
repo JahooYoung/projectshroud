@@ -10,22 +10,8 @@
           label-for="titleInput"
         >
           <b-form-input
-            v-model="form.title"
             id="titleInput"
-            required
-          />
-        </b-form-group>
-        <b-form-group
-          id="descriptionInputGroup"
-          label-cols-sm="4"
-          label-cols-lg="3"
-          label="Description"
-          label-for="descriptionInput"
-        >
-          <b-form-textarea
-            v-model="form.description"
-            rows="8"
-            id="descriptionInput"
+            v-model="form.title"
             required
           />
         </b-form-group>
@@ -36,17 +22,11 @@
           label="Start time"
           label-for="startTimeInput"
         >
-          <!-- <b-form-input
-            v-model="form.startTime"
-            id="startTimeInput"
-            type="datetime-local"
-            required
-          /> -->
           <flat-pickr
-            class="form-control"
             id="startTimeInput"
-            :config="configs.start"
             v-model="form.startTime"
+            class="form-control"
+            :config="configs.start"
             @on-change="onStartChange"
           />
         </b-form-group>
@@ -57,17 +37,11 @@
           label="End time"
           label-for="endTimeInput"
         >
-          <!-- <b-form-input
-            v-model="form.endTime"
-            id="endTimeInput"
-            type="datetime-local"
-            required
-          /> -->
           <flat-pickr
-            class="form-control"
             id="endTimeInput"
-            :config="configs.end"
             v-model="form.endTime"
+            class="form-control"
+            :config="configs.end"
             @on-change="onEndChange"
           />
         </b-form-group>
@@ -79,8 +53,8 @@
           label-for="locationInput"
         >
           <b-form-input
-            v-model="form.location"
             id="locationInput"
+            v-model="form.location"
             required
           />
         </b-form-group>
@@ -94,8 +68,8 @@
         >
           <div style="text-align: left;">
             <b-form-checkbox
-              size="lg"
               v-model="form.public"
+              size="lg"
               switch
             />
           </div>
@@ -110,8 +84,8 @@
         >
           <div style="text-align: left;">
             <b-form-checkbox
-              size="lg"
               v-model="form.requireApprove"
+              size="lg"
               switch
             />
           </div>
@@ -123,11 +97,11 @@
           :disabled="isLoading"
         >
           <b-spinner
+            v-show="isLoading"
             small
             type="grow"
-            v-show="isLoading"
           />
-          {{ buttonName }}
+          {{ newEvent ? 'Create' : 'Save' }}
         </b-button>
       </b-form>
     </b-col>
@@ -139,7 +113,7 @@ import flatPickr from 'vue-flatpickr-component'
 import 'flatpickr/dist/flatpickr.css'
 
 export default {
-  name: 'Info',
+  name: 'EventAdminInfo',
   components: {
     flatPickr
   },
@@ -151,16 +125,15 @@ export default {
   },
   data () {
     return {
-      buttonName: 'Save',
       form: {
         title: '',
-        description: '',
         startTime: null,
         endTime: null,
         location: '',
         public: false,
         requireApprove: false
       },
+      event: null,
       configs: {
         start: {
           enableTime: true,
@@ -173,15 +146,13 @@ export default {
       }
     }
   },
-  created () {
-    if (this.newEvent) {
-      this.buttonName = 'Create'
-    } else {
-      this.refresh()
-    }
-  },
   watch: {
     '$route': 'refresh'
+  },
+  created () {
+    if (!this.newEvent) {
+      this.refresh()
+    }
   },
   methods: {
     onStartChange (selectedDates, dateStr, instance) {
@@ -191,8 +162,8 @@ export default {
       this.$set(this.configs.start, 'maxDate', dateStr)
     },
     updateForm (data) {
+      this.event = data
       this.form.title = data.title
-      this.form.description = data.description
       this.form.startTime = new Date(data.start_time)
       this.form.endTime = new Date(data.end_time)
       this.form.location = data.location
@@ -203,7 +174,8 @@ export default {
       evt.preventDefault()
       const data = {
         title: this.form.title,
-        description: this.form.description,
+        description: this.event ? this.event.description : '',
+        description_html: this.event ? this.event.description_html : '',
         start_time: new Date(this.form.startTime).toISOString(),
         end_time: new Date(this.form.endTime).toISOString(),
         location: this.form.location,
@@ -223,7 +195,7 @@ export default {
             this.$router.push('/event/' + eventId)
           })
       } else {
-        this.axios.put('/api/event/' + this.$route.params.id + '/', data)
+        this.axios.put(`/api/event/${this.$route.params.id}/`, data)
           .then(res => {
             this.$bvToast.toast(`Event "${res.data.title}" saved successfully`, {
               title: `Success`,
@@ -235,7 +207,7 @@ export default {
       }
     },
     refresh () {
-      this.axios.get('/api/event/' + this.$route.params.id)
+      this.axios.get(`/api/event/${this.$route.params.id}/`)
         .then(res => this.updateForm(res.data))
     }
   }

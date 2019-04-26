@@ -19,6 +19,12 @@
                 Basic Info
               </b-nav-item>
               <b-nav-item
+                :active="$route.name === 'eventAdminDescription'"
+                to="description"
+              >
+                Description
+              </b-nav-item>
+              <b-nav-item
                 :active="$route.name === 'eventAdminAdministrator'"
                 to="administrator"
               >

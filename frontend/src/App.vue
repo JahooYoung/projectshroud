@@ -15,16 +15,17 @@
 <script>
 // @ is an alias to /src
 import { whiteList } from '@/router'
-// import Utils from '@/components/Utils.vue'
 import NavBar from '@/components/NavBar.vue'
 // import Footer from '@/components/Footer.vue'
 
 export default {
   name: 'App',
-  // mixins: [Utils],
   components: {
     NavBar
     // Footer
+  },
+  watch: {
+    'user': 'checkUserActivation'
   },
   created () {
     this.checkUserActivation()
@@ -57,20 +58,51 @@ export default {
       } else {
         //! this should be the only `console.log` of network request
         console.log(err.response)
-        if (err.response.data.detail) {
-          this.$bvToast.toast(err.response.data.detail, {
-            title: 'Error',
-            variant: 'secondary',
-            autoHideDelay: 4000,
-            solid: true
-          })
+        switch (err.response.status) {
+          case 400:
+            // Bad Request: most of these are validation error.
+            // Should be processed by the caller.
+            break
+          case 401:
+            // Unauthorized: probably not login.
+            // If 401 is returned, it is probable that you forget to
+            // call `checkLogin()`, so I call it here.
+            this.checkLogin()
+            break
+          case 403:
+            // Forbidden: user does not have permission.
+            this.$bvToast.toast('You do not have permission', {
+              title: 'Forbidden',
+              variant: 'secondary',
+              autoHideDelay: 4000,
+              solid: true
+            })
+            break
+          case 404:
+            // Not Found: the resource is not existed.
+            // Should be processed by the caller.
+            break
+          case 500:
+            // Internal Server Error
+            this.$bvToast.toast('It seems some error occured in the server', {
+              title: 'Internal Server Error',
+              variant: 'secondary',
+              autoHideDelay: 4000,
+              solid: true
+            })
+            break
+          default:
+            this.$bvToast.toast('Unknown status code ' + err.response.status, {
+              title: 'Unknown Error',
+              variant: 'secondary',
+              autoHideDelay: 4000,
+              solid: true
+            })
+            break
         }
       }
       return Promise.reject(err)
     })
-  },
-  watch: {
-    'user': 'checkUserActivation'
   },
   methods: {
     checkUserActivation () {
@@ -84,7 +116,7 @@ export default {
             this.$bvToast.toast('Click here to activate your account!', {
               title: 'Account not activated',
               variant: 'warning',
-              autoHideDelay: 10000,
+              autoHideDelay: 5000,
               solid: true,
               to: '/user-profile'
             })
@@ -95,7 +127,7 @@ export default {
           this.$bvToast.toast('Your signin seems expired, click here to login again!', {
             title: 'Error',
             variant: 'danger',
-            autoHideDelay: 10000,
+            autoHideDelay: 5000,
             solid: true,
             to: '/login'
           })

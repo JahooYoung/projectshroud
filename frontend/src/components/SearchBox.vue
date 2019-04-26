@@ -24,12 +24,12 @@
       <template slot-scope="{ query, hits }">
         <ais-hits v-if="query.length > 0">
           <b-popover
+            ref="popover"
+            slot-scope="{ items }"
             target="search-box"
             triggers="focus"
             placement="auto"
             :show.sync="query.length"
-            ref="popover"
-            slot-scope="{ items }"
           >
             <div>
               <div v-if="hits.length > 0">
