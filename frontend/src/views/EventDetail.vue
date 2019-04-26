@@ -50,9 +50,9 @@
                     @click="checkActivated() && $bvModal.show('modal-register')"
                   >
                     <b-spinner
+                      v-show="isLoading"
                       small
                       type="grow"
-                      v-show="isLoading"
                     />
                     Register
                   </b-button>
@@ -63,9 +63,9 @@
                     @click="checkActivated() && $bvModal.show('modal-unregister')"
                   >
                     <b-spinner
+                      v-show="isLoading"
                       small
                       type="grow"
-                      v-show="isLoading"
                     />
                     Unregister
                   </b-button>
@@ -86,8 +86,8 @@
 
       <b-modal
         id="modal-register"
-        @ok="register"
         title="Basic infomation"
+        @ok="register"
       >
         <b-form-group
           label="Your Name:"
@@ -138,9 +138,9 @@
           label-for="input-5"
         >
           <b-form-input
-            type="datetime-local"
             id="input-5"
             v-model="attendee.depart_time"
+            type="datetime-local"
             placeholder="Enter depart time"
           />
         </b-form-group>
@@ -161,9 +161,9 @@
           label-for="input-7"
         >
           <b-form-input
-            type="datetime-local"
             id="input-7"
             v-model="attendee.arrival_time"
+            type="datetime-local"
             placeholder="Enter arrival time"
           />
         </b-form-group>
@@ -181,8 +181,8 @@
       </b-modal>
       <b-modal
         id="modal-unregister"
-        @ok="unregister"
         title="Unregister"
+        @ok="unregister"
       >
         <p class="my-4">
           Are you sure to unregister?
@@ -240,14 +240,14 @@ export default {
       }
     }
   },
+  watch: {
+    '$route': 'refresh'
+  },
   created () {
     this.refresh()
       .then(() => {
         this.firstLoading = false
       })
-  },
-  watch: {
-    '$route': 'refresh'
   },
   methods: {
     makeToast (succeed, message) {

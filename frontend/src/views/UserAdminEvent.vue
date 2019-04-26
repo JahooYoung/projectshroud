@@ -2,113 +2,108 @@
   <div>
     <b-container>
       <h2>Admin Events</h2>
-      <b-row>
-        <b-col
-          md="4"
-          class="my-1"
-        >
-          <b-input-group>
-            <b-input-group-text slot="prepend">
-              Filter
-            </b-input-group-text>
-            <b-form-input
-              v-model="filter"
-              placeholder="Type to Search"
-            />
-            <b-input-group-append>
-              <b-button
-                :disabled="!filter"
-                @click="filter = ''"
-              >
-                Clear
-              </b-button>
-            </b-input-group-append>
-          </b-input-group>
-        </b-col>
 
-        <b-table
-          striped
-          hover
-          show-empty
-          :busy="isLoading"
-          :items="events"
-          :fields="fields"
-          primary-key="event.id"
-          :filter="filter"
-          sort-by="start_time"
-        >
-          <div
-            slot="table-busy"
-            class="text-center text-danger my-2"
+      <TableLayout
+        item-name="event"
+        :refresh="refresh"
+        :total-rows="events.length"
+      >
+        <template #buttons>
+          <b-button
+            class="mr-2"
+            variant="outline-dark"
+            to="/event/new"
           >
-            <b-spinner class="align-middle" />
-            <strong>Loading...</strong>
-          </div>
+            New Event
+          </b-button>
+        </template>
 
-          <template
-            slot="event_info.title"
-            slot-scope="row"
+        <template v-slot="config">
+          <b-table
+            v-bind="config"
+            :items="events"
+            :fields="fields"
+            :tbody-tr-class="rowClass"
+            primary-key="id"
+            sort-by="start_time"
+            caption="Blue represents the event is checking in."
           >
-            <b-link :to="'/event/' + row.item.event_info.id">
-              {{ row.value }}
-            </b-link>
-          </template>
-
-          <template
-            slot="actions"
-            slot-scope="row"
-          >
-            <b-button
-              size="sm"
-              @click="row.toggleDetails"
+            <div
+              slot="table-busy"
+              class="text-center text-primary my-2"
             >
-              {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
-            </b-button>
-          </template>
+              <b-spinner class="align-middle mr-2" />
+              <strong>Loading...</strong>
+            </div>
 
-          <template
-            slot="row-details"
-            slot-scope="row"
-          >
-            <b-card>
-              <ul>
-                <li
-                  v-for="(value, key) in row.item"
-                  :key="key"
-                >
-                  {{ key }}: {{ value }}
-                </li>
-              </ul>
-            </b-card>
-          </template>
-        </b-table>
-      </b-row>
+            <template
+              slot="title"
+              slot-scope="row"
+            >
+              <b-link :to="'/event/' + row.item.id">
+                {{ row.value }}
+              </b-link>
+            </template>
+
+            <template
+              slot="actions"
+              slot-scope="row"
+            >
+              <b-button
+                variant="dark"
+                size="sm"
+                :to="`/event/${row.item.id}/admin`"
+              >
+                Manage
+              </b-button>
+            </template>
+          </b-table>
+        </template>
+      </TableLayout>
     </b-container>
   </div>
 </template>
 
 <script>
-const fields = [
-  { key: 'event_info.title', label: 'event' },
-  { key: 'event_info.start_time', label: 'time', sortable: true },
-  // { key: 'host_display_info', label: 'Host', sortable: true },
-  { key: 'transport_info', label: 'transport' },
-  { key: 'actions' }
-]
+import TableLayout from '@/components/TableLayout.vue'
 
 export default {
+  components: {
+    TableLayout
+  },
   data () {
     return {
-      filter: null,
-      fields,
+      fields: [
+        'title',
+        {
+          key: 'start_time',
+          label: 'Start Time',
+          sortable: true,
+          formatter: value => new Date(value).toLocaleString()
+        },
+        {
+          key: 'actions'
+        }
+      ],
       events: []
     }
   },
   created () {
-    this.axios.get('/api/event/admins/')
-      .then(res => {
-        this.events = res.data
-      })
+    this.refresh()
+  },
+  methods: {
+    refresh () {
+      this.axios.get('/api/event/admins/')
+        .then(res => {
+          console.log(res.data[0].event_info)
+          this.events = res.data.map(x => x.event_info)
+        })
+    },
+    rowClass (item, type) {
+      if (item.checkin_enabled) {
+        return 'table-primary'
+      }
+    }
   }
 }
 </script>

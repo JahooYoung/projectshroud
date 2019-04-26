@@ -7,9 +7,9 @@
       @click="onClick"
     >
       <b-spinner
+        v-show="isLoading"
         small
         type="grow"
-        v-show="isLoading"
       />
       {{ checkingIn ? 'Stop' : 'Start' }} Check In
     </b-button>
@@ -34,11 +34,11 @@ export default {
       location: window.location
     }
   },
-  created () {
-    this.refresh()
-  },
   watch: {
     '$route': 'refresh'
+  },
+  created () {
+    this.refresh()
   },
   methods: {
     onClick () {

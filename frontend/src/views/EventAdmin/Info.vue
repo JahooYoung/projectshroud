@@ -10,8 +10,8 @@
           label-for="titleInput"
         >
           <b-form-input
-            v-model="form.title"
             id="titleInput"
+            v-model="form.title"
             required
           />
         </b-form-group>
@@ -23,9 +23,9 @@
           label-for="descriptionInput"
         >
           <b-form-textarea
+            id="descriptionInput"
             v-model="form.description"
             rows="8"
-            id="descriptionInput"
             required
           />
         </b-form-group>
@@ -43,10 +43,10 @@
             required
           /> -->
           <flat-pickr
-            class="form-control"
             id="startTimeInput"
-            :config="configs.start"
             v-model="form.startTime"
+            class="form-control"
+            :config="configs.start"
             @on-change="onStartChange"
           />
         </b-form-group>
@@ -64,10 +64,10 @@
             required
           /> -->
           <flat-pickr
-            class="form-control"
             id="endTimeInput"
-            :config="configs.end"
             v-model="form.endTime"
+            class="form-control"
+            :config="configs.end"
             @on-change="onEndChange"
           />
         </b-form-group>
@@ -79,8 +79,8 @@
           label-for="locationInput"
         >
           <b-form-input
-            v-model="form.location"
             id="locationInput"
+            v-model="form.location"
             required
           />
         </b-form-group>
@@ -94,8 +94,8 @@
         >
           <div style="text-align: left;">
             <b-form-checkbox
-              size="lg"
               v-model="form.public"
+              size="lg"
               switch
             />
           </div>
@@ -110,8 +110,8 @@
         >
           <div style="text-align: left;">
             <b-form-checkbox
-              size="lg"
               v-model="form.requireApprove"
+              size="lg"
               switch
             />
           </div>
@@ -123,9 +123,9 @@
           :disabled="isLoading"
         >
           <b-spinner
+            v-show="isLoading"
             small
             type="grow"
-            v-show="isLoading"
           />
           {{ buttonName }}
         </b-button>
@@ -173,15 +173,15 @@ export default {
       }
     }
   },
+  watch: {
+    '$route': 'refresh'
+  },
   created () {
     if (this.newEvent) {
       this.buttonName = 'Create'
     } else {
       this.refresh()
     }
-  },
-  watch: {
-    '$route': 'refresh'
   },
   methods: {
     onStartChange (selectedDates, dateStr, instance) {
