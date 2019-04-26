@@ -387,6 +387,7 @@ class TransportCreateView(generics.CreateAPIView):
         if 'user_id' in data:
             user = get_user_model().objects.get(id=data['user_id'])
 
+        event = Event.objects.get(id=data.get('event_id'))
         serializer.save(user=user, event=event)
 
 
