@@ -26,6 +26,7 @@
 
 <script>
 export default {
+  name: 'EventAdminCheckin',
   data () {
     return {
       checkingIn: false,

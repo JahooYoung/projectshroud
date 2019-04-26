@@ -20,7 +20,7 @@
               <p
                 v-if="event.title !== ''"
                 style="text-align: left;"
-                v-html="event.description.replace('\n', '<br/>')"
+                v-html="event.description_html"
               >
                 <!-- {{ event.description }} -->
               </p>
@@ -193,6 +193,8 @@
 </template>
 
 <script>
+import 'mavon-editor/dist/markdown/github-markdown.min.css'
+
 function date2input (date) {
   date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
   date.setSeconds(0, 0)

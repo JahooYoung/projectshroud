@@ -16,32 +16,12 @@
           />
         </b-form-group>
         <b-form-group
-          id="descriptionInputGroup"
-          label-cols-sm="4"
-          label-cols-lg="3"
-          label="Description"
-          label-for="descriptionInput"
-        >
-          <b-form-textarea
-            id="descriptionInput"
-            v-model="form.description"
-            rows="8"
-            required
-          />
-        </b-form-group>
-        <b-form-group
           id="startTimeInputGroup"
           label-cols-sm="4"
           label-cols-lg="3"
           label="Start time"
           label-for="startTimeInput"
         >
-          <!-- <b-form-input
-            v-model="form.startTime"
-            id="startTimeInput"
-            type="datetime-local"
-            required
-          /> -->
           <flat-pickr
             id="startTimeInput"
             v-model="form.startTime"
@@ -57,12 +37,6 @@
           label="End time"
           label-for="endTimeInput"
         >
-          <!-- <b-form-input
-            v-model="form.endTime"
-            id="endTimeInput"
-            type="datetime-local"
-            required
-          /> -->
           <flat-pickr
             id="endTimeInput"
             v-model="form.endTime"
@@ -127,7 +101,7 @@
             small
             type="grow"
           />
-          {{ buttonName }}
+          {{ newEvent ? 'Create' : 'Save' }}
         </b-button>
       </b-form>
     </b-col>
@@ -139,7 +113,7 @@ import flatPickr from 'vue-flatpickr-component'
 import 'flatpickr/dist/flatpickr.css'
 
 export default {
-  name: 'Info',
+  name: 'EventAdminInfo',
   components: {
     flatPickr
   },
@@ -151,16 +125,15 @@ export default {
   },
   data () {
     return {
-      buttonName: 'Save',
       form: {
         title: '',
-        description: '',
         startTime: null,
         endTime: null,
         location: '',
         public: false,
         requireApprove: false
       },
+      event: null,
       configs: {
         start: {
           enableTime: true,
@@ -177,9 +150,7 @@ export default {
     '$route': 'refresh'
   },
   created () {
-    if (this.newEvent) {
-      this.buttonName = 'Create'
-    } else {
+    if (!this.newEvent) {
       this.refresh()
     }
   },
@@ -191,8 +162,8 @@ export default {
       this.$set(this.configs.start, 'maxDate', dateStr)
     },
     updateForm (data) {
+      this.event = data
       this.form.title = data.title
-      this.form.description = data.description
       this.form.startTime = new Date(data.start_time)
       this.form.endTime = new Date(data.end_time)
       this.form.location = data.location
@@ -203,7 +174,8 @@ export default {
       evt.preventDefault()
       const data = {
         title: this.form.title,
-        description: this.form.description,
+        description: this.event ? this.event.description : '',
+        description_html: this.event ? this.event.description_html : '',
         start_time: new Date(this.form.startTime).toISOString(),
         end_time: new Date(this.form.endTime).toISOString(),
         location: this.form.location,
@@ -223,7 +195,7 @@ export default {
             this.$router.push('/event/' + eventId)
           })
       } else {
-        this.axios.put('/api/event/' + this.$route.params.id + '/', data)
+        this.axios.put(`/api/event/${this.$route.params.id}/`, data)
           .then(res => {
             this.$bvToast.toast(`Event "${res.data.title}" saved successfully`, {
               title: `Success`,
@@ -235,7 +207,7 @@ export default {
       }
     },
     refresh () {
-      this.axios.get('/api/event/' + this.$route.params.id)
+      this.axios.get(`/api/event/${this.$route.params.id}/`)
         .then(res => this.updateForm(res.data))
     }
   }

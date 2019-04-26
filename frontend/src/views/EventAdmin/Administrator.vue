@@ -48,7 +48,7 @@
 import TableLayout from '@/components/TableLayout.vue'
 
 export default {
-  name: 'AdministratorList',
+  name: 'EventAdminAdministrator',
   components: {
     TableLayout
   },
