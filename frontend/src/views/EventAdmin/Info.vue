@@ -36,11 +36,18 @@
           label="Start time"
           label-for="startTimeInput"
         >
-          <b-form-input
+          <!-- <b-form-input
             v-model="form.startTime"
             id="startTimeInput"
             type="datetime-local"
             required
+          /> -->
+          <flat-pickr
+            class="form-control"
+            id="startTimeInput"
+            :config="configs.start"
+            v-model="form.startTime"
+            @on-change="onStartChange"
           />
         </b-form-group>
         <b-form-group
@@ -50,11 +57,18 @@
           label="End time"
           label-for="endTimeInput"
         >
-          <b-form-input
+          <!-- <b-form-input
             v-model="form.endTime"
             id="endTimeInput"
             type="datetime-local"
             required
+          /> -->
+          <flat-pickr
+            class="form-control"
+            id="endTimeInput"
+            :config="configs.end"
+            v-model="form.endTime"
+            @on-change="onEndChange"
           />
         </b-form-group>
         <b-form-group
@@ -121,20 +135,14 @@
 </template>
 
 <script>
-function date2input (date) {
-  date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
-  date.setSeconds(0, 0)
-  date = date.toISOString()
-  return date.substr(0, date.length - 1)
-}
-
-function input2date (str) {
-  let date = new Date(str)
-  return date
-}
+import flatPickr from 'vue-flatpickr-component'
+import 'flatpickr/dist/flatpickr.css'
 
 export default {
   name: 'Info',
+  components: {
+    flatPickr
+  },
   props: {
     newEvent: {
       type: Boolean,
@@ -143,20 +151,29 @@ export default {
   },
   data () {
     return {
-      isLoading: false,
       buttonName: 'Save',
       form: {
         title: '',
         description: '',
-        startTime: '',
-        endTime: '',
+        startTime: null,
+        endTime: null,
         location: '',
         public: false,
         requireApprove: false
+      },
+      configs: {
+        start: {
+          enableTime: true,
+          maxDate: null
+        },
+        end: {
+          enableTime: true,
+          minDate: null
+        }
       }
     }
   },
-  mounted () {
+  created () {
     if (this.newEvent) {
       this.buttonName = 'Create'
     } else {
@@ -167,90 +184,59 @@ export default {
     '$route': 'refresh'
   },
   methods: {
-    onSubmit (e) {
-      e.preventDefault()
+    onStartChange (selectedDates, dateStr, instance) {
+      this.$set(this.configs.end, 'minDate', dateStr)
+    },
+    onEndChange (selectedDates, dateStr, instance) {
+      this.$set(this.configs.start, 'maxDate', dateStr)
+    },
+    updateForm (data) {
+      this.form.title = data.title
+      this.form.description = data.description
+      this.form.startTime = new Date(data.start_time)
+      this.form.endTime = new Date(data.end_time)
+      this.form.location = data.location
+      this.form.public = data.public
+      this.form.requireApprove = data.require_approve
+    },
+    onSubmit (evt) {
+      evt.preventDefault()
       const data = {
         title: this.form.title,
         description: this.form.description,
-        start_time: input2date(this.form.startTime).toISOString(),
-        end_time: input2date(this.form.endTime).toISOString(),
+        start_time: new Date(this.form.startTime).toISOString(),
+        end_time: new Date(this.form.endTime).toISOString(),
         location: this.form.location,
         public: this.form.public,
         require_approve: this.form.requireApprove
       }
       if (this.newEvent) {
-        this.isLoading = true
+        let eventId
         this.axios.post('/api/event/', data)
           .then(res => {
-            this.isLoading = false
-            if (res.status === 201) {
-              // this.$bvToast.toast(`Event "${res.data.title}" created successfully`, {
-              //   title: `Success`,
-              //   autoHideDelay: 5000,
-              //   solid: true
-              // })
-              const eventId = res.data.id
-              this.isLoading = true
-              this.axios.post('/api/assignadmin/', {
-                event_id: eventId
-              })
-                .then(res => {
-                  this.isLoading = false
-                  if (res.status === 201) {
-                    this.$router.push('/event/' + eventId)
-                  } else {
-                    alert(JSON.stringify(res.data))
-                  }
-                })
-                .catch(err => {
-                  this.isLoading = false
-                  console.log('failed to assign admin', err)
-                })
-            } else {
-              alert(JSON.stringify(res.data))
-            }
+            eventId = res.data.id
+            return this.axios.post('/api/assignadmin/', {
+              event_id: eventId
+            })
           })
-          .catch(err => {
-            this.isLoading = false
-            console.log('failed to create events\n', err)
+          .then(res => {
+            this.$router.push('/event/' + eventId)
           })
       } else {
-        this.isLoading = true
         this.axios.put('/api/event/' + this.$route.params.id + '/', data)
           .then(res => {
-            if (res.status === 200) {
-              this.$bvToast.toast(`Event "${res.data.title}" saved successfully`, {
-                title: `Success`,
-                autoHideDelay: 5000,
-                solid: true
-              })
-              this.refresh()
-            }
-          })
-          .catch(err => {
-            this.isLoading = false
-            console.log('failed to update events\n', err)
+            this.$bvToast.toast(`Event "${res.data.title}" saved successfully`, {
+              title: `Success`,
+              autoHideDelay: 5000,
+              solid: true
+            })
+            this.updateForm(res.data)
           })
       }
     },
     refresh () {
-      this.isLoading = true
       this.axios.get('/api/event/' + this.$route.params.id)
-        .then(res => {
-          this.isLoading = false
-          console.log(res.data)
-          this.form.title = res.data.title
-          this.form.description = res.data.description
-          this.form.startTime = date2input(new Date(res.data.start_time))
-          this.form.endTime = date2input(new Date(res.data.end_time))
-          this.form.location = res.data.location
-          this.form.public = res.data.public
-          this.form.requireApprove = res.data.require_approve
-        })
-        .catch(err => {
-          this.isLoading = false
-          console.log('failed to fetch events\n', err)
-        })
+        .then(res => this.updateForm(res.data))
     }
   }
 }

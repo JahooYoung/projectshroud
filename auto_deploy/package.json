@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "scripts": {
+    "start": "node git_auto_deploy.js",
+    "serve": "forever start git_auto_deploy.js"
+  },
+  "dependencies": {
+    "forever": "^1.0.0",
+    "github-webhook-handler": "^0.7.1"
+  }
+}

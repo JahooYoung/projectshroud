@@ -205,6 +205,7 @@ export default {
           evt.preventDefault()
 
         })
+        .catch(err => err.response && alert(JSON.stringify(err.response.data)))
     }
   }
 }

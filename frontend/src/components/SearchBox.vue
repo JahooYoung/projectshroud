@@ -81,10 +81,6 @@ export default {
     }
   },
   methods: {
-    printHit (hits) {
-      console.log(hits)
-      return true
-    },
     highlight (obj) {
       return obj.value
         .replace(/<mark>/g, `<span class="search-highlight">`)

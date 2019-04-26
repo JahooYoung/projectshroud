@@ -23,16 +23,6 @@
                 required
               />
             </b-form-group>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col
-            cols="12"
-            offset-md="3"
-            md="6"
-            offset-lg="4"
-            lg="4"
-          >
             <b-form-group
               id="passwordInputGroup"
               label="Password:"
@@ -45,17 +35,8 @@
                 required
               />
             </b-form-group>
-          </b-col>
-        </b-row>
-        <b-row>
-          <b-col
-            cols="12"
-            offset-md="3"
-            md="6"
-            offset-lg="4"
-            lg="4"
-          >
             <b-button
+              class="mr-md-3"
               type="submit"
               variant="primary"
             >
@@ -85,13 +66,6 @@ export default {
       }
     }
   },
-  // beforeRouteEnter (to, from, next) {
-  //   next(vm => {
-  //     if (vm.$store.state.user !== null) {
-  //       vm.$router.back()
-  //     }
-  //   })
-  // },
   methods: {
     onSubmit (evt) {
       evt.preventDefault()
@@ -100,27 +74,22 @@ export default {
         password: this.form.password
       })
         .then(res => {
-          if (res.status < 300) {
-            this.$store.commit('setUserState', {
-              user: this.form.username,
-              key: res.data.key
-            })
-            this.$router.back()
-          } else {
-            alert(JSON.stringify(res.data))
-            this.$store.commit('setUserState', null)
-          }
+          this.$store.commit('setUserState', {
+            user: this.form.username,
+            key: res.data.key
+          })
+          this.$router.back()
         })
         .catch(err => {
-          alert('login failed')
-          console.log(err)
+          if (err.response) {
+            alert(JSON.stringify(err.response.data))
+          }
         })
     }
   },
   directives: {
     focus: {
-    // 指令的定义
-      inserted: function (el) {
+      inserted: el => {
         el.focus()
       }
     }

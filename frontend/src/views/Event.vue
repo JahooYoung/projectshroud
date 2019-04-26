@@ -3,41 +3,41 @@
     <b-container>
       <h2>Event List</h2>
       <b-row>
-        <b-col
-          md="4"
-          class="my-1"
-        >
-          <b-input-group>
-            <b-input-group-text slot="prepend">
-              Filter
-            </b-input-group-text>
-            <b-form-input
-              v-model="filter"
-              placeholder="Type to Search"
-            />
-            <b-input-group-append>
-              <b-button
-                :disabled="!filter"
-                @click="filter = ''"
-              >
-                Clear
-              </b-button>
-            </b-input-group-append>
-          </b-input-group>
-        </b-col>
-        <b-col
-          offset-md="6"
-          md="2"
-          class="my-1"
-        >
+        <b-input-group class="w-25 my-3">
+          <!-- <b-input-group-text slot="prepend">
+            Filter
+          </b-input-group-text> -->
+          <b-form-input
+            v-model="filter"
+            placeholder="Type to Search"
+          />
+          <b-input-group-append>
+            <b-button
+              :disabled="!filter"
+              @click="filter = ''"
+            >
+              Clear
+            </b-button>
+          </b-input-group-append>
+        </b-input-group>
+        <div class="ml-auto my-3">
           <b-button
+            class="mr-2"
             variant="outline-info"
             to="/event/new"
           >
             New Event
           </b-button>
-        </b-col>
+          <b-button
+            variant="outline-info"
+            @click="refresh"
+            :disabled="isLoading"
+          >
+            Refresh
+          </b-button>
+        </div>
 
+        <!-- <hr/> -->
         <b-table
           id="event-list-table"
           striped
@@ -124,7 +124,6 @@ const fields = [
 export default {
   data () {
     return {
-      isLoading: false,
       filter: null,
       fields,
       events: [],
@@ -132,22 +131,20 @@ export default {
       currentPage: 1
     }
   },
-  mounted () {
-    this.isLoading = true
-    this.axios.get('/api/event/')
-      .then(res => {
-        this.isLoading = false
-        this.events = res.data
-        console.log(res.data)
-      })
-      .catch(err => {
-        this.isLoading = false
-        console.log('failed to fetch events\n', err)
-      })
-  },
   computed: {
     rows () {
       return this.events.length
+    }
+  },
+  created () {
+    this.refresh()
+  },
+  methods: {
+    refresh () {
+      this.axios.get('/api/event/')
+        .then(res => {
+          this.events = res.data
+        })
     }
   }
 }
