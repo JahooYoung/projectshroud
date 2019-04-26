@@ -11,19 +11,15 @@
         <b-row>
           <b-col cols="9">
             <b-card header="Event Description">
-              <b-card-title v-if="event.title !== ''">
-                {{ event.title }}
-              </b-card-title>
+              <div
+                v-if="event.title"
+                class="markdown-body"
+                style="text-align: initial;"
+                v-html="event.description_html"
+              />
               <b-card-title v-else>
                 Event is not existed
               </b-card-title>
-              <p
-                v-if="event.title !== ''"
-                style="text-align: left;"
-                v-html="event.description_html"
-              >
-                <!-- {{ event.description }} -->
-              </p>
             </b-card>
           </b-col>
           <b-col
@@ -231,8 +227,9 @@ export default {
         { value: null, text: '未决定' }
       ],
       event: {
-        title: '',
+        title: null,
         description: '',
+        description_html: '',
         startTime: '',
         endTime: '',
         location: '',
@@ -265,6 +262,7 @@ export default {
         .then(res => {
           this.event.title = res.data.title
           this.event.description = res.data.description
+          this.event.description_html = res.data.description_html
           this.event.startTime = date2input(new Date(res.data.start_time))
           this.event.endTime = date2input(new Date(res.data.end_time))
           this.event.location = res.data.location
