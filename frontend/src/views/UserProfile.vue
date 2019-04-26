@@ -1,6 +1,6 @@
 <template>
   <div>
-    Here is your user profile<br/>
+    Here is your user profile<br>
     You can activate your account here, there will be a modal, press OK until you confirm the email
   </div>
 </template>

@@ -107,13 +107,8 @@
 </template>
 
 <script>
-// @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue'
-import Utils from '@/components/Utils.vue'
-
 export default {
   name: 'Home',
-  mixins: [Utils],
   data () {
     return {
       futureEvents: [],
@@ -124,30 +119,18 @@ export default {
   created () {
     this.axios.get('/api/event/future/')
       .then(res => {
-        console.log(res.data)
         this.futureEvents = res.data
-      })
-      .catch(err => {
-        console.log(err)
       })
     if (!this.userActivated) {
       return
     }
     this.axios.get('/api/event/registered/future/')
       .then(res => {
-        console.log(res.data)
         this.registeredFutureEvents = res.data.map(x => x.event_info)
-      })
-      .catch(err => {
-        console.log(err)
       })
     this.axios.get('/api/event/admins/')
       .then(res => {
-        console.log(res.data)
         this.manageEvents = res.data.map(x => x.event_info)
-      })
-      .catch(err => {
-        console.log(err)
       })
   }
 }

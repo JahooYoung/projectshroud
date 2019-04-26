@@ -10,8 +10,8 @@
           label-for="titleInput"
         >
           <b-form-input
-            v-model="form.title"
             id="titleInput"
+            v-model="form.title"
             required
           />
         </b-form-group>
@@ -23,9 +23,9 @@
           label-for="descriptionInput"
         >
           <b-form-textarea
+            id="descriptionInput"
             v-model="form.description"
             rows="8"
-            id="descriptionInput"
             required
           />
         </b-form-group>
@@ -43,10 +43,10 @@
             required
           /> -->
           <flat-pickr
-            class="form-control"
             id="startTimeInput"
-            :config="configs.start"
             v-model="form.startTime"
+            class="form-control"
+            :config="configs.start"
             @on-change="onStartChange"
           />
         </b-form-group>
@@ -64,10 +64,10 @@
             required
           /> -->
           <flat-pickr
-            class="form-control"
             id="endTimeInput"
-            :config="configs.end"
             v-model="form.endTime"
+            class="form-control"
+            :config="configs.end"
             @on-change="onEndChange"
           />
         </b-form-group>
@@ -79,8 +79,8 @@
           label-for="locationInput"
         >
           <b-form-input
-            v-model="form.location"
             id="locationInput"
+            v-model="form.location"
             required
           />
         </b-form-group>
@@ -94,8 +94,8 @@
         >
           <div style="text-align: left;">
             <b-form-checkbox
-              size="lg"
               v-model="form.public"
+              size="lg"
               switch
             />
           </div>
@@ -110,8 +110,8 @@
         >
           <div style="text-align: left;">
             <b-form-checkbox
-              size="lg"
               v-model="form.requireApprove"
+              size="lg"
               switch
             />
           </div>
@@ -123,9 +123,9 @@
           :disabled="isLoading"
         >
           <b-spinner
+            v-show="isLoading"
             small
             type="grow"
-            v-show="isLoading"
           />
           {{ buttonName }}
         </b-button>
@@ -151,7 +151,6 @@ export default {
   },
   data () {
     return {
-      isLoading: false,
       buttonName: 'Save',
       form: {
         title: '',
@@ -165,7 +164,6 @@ export default {
       configs: {
         start: {
           enableTime: true,
-          minDate: new Date(),
           maxDate: null
         },
         end: {
@@ -175,6 +173,9 @@ export default {
       }
     }
   },
+  watch: {
+    '$route': 'refresh'
+  },
   created () {
     if (this.newEvent) {
       this.buttonName = 'Create'
@@ -182,18 +183,12 @@ export default {
       this.refresh()
     }
   },
-  watch: {
-    '$route': 'refresh'
-  },
   methods: {
     onStartChange (selectedDates, dateStr, instance) {
       this.$set(this.configs.end, 'minDate', dateStr)
     },
     onEndChange (selectedDates, dateStr, instance) {
       this.$set(this.configs.start, 'maxDate', dateStr)
-    },
-    stopLoading () {
-      this.isLoading = false
     },
     updateForm (data) {
       this.form.title = data.title
@@ -206,7 +201,6 @@ export default {
     },
     onSubmit (evt) {
       evt.preventDefault()
-      this.isLoading = true
       const data = {
         title: this.form.title,
         description: this.form.description,
@@ -217,9 +211,10 @@ export default {
         require_approve: this.form.requireApprove
       }
       if (this.newEvent) {
+        let eventId
         this.axios.post('/api/event/', data)
           .then(res => {
-            const eventId = res.data.id
+            eventId = res.data.id
             return this.axios.post('/api/assignadmin/', {
               event_id: eventId
             })
@@ -227,8 +222,6 @@ export default {
           .then(res => {
             this.$router.push('/event/' + eventId)
           })
-          .catch(() => {})
-          .then(this.stopLoading)
       } else {
         this.axios.put('/api/event/' + this.$route.params.id + '/', data)
           .then(res => {
@@ -239,15 +232,11 @@ export default {
             })
             this.updateForm(res.data)
           })
-          .catch(() => {})
-          .then(this.stopLoading)
       }
     },
     refresh () {
-      this.isLoading = true
       this.axios.get('/api/event/' + this.$route.params.id)
         .then(res => this.updateForm(res.data))
-        .then(this.stopLoading)
     }
   }
 }

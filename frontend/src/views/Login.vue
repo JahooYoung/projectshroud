@@ -17,9 +17,9 @@
             >
               <b-form-input
                 id="usernameInput"
-                type="text"
                 v-model="form.username"
                 v-focus
+                type="text"
                 required
               />
             </b-form-group>
@@ -30,8 +30,8 @@
             >
               <b-form-input
                 id="passwordInput"
-                type="password"
                 v-model="form.password"
+                type="password"
                 required
               />
             </b-form-group>
@@ -58,6 +58,13 @@
 <script>
 export default {
   name: 'Login',
+  directives: {
+    focus: {
+      inserted: el => {
+        el.focus()
+      }
+    }
+  },
   data () {
     return {
       form: {
@@ -85,13 +92,6 @@ export default {
             alert(JSON.stringify(err.response.data))
           }
         })
-    }
-  },
-  directives: {
-    focus: {
-      inserted: el => {
-        el.focus()
-      }
     }
   }
 }

@@ -1,16 +1,16 @@
 <template>
   <b-nav-form>
     <b-spinner
-      v-if="state.isSearchStalled"
+      v-if="state && state.isSearchStalled"
       variant="light"
       label="Spinning"
       class="mr-sm-2"
     />
     <b-form-input
+      v-model="query"
       class="mr-sm-2"
       type="search"
       placeholder="Search..."
-      v-model="query"
     />
   </b-nav-form>
 </template>
@@ -18,7 +18,7 @@
 <script>
 import { connectSearchBox } from 'instantsearch.js/es/connectors'
 import { createWidgetMixin } from 'vue-instantsearch'
-import _ from 'lodash'
+import _ from 'lodash/function'
 
 export default {
   mixins: [createWidgetMixin({ connector: connectSearchBox })],
@@ -27,8 +27,6 @@ export default {
       localQuery: '',
       refine: null
     }
-  },
-  methods: {
   },
   computed: {
     query: {
@@ -45,6 +43,8 @@ export default {
         this.refine()
       }
     }
+  },
+  methods: {
   }
 }
 </script>

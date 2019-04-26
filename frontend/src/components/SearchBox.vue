@@ -24,12 +24,12 @@
       <template slot-scope="{ query, hits }">
         <ais-hits v-if="query.length > 0">
           <b-popover
+            ref="popover"
+            slot-scope="{ items }"
             target="search-box"
             triggers="focus"
             placement="auto"
             :show.sync="query.length"
-            ref="popover"
-            slot-scope="{ items }"
           >
             <div>
               <div v-if="hits.length > 0">
@@ -66,11 +66,23 @@
 <script>
 import algoliasearch from 'algoliasearch/lite'
 import 'instantsearch.css/themes/algolia-min.css'
+import {
+  AisInstantSearch, AisSearchBox, AisStateResults, AisConfigure,
+  AisHits, AisPoweredBy, AisPagination
+} from 'vue-instantsearch'
 import SearchInput from './SearchInput'
 
 export default {
+  name: 'SearchBox',
   components: {
-    SearchInput
+    SearchInput,
+    AisInstantSearch,
+    AisSearchBox,
+    AisStateResults,
+    AisConfigure,
+    AisHits,
+    AisPoweredBy,
+    AisPagination
   },
   data () {
     return {
@@ -81,10 +93,6 @@ export default {
     }
   },
   methods: {
-    printHit (hits) {
-      console.log(hits)
-      return true
-    },
     highlight (obj) {
       return obj.value
         .replace(/<mark>/g, `<span class="search-highlight">`)

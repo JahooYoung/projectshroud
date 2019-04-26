@@ -44,7 +44,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     user: null,
-    userActivated: false
+    userActivated: false,
+    isLoading: false
   },
   mutations: {
     setUserState (state, userState) {
@@ -57,6 +58,7 @@ export default new Vuex.Store({
         }
       } else {
         state.user = null
+        state.userActivated = false
         userToken = null
         if (window.localStorage) {
           window.localStorage.user = ''
@@ -66,6 +68,9 @@ export default new Vuex.Store({
     },
     setUserActivation (state, activated) {
       state.userActivated = activated
+    },
+    setLoading (state, isLoading) {
+      state.isLoading = isLoading
     }
   },
   actions: {

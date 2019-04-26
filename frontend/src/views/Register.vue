@@ -19,8 +19,8 @@
             >
               <b-form-input
                 id="mobileInput"
-                type="text"
                 v-model="form.mobile"
+                type="text"
                 required
               />
             </b-form-group>
@@ -43,8 +43,8 @@
             >
               <b-form-input
                 id="passwordInput"
-                type="password"
                 v-model="form.password"
+                type="password"
                 required
               />
             </b-form-group>
@@ -67,8 +67,8 @@
             >
               <b-form-input
                 id="repeatPasswordInput"
-                type="password"
                 v-model="form.repeatPassword"
+                type="password"
                 required
               />
             </b-form-group>
@@ -91,8 +91,8 @@
             >
               <b-form-input
                 id="realNameInput"
-                type="realName"
                 v-model="form.realName"
+                type="realName"
                 required
               />
             </b-form-group>
@@ -115,8 +115,8 @@
             >
               <b-form-input
                 id="emailInput"
-                type="email"
                 v-model="form.email"
+                type="email"
                 required
               />
             </b-form-group>
@@ -168,20 +168,13 @@ export default {
         real_name: this.form.realName
       })
         .then(res => {
-          if (res.status === 201) {
-            this.$store.commit('setUserState', {
-              user: this.form.mobile,
-              key: res.data.key
-            })
-            this.$router.back()
-          } else {
-            alert(JSON.stringify(res.data))
-          }
+          this.$store.commit('setUserState', {
+            user: this.form.mobile,
+            key: res.data.key
+          })
+          this.$router.back()
         })
-        .catch(err => {
-          console.log(err)
-          alert('register failed')
-        })
+        .catch(err => err.response && alert(JSON.stringify(err.response.data)))
     }
   }
 }
