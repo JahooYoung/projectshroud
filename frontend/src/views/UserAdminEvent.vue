@@ -95,7 +95,6 @@ export default {
     refresh () {
       this.axios.get('/api/event/admins/')
         .then(res => {
-          console.log(res.data[0].event_info)
           this.events = res.data.map(x => x.event_info)
         })
     },

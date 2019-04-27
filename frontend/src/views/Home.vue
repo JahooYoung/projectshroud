@@ -31,75 +31,84 @@
       <!-- <b-button variant="success" href="#">I am host</b-button> -->
     </b-jumbotron>
 
-    <b-container v-if="user !== null">
+    <b-container v-else>
       <b-row>
-        <b-col cols="4">
+        <b-col cols="8">
           <h3>Recent Events</h3>
-          <b-list-group>
-            <b-list-group-item
-              v-for="event in futureEvents"
-              :key="'recent-event-' + event.id"
-              :to="`/event/${event.id}`"
-              class="flex-column align-items-start"
-            >
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">
+          <b-card
+            v-for="event in futureEvents"
+            :key="'recent-event-' + event.id"
+            no-body
+            border-variant="white"
+            class="my-4"
+          >
+            <div class="d-flex w-100 justify-content-between">
+              <h4 class="mb-2">
+                <b-link
+                  :to="`/event/${event.id}`"
+                  active-class=""
+                  exact-active-class=""
+                >
                   {{ event.title }}
-                </h5>
-                <small>{{ (new Date(event.start_time)).toLocaleDateString() }}</small>
-              </div>
-              <p class="mb-1">
-                I don't know what to show
-              </p>
-              <small>{{ event.location }} -- {{ event.host_display_info }}</small>
-            </b-list-group-item>
-          </b-list-group>
+                </b-link>
+              </h4>
+              <em>{{ event.location }}, {{ new Date(event.start_time).toLocaleDateString() }}</em>
+            </div>
+            <p
+              class="mb-2"
+              style="text-align: left"
+            >
+              Short description here?
+            </p>
+            <hr>
+          </b-card>
         </b-col>
 
         <b-col cols="4">
-          <h3>Registered Future Events</h3>
-          <b-list-group>
-            <b-list-group-item
-              v-for="event in registeredFutureEvents"
-              :key="'recent-event-' + event.id"
-              :to="`/event/${event.id}`"
-              class="flex-column align-items-start"
-            >
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">
-                  {{ event.title }}
-                </h5>
+          <b-card
+            no-body
+            header="Registered Future Events"
+            class="mb-3"
+            border-variant="primary"
+            header-bg-variant="primary"
+            header-text-variant="white"
+          >
+            <b-list-group flush>
+              <b-list-group-item
+                v-for="event in registeredFutureEvents"
+                :key="'recent-event-' + event.id"
+                :to="'/event/' + event.id"
+                class="d-flex justify-content-between align-items-center"
+              >
+                {{ event.title }}
                 <small>{{ (new Date(event.start_time)).toLocaleDateString() }}</small>
-              </div>
-              <p class="mb-1">
-                I don't know what to show
-              </p>
-              <small>{{ event.location }} -- {{ event.host_display_info }}</small>
-            </b-list-group-item>
-          </b-list-group>
-        </b-col>
-
-        <b-col cols="4">
-          <h3>Manage Events</h3>
-          <b-list-group>
-            <b-list-group-item
-              v-for="event in manageEvents"
-              :key="'recent-event-' + event.id"
-              :to="`/event/${event.id}`"
-              class="flex-column align-items-start"
-            >
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">
-                  {{ event.title }}
-                </h5>
-                <small>{{ (new Date(event.start_time)).toLocaleDateString() }}</small>
-              </div>
-              <p class="mb-1">
-                I don't know what to show
-              </p>
-              <small>{{ event.location }} -- {{ event.host_display_info }}</small>
-            </b-list-group-item>
-          </b-list-group>
+              </b-list-group-item>
+            </b-list-group>
+          </b-card>
+          <b-card
+            no-body
+            header="Manage Events"
+            border-variant="dark"
+            header-bg-variant="dark"
+            header-text-variant="white"
+          >
+            <b-list-group flush>
+              <b-list-group-item
+                v-for="event in manageEvents"
+                :key="'recent-event-' + event.id"
+                :to="'/event/' + event.id"
+                class="d-flex justify-content-between align-items-center"
+              >
+                {{ event.title }}
+                <b-badge
+                  variant="dark"
+                  pill
+                >
+                  14
+                </b-badge>
+              </b-list-group-item>
+            </b-list-group>
+          </b-card>
         </b-col>
       </b-row>
     </b-container>
