@@ -51,7 +51,20 @@
             <b-nav-item-dropdown right>
               <template slot="button-content">
                 {{ user }}
+                <b-badge variant="light">
+                  1
+                </b-badge>
               </template>
+              <b-dropdown-item
+                href="#"
+                exact-active-class=""
+              >
+                Notification
+                <b-badge variant="dark">
+                  1
+                </b-badge>
+              </b-dropdown-item>
+              <b-dropdown-divider />
               <b-dropdown-item
                 to="/user-profile"
                 exact-active-class=""
@@ -70,6 +83,7 @@
               >
                 Admin events
               </b-dropdown-item>
+              <b-dropdown-divider />
               <b-dropdown-item @click="logout">
                 Logout
               </b-dropdown-item>
