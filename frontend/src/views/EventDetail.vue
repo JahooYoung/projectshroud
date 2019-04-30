@@ -273,9 +273,6 @@ export default {
         })
         .catch(err => {
           this.event.title = ''
-          if (err.response) {
-            this.makeToast(false, err.response)
-          }
         })
     },
     postRegister (transportId) {
