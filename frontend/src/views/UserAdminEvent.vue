@@ -99,7 +99,7 @@ export default {
         })
     },
     rowClass (item, type) {
-      if (item.checkin_enabled) {
+      if (item && item.checkin_enabled) {
         return 'table-primary'
       }
     }
