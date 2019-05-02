@@ -271,7 +271,7 @@ export default {
           this.event.requireApprove = res.data.require_approve
           this.isAdmin = res.data.event_admin
         })
-        .catch(err => {
+        .catch(() => {
           this.event.title = ''
         })
     },
@@ -288,7 +288,7 @@ export default {
           this.makeToast(true, 'Register successfully')
         })
         .catch(err => {
-          if (err.response) {
+          if (err.response && err.response.status === 400) {
             this.makeToast(false, err.response.data.detail)
           }
         })
