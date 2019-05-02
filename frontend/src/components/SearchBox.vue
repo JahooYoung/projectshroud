@@ -13,7 +13,7 @@
       :highlighting="highlighting"
       :on-hit="onHit"
       class="mr-sm-2"
-      style="width: 25em"
+      style="width: 20em"
     />
   </b-nav-form>
 </template>
