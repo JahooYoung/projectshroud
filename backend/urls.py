@@ -1,9 +1,9 @@
-from django.urls import path, include
+from django.urls import path, re_path, include
 from rest_framework.urlpatterns import format_suffix_patterns
 from backend import views
 
 urlpatterns = [
-    path('', views.index),
+    re_path(r'^(?:[^a].*|a[^p].*|ap[^i].*|api[^/].*)$', views.index),
     path('api/users/<pk>/', views.UserView.as_view()),
 
     path('api/event/', views.EventList.as_view()),
