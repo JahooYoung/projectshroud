@@ -3,8 +3,10 @@
     <b-row>
       <b-col md="8">
         <b-card>
-          <h4 class="mb-3">Edit Profile</h4>
-          <b-form @submit="saveUserProfile">
+          <h4 class="mb-3">
+            Edit Profile
+          </h4>
+          <b-form @submit.prevent="saveUserProfile">
             <b-form-group
               label-cols-sm="4"
               label-cols-lg="3"
@@ -53,6 +55,7 @@
                     v-else
                     variant="warning"
                     @click="activate"
+                    :disabled="isLoading"
                   >
                     activate
                   </b-button>
@@ -63,7 +66,7 @@
             <b-button
               variant="primary"
               type="submit"
-              :disabled="isLoading"
+              :disabled="!modified || isLoading"
             >
               <b-spinner
                 v-show="isLoading"
@@ -79,7 +82,7 @@
           id="modal-activate-email"
           title="Email Activation"
           lazy
-          @ok="refreshUserState"
+          @ok="refresh"
         >
           A confirmation email was sent to <b>{{ email }}</b>. <br>
           Click "ok" after the confirmation succeeds.
@@ -107,9 +110,17 @@ export default {
   name: 'UserProfile',
   data () {
     return {
+      userProfile: null,
       mobile: '',
       realName: '',
       email: ''
+    }
+  },
+  computed: {
+    modified () {
+      return this.userProfile && (this.mobile !== this.userProfile.mobile
+        || this.realName !== this.userProfile.real_name
+        || this.email !== this.userProfile.email)
     }
   },
   created () {
@@ -117,20 +128,51 @@ export default {
   },
   methods: {
     refresh () {
-      this.mobile = this.user
-      this.realName = 'Rio Nem'
-      this.email = 'admin@testshroud.top'
+      this.axios.get('/api/user/')
+        .then(res => {
+          this.userProfile = res.data
+          this.mobile = res.data.mobile
+          this.realName = res.data.real_name
+          this.email = res.data.email
+          this.$store.commit('setUserActivation', res.data.is_activated)
+        })
     },
     activate () {
       // check saved?
+      if (this.modified) {
+        this.$bvToast.toast('Please save your profile first', {
+          title: 'Error',
+          variant: 'danger',
+          autoHideDelay: 5000,
+          solid: true
+        })
+        return
+      }
       // send confirmation email
-      this.$bvModal.show('modal-activate-email')
+      this.axios.get('/api/send/activation/')
+        .then(res => {
+          this.$bvModal.show('modal-activate-email')
+        })
     },
     saveUserProfile () {
-
-    },
-    refreshUserState () {
-
+      this.axios.put(`/api/users/${this.userProfile.id}/`, {
+        mobile: this.mobile,
+        real_name: this.realName,
+        email: this.email
+      })
+        .then(res => {
+          this.$bvToast.toast('Profile saved successfully', {
+            title: 'Success',
+            autoHideDelay: 3000,
+            solid: true
+          })
+          this.refresh()
+        })
+        .catch(err => {
+          if (err.response) {
+            alert(JSON.stringify(err.response.data))
+          }
+        })
     }
   }
 }

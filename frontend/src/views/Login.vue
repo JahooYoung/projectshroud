@@ -76,7 +76,7 @@ export default {
   methods: {
     onSubmit (evt) {
       evt.preventDefault()
-      this.axios.post('api/auth/login/', {
+      this.axios.post('/api/auth/login/', {
         username: this.form.username,
         password: this.form.password
       })

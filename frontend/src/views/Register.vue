@@ -160,7 +160,7 @@ export default {
   methods: {
     onSubmit (evt) {
       evt.preventDefault()
-      this.axios.post('api/auth/registration/', {
+      this.axios.post('/api/auth/registration/', {
         username: this.form.mobile,
         password1: this.form.password,
         password2: this.form.repeatPassword,

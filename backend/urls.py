@@ -41,7 +41,7 @@ urlpatterns = [
 
     # Activation email
     path('api/activate/', views.activate_user),
-    path('api/send/activation', views.send_activation)
+    path('api/send/activation/', views.send_activation)
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

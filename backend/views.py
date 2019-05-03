@@ -118,7 +118,7 @@ class UserProfileView(APIView):
 class UserView(generics.RetrieveUpdateDestroyAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrSelf)
+    permission_classes = (permissions.IsAuthenticated, IsSiteAdminOrSelf)
 
 
 class EventList(generics.ListCreateAPIView):

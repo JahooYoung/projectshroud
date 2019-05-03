@@ -31,19 +31,11 @@ export default {
     this.checkUserActivation()
 
     this.$router.beforeEach((to, from, next) => {
-      if (whiteList.indexOf(to.name) === -1) {
-        if (!this.checkActivated()) {
-          next(false)
-          this.$nprogress.setComplete()
-        } else {
-          next()
-        }
+      if (whiteList.indexOf(to.name) === -1 && !this.checkActivated()) {
+        next(false)
+        this.$nprogress.setComplete()
       } else {
-        if (this.user && (to.name === 'login' || to.name === 'register')) {
-          next('/')
-        } else {
-          next()
-        }
+        next()
       }
     })
 

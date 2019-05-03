@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import VueI18n from 'vue-i18n'
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -10,6 +11,8 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import NProgress from './plugins/nprogress'
 import UserStatus from './plugins/userStatus'
+
+Vue.use(VueI18n)
 
 Vue.use(BootstrapVue)
 

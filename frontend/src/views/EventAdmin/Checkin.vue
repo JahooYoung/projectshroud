@@ -45,12 +45,12 @@ export default {
     onClick () {
       if (this.checkingIn) {
         this.qrcodeURL = null
-        this.axios.delete(`api/checkin/${this.checkinToken}/stop/`)
+        this.axios.delete(`/api/checkin/${this.checkinToken}/stop/`)
           .then(res => {
             this.checkingIn = false
           })
       } else {
-        this.axios.post('api/checkin/start/', {
+        this.axios.post('/api/checkin/start/', {
           event_id: this.$route.params.id
         })
           .then(res => {
@@ -61,7 +61,7 @@ export default {
       }
     },
     refresh () {
-      this.axios.get(`api/event/${this.$route.params.id}/checkin/`)
+      this.axios.get(`/api/event/${this.$route.params.id}/checkin/`)
         .then(res => {
           this.checkingIn = true
           this.checkinToken = res.data.checkin_token
@@ -69,8 +69,9 @@ export default {
         })
     },
     getQrcode () {
+      console.log(`${this.location.origin}/checkin/${this.checkinToken}`)
       this.axios.post('/api/qrcode/', {
-        text: `http://${this.location.host}/#/checkin/${this.checkinToken}`
+        text: `${this.location.origin}/checkin/${this.checkinToken}`
       }, {
         responseType: 'blob'
       })
