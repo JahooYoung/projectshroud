@@ -4,6 +4,7 @@ from backend import views
 
 urlpatterns = [
     re_path(r'^(?:[^a].*|a[^p].*|ap[^i].*|api[^/].*)$', views.index),
+    path('api/user/', views.UserProfileView.as_view()),
     path('api/users/<pk>/', views.UserView.as_view()),
 
     path('api/event/', views.EventList.as_view()),
