@@ -1,8 +1,8 @@
 import Vue from 'vue'
-import VueI18n from 'vue-i18n'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import i18n from './i18n'
 import axios from 'axios'
 
 import BootstrapVue from 'bootstrap-vue'
@@ -11,8 +11,6 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import NProgress from './plugins/nprogress'
 import UserStatus from './plugins/userStatus'
-
-Vue.use(VueI18n)
 
 Vue.use(BootstrapVue)
 
@@ -31,5 +29,6 @@ new Vue({
   router,
   store,
   nprogress: new NProgress({ showSpinner: false }),
+  i18n,
   render: h => h(App)
 }).$mount('#app')

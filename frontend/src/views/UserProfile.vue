@@ -118,9 +118,9 @@ export default {
   },
   computed: {
     modified () {
-      return this.userProfile && (this.mobile !== this.userProfile.mobile
-        || this.realName !== this.userProfile.real_name
-        || this.email !== this.userProfile.email)
+      return this.userProfile && (this.mobile !== this.userProfile.mobile ||
+        this.realName !== this.userProfile.real_name ||
+        this.email !== this.userProfile.email)
     }
   },
   created () {

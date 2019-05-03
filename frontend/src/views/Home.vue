@@ -34,7 +34,7 @@
     <b-container v-else>
       <b-row>
         <b-col cols="8">
-          <h3>Recent Events</h3>
+          <h3>{{ $t('Recent Events') }}</h3>
           <b-card
             v-for="event in futureEvents"
             :key="'recent-event-' + event.id"
@@ -67,7 +67,7 @@
         <b-col cols="4">
           <b-card
             no-body
-            header="Registered Future Events"
+            :header="$t('Registered Future Events')"
             class="mb-3"
             border-variant="primary"
             header-bg-variant="primary"
@@ -87,7 +87,7 @@
           </b-card>
           <b-card
             no-body
-            header="Manage Events"
+            :header="$t('Manage Events')"
             border-variant="dark"
             header-bg-variant="dark"
             header-text-variant="white"

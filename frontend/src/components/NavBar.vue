@@ -8,7 +8,7 @@
       variant="dark"
     >
       <b-navbar-brand to="/">
-        NavBar
+        {{ $t('Website name') }}
       </b-navbar-brand>
 
       <b-navbar-toggle target="nav_collapse" />
@@ -19,30 +19,32 @@
       >
         <b-navbar-nav>
           <b-nav-item to="/">
-            Home
+            {{ $t('Home') }}
           </b-nav-item>
           <b-nav-item to="/event">
-            Event
+            {{ $t('Event') }}
           </b-nav-item>
         </b-navbar-nav>
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
-          <!-- <b-nav-form>
-            <b-form-input size="sm" class="mr-sm-2" type="text" placeholder="Search" />
-            <b-button size="sm" class="my-2 my-sm-0">Search</b-button>
-          </b-nav-form> -->
 
           <SearchBox />
 
           <b-nav-item-dropdown
-            text="Lang"
+            :text="$t('Language')"
             right
           >
-            <b-dropdown-item href="#">
+            <b-dropdown-item
+              :active="$i18n.locale === 'en'"
+              @click="changeLocale('en')"
+            >
               English
             </b-dropdown-item>
-            <b-dropdown-item href="#">
+            <b-dropdown-item
+              :active="$i18n.locale === 'zh'"
+              @click="changeLocale('zh')"
+            >
               简体中文
             </b-dropdown-item>
           </b-nav-item-dropdown>
@@ -59,7 +61,7 @@
                 href="#"
                 exact-active-class=""
               >
-                Notification
+                {{ $t('Notification') }}
                 <b-badge variant="dark">
                   1
                 </b-badge>
@@ -69,29 +71,29 @@
                 to="/user-profile"
                 exact-active-class=""
               >
-                Your Profile
+                {{ $t('Your Profile') }}
               </b-dropdown-item>
               <b-dropdown-item
                 to="/registered-event"
                 exact-active-class=""
               >
-                Registered events
+                {{ $t('Registered events') }}
               </b-dropdown-item>
               <b-dropdown-item
                 to="/admin-event"
                 exact-active-class=""
               >
-                Admin events
+                {{ $t('Admin events') }}
               </b-dropdown-item>
               <b-dropdown-divider />
               <b-dropdown-item @click="logout">
-                Logout
+                {{ $t('Logout') }}
               </b-dropdown-item>
             </b-nav-item-dropdown>
           </div>
           <div v-else>
             <b-nav-item to="/login">
-              Login
+              {{ $t('Login') }}
             </b-nav-item>
           </div>
         </b-navbar-nav>
@@ -102,6 +104,7 @@
 
 <script>
 import SearchBoxLoading from './SearchBoxLoading.vue'
+import { loadLanguageAsync } from '@/i18n'
 
 export default {
   name: 'NavBar',
@@ -118,6 +121,9 @@ export default {
           this.$store.commit('setUserState', null)
           this.$router.push('/')
         })
+    },
+    changeLocale (lang) {
+      loadLanguageAsync(lang)
     }
   }
 }
