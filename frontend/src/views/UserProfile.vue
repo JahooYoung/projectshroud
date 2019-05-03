@@ -54,8 +54,8 @@
                   <b-button
                     v-else
                     variant="warning"
-                    @click="activate"
                     :disabled="isLoading"
+                    @click="activate"
                   >
                     activate
                   </b-button>

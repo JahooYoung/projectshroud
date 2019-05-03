@@ -28,7 +28,6 @@
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
-
           <SearchBox />
 
           <b-nav-item-dropdown
