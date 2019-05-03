@@ -40,18 +40,13 @@
             >
               <b-form-input
                 id="passwordInput"
+                type="password"
                 v-model="form.password"
-<<<<<<< HEAD
                 :state="passwordCheck"
                 required/>
               <b-form-invalid-feedback id="passwordInput">
                 Password can only contain 0-9, a-z and underlines, and must have length 6-16
               </b-form-invalid-feedback>
-=======
-                type="password"
-                required
-              />
->>>>>>> master
             </b-form-group>
           </b-col>
         </b-row>
@@ -72,6 +67,7 @@
             >
               <b-form-input
                 id="repeatPasswordInput"
+                type="password"
                 v-model="form.repeatPassword"
                 :state="repeatPasswordCheck"
                 required/>
@@ -132,13 +128,13 @@
         </b-row>
         <b-row>
           <b-col cols="12" offset-md="3" md="6" offset-lg="4" lg="4">
-            <b-button v-b-modal.modal-registerAccount variant="primary" type="submit" :disabled="!allCheck">
+            <b-button variant="primary" type="submit" :disabled="!allCheck">
               Register
             </b-button>
           </b-col>
         </b-row>
       </b-container>
-      <b-modal id="modal-registerAccount" @ok="onSubmit" title="Register Account">
+      <b-modal ref="modal-registerAccount" @ok="mailConfirm" title="Register Account">
         <p class="my-4">We've sent you an email. Please click on the link in it to confirm your register.</p>
       </b-modal>
 
@@ -152,17 +148,19 @@ export default {
   data () {
     return {
       form: {
-        mobile: '',
-        password: '',
-        repeatPassword: '',
-        email: '',
-        realName: ''
+        mobile: '11111111',
+        password: '111111aaaa',
+        repeatPassword: '111111aaaa',
+        email: 'example@example.com',
+        realName: '123'
       }
     }
   },
   computed: {
     mobileCheck() {
-      return /^[0-9]+$/.test(this.form.mobile);
+      if(!(/^[0-9]+$/.test(this.form.mobile)))
+        return false;
+      return true;
     },
     passwordCheck() {
       return this.form.password.length>=6 && this.form.password.length<=16 && /^\w+$/.test(this.form.password);
@@ -180,6 +178,14 @@ export default {
     }
   },
   methods: {
+    mounted (evt) {
+
+    },
+    mailConfirm (evt) {
+      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+      alert('Email have been sent')
+      // this.$refs["modal-registerAccount"].show()
+    },
     onSubmit (evt) {
       evt.preventDefault()
       this.axios.post('api/auth/registration/', {
@@ -190,24 +196,31 @@ export default {
         real_name: this.form.realName
       })
         .then(res => {
+          // this.$refs["modal-registerAccount"].show()
           if (res.status === 201) {
             this.$store.commit('setUserState', {
               user: this.form.mobile,
               key: res.data.key
             })
-            this.$router.go(-2)
+            this.mailConfirm(evt);
+            this.$router.go(-1)
+            evt.preventDefault()
           } else {
+            console.log(res.data);
             alert(JSON.stringify(res.data))
             evt.preventDefault()
           }
         })
         .catch(err => {
           console.log(err)
+          alert(JSON.stringify(err))
           alert('register failed')
           evt.preventDefault()
-
         })
-        .catch(err => err.response && alert(JSON.stringify(err.response.data)))
+        .catch(err => {
+          alert("aaaa")
+          err.response && alert(JSON.stringify(err.response.data))
+        })
     }
   }
 }

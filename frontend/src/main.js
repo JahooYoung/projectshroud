@@ -16,9 +16,6 @@ Vue.use(BootstrapVue)
 
 Vue.use(Vuelidate)
 
-library.add(faTimesCircle, faCheckCircle)
-Vue.component('font-awesome-icon', FontAwesomeIcon)
-
 Vue.use(NProgress, {
   latencyThreshold: 200, // Number of ms before progressbar starts showing, default: 100,
   router: true, // Show progressbar when navigating routes, default: true
