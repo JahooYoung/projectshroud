@@ -284,10 +284,10 @@ export default {
 
 <style scoped>
 div.input-group input.form-control.type-ahead-select {
-  border-radius: 15px;
-  background: #fff url(../assets/search.png) 8px 5px no-repeat;
+  border-radius: .25rem;
+  background: #fff url(../assets/search.png) 5px 5px no-repeat;
   background-size: 20px;
-  padding-left: 30px;
+  padding-left: 28px;
   /* border-top-right-radius: .25rem;
   border-bottom-right-radius: .25rem; */
 }

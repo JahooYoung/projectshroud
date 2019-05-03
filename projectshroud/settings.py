@@ -180,7 +180,10 @@ EMAIL_HOST_PASSWORD = '5LingFournoreply'
 DEFAULT_FROM_EMAIL = 'noreply <%s>' % EMAIL_HOST_USER
 
 SITE_OFFICIAL_NAME = 'TESTSHROUD'
-SITE_HOST_NAME = 'localhost:8000'
+if environ.get('DJANGO_DB') == 'mysql':
+    SITE_HOST_NAME = '47.94.219.224:8000'
+else:
+    SITE_HOST_NAME = 'localhost:8000'
 SITE_DOMAIN_NAME = 'testshroud.top'
 
-USER_ACTIVATE_URL = '/#/send/activation/'
+USER_ACTIVATE_URL = '/send/activation/'

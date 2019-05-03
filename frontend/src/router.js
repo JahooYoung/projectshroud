@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from './store'
 
 Vue.use(Router)
 
@@ -84,14 +85,37 @@ export default new Router({
       component: () => import(/* webpackChunkName: "user" */ './views/UserProfile.vue')
     },
     {
+      path: '/send/activation/',
+      name: 'sendActivation',
+      component: () => import(/* webpackChunkName: "user" */ './views/SendActivaion.vue'),
+      beforeEnter: (to, from, next) => {
+        store.commit('setUserState', null)
+        next()
+      }
+    },
+    {
       path: '/login',
       name: 'login',
-      component: () => import(/* webpackChunkName: "login" */ './views/Login.vue')
+      component: () => import(/* webpackChunkName: "login" */ './views/Login.vue'),
+      beforeEnter: (to, from, next) => {
+        if (store.state.user) {
+          next('/')
+        } else {
+          next()
+        }
+      }
     },
     {
       path: '/register',
       name: 'register',
-      component: () => import(/* webpackChunkName: "register" */ './views/Register.vue')
+      component: () => import(/* webpackChunkName: "register" */ './views/Register.vue'),
+      beforeEnter: (to, from, next) => {
+        if (store.state.user) {
+          next('/')
+        } else {
+          next()
+        }
+      }
     },
     {
       path: '*',

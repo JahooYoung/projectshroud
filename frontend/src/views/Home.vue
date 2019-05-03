@@ -1,10 +1,11 @@
 <template>
-  <div class="home">
+  <div>
     <b-jumbotron
-      v-if="user === null"
+      v-if="!user"
       fluid
       container-fluid
-      bg-variant="light"
+      header-level="4"
+      bg-variant="white"
     >
       <template slot="header">
         Academic Conference
@@ -33,8 +34,13 @@
 
     <b-container v-else>
       <b-row>
-        <b-col cols="8">
-          <h3>Recent Events</h3>
+        <b-col
+          cols="12"
+          order="2"
+          lg="8"
+          order-lg="1"
+        >
+          <h3>{{ $t('Recent Events') }}</h3>
           <b-card
             v-for="event in futureEvents"
             :key="'recent-event-' + event.id"
@@ -64,10 +70,16 @@
           </b-card>
         </b-col>
 
-        <b-col cols="4">
+        <b-col
+          cols="12"
+          order="1"
+          lg="4"
+          order-lg="2"
+          class="mb-3"
+        >
           <b-card
             no-body
-            header="Registered Future Events"
+            :header="$t('Registered Future Events')"
             class="mb-3"
             border-variant="primary"
             header-bg-variant="primary"
@@ -87,7 +99,7 @@
           </b-card>
           <b-card
             no-body
-            header="Manage Events"
+            :header="$t('Manage Events')"
             border-variant="dark"
             header-bg-variant="dark"
             header-text-variant="white"

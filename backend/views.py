@@ -107,10 +107,18 @@ class DummyView(APIView):
         return Response(content)
 
 
+class UserProfileView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, format=None):
+        serializer = UserProfileSerializer(instance=request.user)
+        return Response(serializer.data)
+
+
 class UserView(generics.RetrieveUpdateDestroyAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrSelf)
+    permission_classes = (permissions.IsAuthenticated, IsSiteAdminOrSelf)
 
 
 class EventList(generics.ListCreateAPIView):

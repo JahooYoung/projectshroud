@@ -3,7 +3,8 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from backend import views
 
 urlpatterns = [
-    re_path(r'^(?:[^a].*|a[^p].*|ap[^i].*|api[^/].*)$', views.index),
+    re_path(r'^(?:|[^a].*|a[^p].*|ap[^i].*|api[^/].*)$', views.index),
+    path('api/user/', views.UserProfileView.as_view()),
     path('api/users/<pk>/', views.UserView.as_view()),
 
     path('api/event/', views.EventList.as_view()),
@@ -40,7 +41,7 @@ urlpatterns = [
 
     # Activation email
     path('api/activate/', views.activate_user),
-    path('api/send/activation', views.send_activation)
+    path('api/send/activation/', views.send_activation)
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -2,7 +2,7 @@
   <b-nav-form>
     <div
       class="input-group mr-sm-2"
-      style="width: 25em"
+      style="width: 20em"
     >
       <input
         class="form-control form-control-sm type-ahead-select taller"
