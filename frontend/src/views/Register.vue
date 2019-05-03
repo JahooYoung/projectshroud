@@ -13,7 +13,6 @@
             >
               <b-form-input
                 id="mobileInput"
-                type="text"
                 v-model="form.mobile"
                 :state="mobileCheck"
                 placeholder="Enter a number"
@@ -41,13 +40,18 @@
             >
               <b-form-input
                 id="passwordInput"
-                type="password"
                 v-model="form.password"
+<<<<<<< HEAD
                 :state="passwordCheck"
                 required/>
               <b-form-invalid-feedback id="passwordInput">
                 Password can only contain 0-9, a-z and underlines, and must have length 6-16
               </b-form-invalid-feedback>
+=======
+                type="password"
+                required
+              />
+>>>>>>> master
             </b-form-group>
           </b-col>
         </b-row>
@@ -68,7 +72,6 @@
             >
               <b-form-input
                 id="repeatPasswordInput"
-                type="password"
                 v-model="form.repeatPassword"
                 :state="repeatPasswordCheck"
                 required/>
@@ -95,7 +98,6 @@
             >
               <b-form-input
                 id="realNameInput"
-                type="realName"
                 v-model="form.realName"
               />
             </b-form-group>
@@ -118,7 +120,6 @@
             >
               <b-form-input
                 id="emailInput"
-                type="email"
                 v-model="form.email"
                 :state="emailCheck"
                 placeholder="example@example.com"

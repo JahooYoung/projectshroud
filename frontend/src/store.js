@@ -30,7 +30,7 @@ axios.interceptors.request.use(config => {
 // }
 
 const readLocalStorage = store => {
-  if (window.localStorage && window.localStorage.user !== '') {
+  if (window.localStorage && window.localStorage.user) {
     store.commit('setUserState', {
       user: window.localStorage.user,
       key: window.localStorage.token
@@ -58,6 +58,7 @@ export default new Vuex.Store({
         }
       } else {
         state.user = null
+        state.userActivated = false
         userToken = null
         if (window.localStorage) {
           window.localStorage.user = ''

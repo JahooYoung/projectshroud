@@ -11,19 +11,15 @@
         <b-row>
           <b-col cols="9">
             <b-card header="Event Description">
-              <b-card-title v-if="event.title !== ''">
-                {{ event.title }}
-              </b-card-title>
+              <div
+                v-if="event.title"
+                class="markdown-body"
+                style="text-align: initial;"
+                v-html="event.description_html"
+              />
               <b-card-title v-else>
                 Event is not existed
               </b-card-title>
-              <p
-                v-if="event.title !== ''"
-                style="text-align: left;"
-                v-html="event.description.replace('\n', '<br/>')"
-              >
-                <!-- {{ event.description }} -->
-              </p>
             </b-card>
           </b-col>
           <b-col
@@ -50,9 +46,9 @@
                     @click="checkActivated() && $bvModal.show('modal-register')"
                   >
                     <b-spinner
+                      v-show="isLoading"
                       small
                       type="grow"
-                      v-show="isLoading"
                     />
                     Register
                   </b-button>
@@ -63,9 +59,9 @@
                     @click="checkActivated() && $bvModal.show('modal-unregister')"
                   >
                     <b-spinner
+                      v-show="isLoading"
                       small
                       type="grow"
-                      v-show="isLoading"
                     />
                     Unregister
                   </b-button>
@@ -86,8 +82,8 @@
 
       <b-modal
         id="modal-register"
-        @ok="register"
         title="Basic infomation"
+        @ok="register"
       >
         <b-form-group
           label="Your Name:"
@@ -138,9 +134,9 @@
           label-for="input-5"
         >
           <b-form-input
-            type="datetime-local"
             id="input-5"
             v-model="attendee.depart_time"
+            type="datetime-local"
             placeholder="Enter depart time"
           />
         </b-form-group>
@@ -161,9 +157,9 @@
           label-for="input-7"
         >
           <b-form-input
-            type="datetime-local"
             id="input-7"
             v-model="attendee.arrival_time"
+            type="datetime-local"
             placeholder="Enter arrival time"
           />
         </b-form-group>
@@ -181,8 +177,8 @@
       </b-modal>
       <b-modal
         id="modal-unregister"
-        @ok="unregister"
         title="Unregister"
+        @ok="unregister"
       >
         <p class="my-4">
           Are you sure to unregister?
@@ -193,6 +189,8 @@
 </template>
 
 <script>
+import 'mavon-editor/dist/markdown/github-markdown.min.css'
+
 function date2input (date) {
   date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
   date.setSeconds(0, 0)
@@ -229,8 +227,9 @@ export default {
         { value: null, text: '未决定' }
       ],
       event: {
-        title: '',
+        title: null,
         description: '',
+        description_html: '',
         startTime: '',
         endTime: '',
         location: '',
@@ -240,14 +239,14 @@ export default {
       }
     }
   },
+  watch: {
+    '$route': 'refresh'
+  },
   created () {
     this.refresh()
       .then(() => {
         this.firstLoading = false
       })
-  },
-  watch: {
-    '$route': 'refresh'
   },
   methods: {
     makeToast (succeed, message) {
@@ -263,6 +262,7 @@ export default {
         .then(res => {
           this.event.title = res.data.title
           this.event.description = res.data.description
+          this.event.description_html = res.data.description_html
           this.event.startTime = date2input(new Date(res.data.start_time))
           this.event.endTime = date2input(new Date(res.data.end_time))
           this.event.location = res.data.location
@@ -271,11 +271,8 @@ export default {
           this.event.requireApprove = res.data.require_approve
           this.isAdmin = res.data.event_admin
         })
-        .catch(err => {
+        .catch(() => {
           this.event.title = ''
-          if (err.response) {
-            this.makeToast(false, err.response)
-          }
         })
     },
     postRegister (transportId) {
@@ -291,7 +288,7 @@ export default {
           this.makeToast(true, 'Register successfully')
         })
         .catch(err => {
-          if (err.response) {
+          if (err.response && err.response.status === 400) {
             this.makeToast(false, err.response.data.detail)
           }
         })

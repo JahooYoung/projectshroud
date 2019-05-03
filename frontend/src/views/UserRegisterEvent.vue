@@ -39,9 +39,9 @@
         >
           <div
             slot="table-busy"
-            class="text-center text-danger my-2"
+            class="text-center text-primary my-2"
           >
-            <b-spinner class="align-middle" />
+            <b-spinner class="align-middle mr-2" />
             <strong>Loading...</strong>
           </div>
 

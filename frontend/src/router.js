@@ -3,12 +3,13 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-const router = new Router({
+export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
       name: 'home',
-      component: () => import(/* webpackChunkName: "event" */ './views/Home.vue')
+      component: () => import(/* webpackChunkName: "home" */ './views/Home.vue')
     },
     {
       path: '/event',
@@ -39,6 +40,11 @@ const router = new Router({
           path: 'info',
           name: 'eventAdminInfo',
           component: () => import(/* webpackChunkName: "eventadmin" */ './views/EventAdmin/Info.vue')
+        },
+        {
+          path: 'description',
+          name: 'eventAdminDescription',
+          component: () => import(/* webpackChunkName: "eventadmin" */ './views/EventAdmin/Description.vue')
         },
         {
           path: 'administrator',
@@ -95,5 +101,3 @@ const router = new Router({
 })
 
 export const whiteList = ['home', 'login', 'register', 'event', 'eventDetail', 'userProfile']
-
-export default router

@@ -1,11 +1,11 @@
 <template>
   <div class="navbar-div">
     <b-navbar
+      id="nav"
       fixed="top"
       toggleable="md"
       type="dark"
       variant="dark"
-      id="nav"
     >
       <b-navbar-brand to="/">
         NavBar
@@ -14,8 +14,8 @@
       <b-navbar-toggle target="nav_collapse" />
 
       <b-collapse
-        is-nav
         id="nav_collapse"
+        is-nav
       >
         <b-navbar-nav>
           <b-nav-item to="/">
@@ -51,7 +51,20 @@
             <b-nav-item-dropdown right>
               <template slot="button-content">
                 {{ user }}
+                <b-badge variant="light">
+                  1
+                </b-badge>
               </template>
+              <b-dropdown-item
+                href="#"
+                exact-active-class=""
+              >
+                Notification
+                <b-badge variant="dark">
+                  1
+                </b-badge>
+              </b-dropdown-item>
+              <b-dropdown-divider />
               <b-dropdown-item
                 to="/user-profile"
                 exact-active-class=""
@@ -70,6 +83,7 @@
               >
                 Admin events
               </b-dropdown-item>
+              <b-dropdown-divider />
               <b-dropdown-item @click="logout">
                 Logout
               </b-dropdown-item>
@@ -87,12 +101,15 @@
 </template>
 
 <script>
-import SearchBox from './SearchBox'
+import SearchBoxLoading from './SearchBoxLoading.vue'
 
 export default {
   name: 'NavBar',
   components: {
-    SearchBox
+    SearchBox: () => ({
+      component: import('./SearchBox.vue'),
+      loading: SearchBoxLoading
+    })
   },
   methods: {
     logout () {

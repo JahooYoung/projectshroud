@@ -16,6 +16,7 @@
     "bootstrap": "^4.3.1",
     "bootstrap-vue": "^2.0.0-rc.19",
     "instantsearch.css": "^7.3.1",
+    "mavon-editor": "^2.7.3",
     "nprogress": "^0.2.0",
     "vue": "^2.6.10",
     "vue-flatpickr-component": "^8.1.2",

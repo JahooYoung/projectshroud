@@ -107,6 +107,14 @@ class DummyView(APIView):
         return Response(content)
 
 
+class UserProfileView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, format=None):
+        serializer = UserProfileSerializer(instance=request.user)
+        return Response(serializer.data)
+
+
 class UserView(generics.RetrieveUpdateDestroyAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = UserProfileSerializer
@@ -387,6 +395,7 @@ class TransportCreateView(generics.CreateAPIView):
         if 'user_id' in data:
             user = get_user_model().objects.get(id=data['user_id'])
 
+        event = Event.objects.get(id=data.get('event_id'))
         serializer.save(user=user, event=event)
 
 
