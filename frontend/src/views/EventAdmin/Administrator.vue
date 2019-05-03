@@ -20,7 +20,7 @@
           variant="outline-dark"
           href="#"
         >
-          Add administrator
+          Add admin
         </b-button>
       </template>
 

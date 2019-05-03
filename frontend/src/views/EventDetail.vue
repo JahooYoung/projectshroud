@@ -9,7 +9,12 @@
     <div v-else>
       <b-container>
         <b-row>
-          <b-col cols="9">
+          <b-col
+            cols="12"
+            order="2"
+            lg="9"
+            order-lg="1"
+          >
             <b-card header="Event Description">
               <div
                 v-if="event.title"
@@ -24,11 +29,14 @@
           </b-col>
           <b-col
             v-if="event.title !== ''"
-            cols="3"
+            cols="12"
+            order="1"
+            lg="3"
+            order-lg="2"
           >
             <b-card
               header="Event Information"
-              class="right-card"
+              class="mb-3 right-card"
             >
               <b-card-body>
                 <h6> {{ event.title }} </h6>
@@ -356,8 +364,10 @@ export default {
 </script>
 
 <style scoped>
-.right-card {
-  position: fixed;
-  margin-right: 3em;
+@media (min-width: 992px) {
+  .right-card {
+    position: fixed;
+    margin-right: 2em;
+  }
 }
 </style>

@@ -16,10 +16,9 @@
     <b-img
       v-if="checkingIn && qrcodeURL"
       center
-      style="margin-top: 10px"
-      height="500px"
+      fluid
       :src="qrcodeURL"
-      alt="Center image"
+      alt="Qrcode cannot display correctly"
     />
   </div>
 </template>

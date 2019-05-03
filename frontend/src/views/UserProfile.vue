@@ -1,7 +1,10 @@
 <template>
   <b-container>
     <b-row>
-      <b-col md="8">
+      <b-col
+        md="8"
+        class="mb-3"
+      >
         <b-card>
           <h4 class="mb-3">
             Edit Profile
@@ -88,7 +91,7 @@
           Click "ok" after the confirmation succeeds.
         </b-modal>
       </b-col>
-      <b-col cols="4">
+      <b-col md="4">
         <b-card
           :title="realName"
           img-src="https://placekitten.com/g/400/200"

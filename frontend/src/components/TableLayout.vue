@@ -1,21 +1,31 @@
 <template>
   <b-row>
-    <b-input-group class="w-25 my-3">
-      <b-form-input
-        v-model="filter"
-        :placeholder="`Search ${itemName}`"
-      />
-      <b-input-group-append>
-        <b-button
-          :disabled="!filter"
-          @click="filter = ''"
-        >
-          Clear
-        </b-button>
-      </b-input-group-append>
-    </b-input-group>
-
-    <div class="ml-auto my-3">
+    <b-col
+      cols="12"
+      md="4"
+      class="px-0 my-3"
+    >
+      <b-input-group>
+        <b-form-input
+          v-model="filter"
+          :placeholder="`Search ${itemName}`"
+        />
+        <b-input-group-append>
+          <b-button
+            :disabled="!filter"
+            @click="filter = ''"
+          >
+            Clear
+          </b-button>
+        </b-input-group-append>
+      </b-input-group>
+    </b-col>
+    <b-col
+      cols="12"
+      md="8"
+      class="px-0 my-3"
+      align="right"
+    >
       <slot name="buttons" />
 
       <b-button
@@ -25,7 +35,7 @@
       >
         Refresh
       </b-button>
-    </div>
+    </b-col>
 
     <slot
       :id="itemName + '-table-layout'"

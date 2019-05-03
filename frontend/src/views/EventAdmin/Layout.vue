@@ -2,11 +2,18 @@
   <div>
     <b-container fluid>
       <b-row>
-        <b-col cols="2">
+        <b-col
+          lg="3"
+          xl="2"
+        >
           <b-card
             bg-variant="light"
-            class="event-detail-sidebar"
+            class="event-detail-sidebar mb-3"
           >
+            <div class="no-lg">
+              Tip: use computer to get better manage experience
+              <hr>
+            </div>
             <b-nav
               vertical
               pills
@@ -61,7 +68,10 @@
             </b-nav>
           </b-card>
         </b-col>
-        <b-col cols="10">
+        <b-col
+          lg="9"
+          xl="10"
+        >
           <transition
             name="fade"
             mode="out-in"
@@ -125,13 +135,18 @@ export default {
 </script>
 
 <style>
-.event-detail-sidebar {
-  position: sticky;
-  top: 4rem;
-  z-index: 500;
-  height: calc(100vh - 5rem);
-  /* padding-right: 1px; */
-  /* border-right: 1px solid rgba(0, 0, 0, 0.1); */
-  order: 0;
+@media (min-width: 992px) {
+  .event-detail-sidebar {
+    position: sticky;
+    top: 4rem;
+    z-index: 500;
+    height: calc(100vh - 5rem);
+    /* padding-right: 1px; */
+    /* border-right: 1px solid rgba(0, 0, 0, 0.1); */
+    order: 0;
+  }
+  .no-lg {
+    display: none;
+  }
 }
 </style>
