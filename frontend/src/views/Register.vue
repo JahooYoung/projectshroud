@@ -16,9 +16,10 @@
                 type="text"
                 v-model="form.mobile"
                 :state="mobileCheck"
+                placeholder="Enter a number"
                 required/>
               <b-form-invalid-feedback id="mobileInput">
-                Enter a number
+                <!--Enter a number-->
               </b-form-invalid-feedback>
             </b-form-group>
           </b-col>
@@ -96,7 +97,6 @@
                 id="realNameInput"
                 type="realName"
                 v-model="form.realName"
-                required
               />
             </b-form-group>
           </b-col>
@@ -121,6 +121,7 @@
                 type="email"
                 v-model="form.email"
                 :state="emailCheck"
+                placeholder="example@example.com"
                 required/>
               <b-form-invalid-feedback id="emailInput">
                 invalid email
