@@ -24,11 +24,10 @@ export default {
     NavBar
     // Footer
   },
-  watch: {
-    'user': 'checkUserActivation'
-  },
   created () {
-    this.checkUserActivation()
+    if (this.user) {
+      this.checkUserActivation()
+    }
 
     this.$router.beforeEach((to, from, next) => {
       if (whiteList.indexOf(to.name) === -1 && !this.checkActivated()) {
@@ -97,36 +96,6 @@ export default {
     })
 
     document.querySelector('#first-page-spinner').remove()
-  },
-  methods: {
-    checkUserActivation () {
-      if (!this.user) {
-        return
-      }
-      this.axios.get('/api/dummy/')
-        .then(res => {
-          this.$store.commit('setUserActivation', res.data.is_activated)
-          if (!res.data.is_activated) {
-            this.$bvToast.toast('Click here to activate your account!', {
-              title: 'Account not activated',
-              variant: 'warning',
-              autoHideDelay: 5000,
-              solid: true,
-              to: '/user-profile'
-            })
-          }
-        })
-        .catch(() => {
-          this.$store.commit('setUserState', null)
-          this.$bvToast.toast('Your signin seems expired, click here to login again!', {
-            title: 'Error',
-            variant: 'danger',
-            autoHideDelay: 5000,
-            solid: true,
-            to: '/login'
-          })
-        })
-    }
   }
 }
 </script>

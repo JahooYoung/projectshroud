@@ -679,6 +679,13 @@
   dependencies:
     "@fortawesome/fontawesome-common-types" "^0.2.17"
 
+"@fortawesome/free-regular-svg-icons@^5.8.1":
+  version "5.8.1"
+  resolved "https://registry.npm.taobao.org/@fortawesome/free-regular-svg-icons/download/@fortawesome/free-regular-svg-icons-5.8.1.tgz#9477a973fe3f681f871375fa95ff32a87dcb5111"
+  integrity sha1-lHepc/4/aB+HE3X6lf8yqH3LURE=
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "^0.2.17"
+
 "@fortawesome/free-solid-svg-icons@^5.8.1":
   version "5.8.1"
   resolved "https://registry.npm.taobao.org/@fortawesome/free-solid-svg-icons/download/@fortawesome/free-solid-svg-icons-5.8.1.tgz#086c70f95b34a4bcf6f50ff1078d46e53486eb52"

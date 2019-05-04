@@ -172,6 +172,9 @@ export default {
             user: this.form.mobile,
             key: res.data.key
           })
+          return this.checkUserActivation()
+        })
+        .then(() => {
           this.$router.back()
         })
         .catch(err => err.response && alert(JSON.stringify(err.response.data)))

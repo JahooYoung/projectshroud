@@ -85,7 +85,10 @@ export default {
             user: this.form.username,
             key: res.data.key
           })
-          this.$router.back()
+          return this.checkUserActivation()
+        })
+        .then(() => {
+            this.$router.back()
         })
         .catch(err => {
           if (err.response) {
