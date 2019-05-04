@@ -408,6 +408,9 @@ class TransportView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class EventCheckInToken(APIView):
+
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsOwner|IsEventHostAdmin|IsAdminUser)
+
     def get(self, request, pk, format=None):
         try:
             event = Event.objects.get(pk=pk)
