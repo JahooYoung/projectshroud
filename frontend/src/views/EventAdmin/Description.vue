@@ -78,8 +78,14 @@ export default {
 
 <style scoped>
 .md-editor {
-  min-height: calc(100vh - 5rem);
-  max-height: calc(100vh - 5rem);
+  min-height: calc(100vh - 6rem);
+  max-height: calc(100vh - 6rem);
   z-index: 20;
+}
+</style>
+
+<style>
+.auto-textarea-input, .auto-textarea-input:focus {
+  box-shadow: none;
 }
 </style>

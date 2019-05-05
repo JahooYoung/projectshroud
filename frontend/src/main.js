@@ -6,7 +6,7 @@ import i18n from './i18n'
 import axios from 'axios'
 
 import BootstrapVue from 'bootstrap-vue'
-import 'bootstrap/dist/css/bootstrap.css'
+import './style.scss'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import NProgress from './plugins/nprogress'

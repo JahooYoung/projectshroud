@@ -41,7 +41,7 @@
           order-lg="1"
         >
           <h3>{{ $t('Recent Events') }}</h3>
-          <b-card
+          <div
             v-for="event in futureEvents"
             :key="'recent-event-' + event.id"
             no-body
@@ -67,7 +67,7 @@
               Short description here?
             </p>
             <hr>
-          </b-card>
+          </div>
         </b-col>
 
         <b-col

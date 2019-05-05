@@ -12,6 +12,7 @@
         />
         <b-input-group-append>
           <b-button
+            size="sm"
             :disabled="!filter"
             @click="filter = ''"
           >

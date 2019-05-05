@@ -2,6 +2,11 @@
   <b-container>
     <h2>Attendee List</h2>
 
+    <b-progress
+      :value="30"
+      class="my-2"
+    />
+
     <TableLayout
       item-name="attendee"
       :refresh="refresh"
