@@ -88,7 +88,7 @@ export default {
           return this.checkUserActivation()
         })
         .then(() => {
-            this.$router.back()
+          this.$router.back()
         })
         .catch(err => {
           if (err.response) {
