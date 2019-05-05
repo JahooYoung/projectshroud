@@ -75,7 +75,7 @@ export default new Router({
       component: () => import(/* webpackChunkName: "user" */ './views/UserAdminEvent.vue')
     },
     {
-      path: '/checkin/:token',
+      path: '/checkin',
       name: 'checkin',
       component: () => import(/* webpackChunkName: "checkin" */ './views/CheckIn.vue')
     },
@@ -124,4 +124,4 @@ export default new Router({
   ]
 })
 
-export const whiteList = ['home', 'login', 'register', 'event', 'eventDetail', 'userProfile']
+export const whiteList = ['home', 'login', 'register', 'event', 'eventDetail', 'userProfile', 'checkin']

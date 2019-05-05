@@ -28,6 +28,7 @@
       <b-button
         variant="dark"
         :disabled="isLoading"
+        :to="`/event/${$route.query.id}`"
       >
         Return to event info
       </b-button>
@@ -58,11 +59,11 @@ export default {
   },
   methods: {
     checkin () {
-      if (!this.checkLogin()) {
+      if (!this.checkActivated()) {
         return
       }
       this.msg = 'Checking in...'
-      const token = this.$route.params.token
+      const token = this.$route.query.token
       this.axios.get(`/api/checkin/${token}/`)
         .then(res => this.axios.post(`/api/checkin/${token}/`))
         .then(res => {
@@ -70,12 +71,21 @@ export default {
           this.checked = true
         })
         .catch(err => {
+          this.msg = null
           if (err.response) {
-            this.msg = err.response.data.msg
-            if (this.msg === 'Already checked in.') {
-              this.checked = true
+            switch (err.response.status) {
+              case 400:
+                this.msg = err.response.data.msg
+                if (this.msg === 'Already checked in.') {
+                  this.checked = true
+                }
+                break
+              case 404:
+                this.msg = 'Please scan the QRcode again'
+                break
             }
-          } else {
+          }
+          if (!this.msg) {
             this.msg = 'Failed to checkin'
           }
         })

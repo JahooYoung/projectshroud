@@ -13,7 +13,7 @@ UserStatus.install = function (Vue, options = {}) {
     methods: {
       checkLogin () {
         if (!this.user) {
-          this.$bvToast.toast('You need to login first', {
+          this.$root.$bvToast.toast('You need to login first', {
             title: 'Not login yet',
             variant: 'warning',
             autoHideDelay: 4000,
@@ -29,7 +29,7 @@ UserStatus.install = function (Vue, options = {}) {
           return false
         }
         if (!this.userActivated) {
-          this.$bvToast.toast('You need to activate first', {
+          this.$root.$bvToast.toast('You need to activate first', {
             title: 'Not activated yet',
             variant: 'warning',
             autoHideDelay: 4000,
