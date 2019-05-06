@@ -4,9 +4,9 @@ import axios from 'axios'
 
 Vue.prototype.axios = axios
 
-const CSRFRegex = /.*csrftoken=([^;.]*).*$/
 let userToken = null
 
+const CSRFRegex = /.*csrftoken=([^;.]*).*$/
 axios.interceptors.request.use(config => {
   // only receive json
   config.headers['Content-Type'] = 'application/json'
@@ -51,6 +51,7 @@ export default new Vuex.Store({
     setUserState (state, userState) {
       if (userState !== null) {
         state.user = userState.user
+        state.userActivated = true
         userToken = userState.key
         if (window.localStorage) {
           window.localStorage.user = state.user
@@ -71,6 +72,9 @@ export default new Vuex.Store({
     },
     setLoading (state, isLoading) {
       state.isLoading = isLoading
+    },
+    clearUserToken (state) {
+      userToken = null
     }
   },
   actions: {
