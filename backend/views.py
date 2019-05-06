@@ -253,6 +253,53 @@ class UserEventRegister(generics.CreateAPIView):
             send_registered_email(user, event, approved=True)
 
 
+class UserEventConflict(APIView):
+    queryset = UserRegisterEvent.objects.all()
+    serializer_class = UserRegisterEventSerializer
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrSelf|IsSiteAdminOrEventManager)
+
+    def post(self, request, format=None):
+        data = request.data
+
+        user = request.user
+        if 'user_id' in data:
+            try:
+                user = get_user_model().objects.get(id=data.get('user_id'))
+            except get_user_model().DoesNotExist:
+                raise ValidationError('User Not Found.')
+
+        event = Event.objects.get(id=data.get('event_id'))
+
+        if check_event_registered(user, event):
+            if check_event_register_approved(user, event):
+                raise ValidationError('Already Registered this event.')
+            else:
+                raise ValidationError('Already applied this event, waiting for approval.')
+
+        data = {}
+        lst = UserRegisterEvent.objects.filter(user=user,
+                                            event__end_time__gt=event.start_time,
+                                            event__end_time__lte=event.end_time)
+        if lst.exists:
+            data['conflict'] = True
+            if 'user_id' not in data:
+                data['user_register_event'] = UserRegisterEventSerializer(lst[0]).data
+            return Response(data)
+
+        lst = serRegisterEvent.objects.filter(user=user,
+                                            event__start_time__gte=event.start_time,
+                                            event__start_time__lt=event.end_time)
+        if lst.exists:
+            data['conflict'] = True
+            if 'user_id' not in data:
+                data['user_register_event'] = UserRegisterEventSerializer(lst[0]).data
+            return Response(data)
+
+        data['conflict'] = False
+
+        return Response(data)
+
+
 class ApproveEventRegister(APIView):
     queryset = UserRegisterEvent.objects.all()
     serializer_class = UserRegisterEventSerializer
@@ -350,9 +397,14 @@ class EventDetail(generics.RetrieveUpdateDestroyAPIView):
         data = self.retrieve(request, *args, **kwargs).data
 
         data['event_admin'] = check_is_admin(request.user, obj)
-        data['event_registered'] = check_event_registered(request.user, obj)
+        data['event_registered'] = True
+        try:
+            ure_obj = UserRegisterEvent.objects.get(user=request.user, event=obj)
+        except UserRegisterEvent.DoesNotExist:
+            data['event_registered'] = False
+
         if data['event_registered']:
-            data['user_register_event'] = UserRegisterEventSerializer(UserRegisterEvent.objects.get(user=request.user, event=obj)).data
+            data['user_register_event'] = UserRegisterEventSerializer(ure_obj).data
         return Response(data)
 
 
@@ -398,7 +450,14 @@ class TransportCreateView(generics.CreateAPIView):
             user = get_user_model().objects.get(id=data['user_id'])
 
         event = Event.objects.get(id=data.get('event_id'))
-        serializer.save(user=user, event=event)
+        instance = serializer.save(user=user, event=event)
+
+        try:
+            ure_obj = UserRegisterEvent.objects.get(user=user, event=event)
+            ure_obj.transport = instance
+            ure_obj.save()
+        except UserRegisterEvent.DoesNotExist:
+            pass
 
 
 class TransportView(generics.RetrieveUpdateDestroyAPIView):

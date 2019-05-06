@@ -12,6 +12,7 @@ urlpatterns = [
     path('api/event/ongoing/', views.OngoingEventList.as_view()),
     path('api/event/future/', views.FutureEventList.as_view()),
 
+    path('api/reg-conflict/', views.UserEventConflict.as_view()),
     path('api/register/', views.UserEventRegister.as_view()),
     path('api/approve/', views.ApproveEventRegister.as_view()),
     path('api/unregister/', views.UserEventUnregister.as_view()),
