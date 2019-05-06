@@ -1938,6 +1938,11 @@ camel-case@3.0.x:
     no-case "^2.2.0"
     upper-case "^1.1.1"
 
+camelcase@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.npm.taobao.org/camelcase/download/camelcase-1.2.1.tgz#9bb5304d2e0b56698b2c758b08a3eaa9daa58a39"
+  integrity sha1-m7UwTS4LVmmLLHWLCKPqqdqlijk=
+
 camelcase@^4.1.0:
   version "4.1.0"
   resolved "https://registry.npm.taobao.org/camelcase/download/camelcase-4.1.0.tgz#d545635be1e33c542649c69173e5de6acfae34dd"
@@ -8188,6 +8193,13 @@ upper-case@^1.1.1:
   resolved "https://registry.npm.taobao.org/upper-case/download/upper-case-1.1.3.tgz#f6b4501c2ec4cdd26ba78be7222961de77621598"
   integrity sha1-9rRQHC7EzdJrp4vnIilh3ndiFZg=
 
+uppercamelcase@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npm.taobao.org/uppercamelcase/download/uppercamelcase-1.1.0.tgz#324d98a6b3afc7e8a8953e10641509b0e4e23f97"
+  integrity sha1-Mk2YprOvx+iolT4QZBUJsOTiP5c=
+  dependencies:
+    camelcase "^1.2.1"
+
 uri-js@^4.2.2:
   version "4.2.2"
   resolved "https://registry.npm.taobao.org/uri-js/download/uri-js-4.2.2.tgz#94c540e1ff772956e2299507c010aea6c8838eb0"
@@ -8305,6 +8317,13 @@ vm-browserify@0.0.4:
   integrity sha1-XX6kW7755Kb/ZflUOOCofDV9WnM=
   dependencies:
     indexof "0.0.1"
+
+vue-amap@^0.5.9:
+  version "0.5.9"
+  resolved "https://registry.npm.taobao.org/vue-amap/download/vue-amap-0.5.9.tgz#148efe58d9e8e7668bd9b2f6c68ef1ba52f8780a"
+  integrity sha1-FI7+WNno52aL2bL2xo7xulL4eAo=
+  dependencies:
+    uppercamelcase "^1.1.0"
 
 vue-cli-plugin-i18n@^0.6.0:
   version "0.6.0"

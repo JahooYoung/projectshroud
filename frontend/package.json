@@ -20,6 +20,7 @@
     "mavon-editor": "^2.7.3",
     "nprogress": "^0.2.0",
     "vue": "^2.6.10",
+    "vue-amap": "^0.5.9",
     "vue-flatpickr-component": "^8.1.2",
     "vue-i18n": "^8.0.0",
     "vue-instantsearch": "^2.0.1",
