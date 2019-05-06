@@ -6,9 +6,9 @@
     <input
       ref="input"
       v-model="query"
-      type="search"
+      type="text"
       autocomplete="off"
-      class="form-control form-control-sm type-ahead-select taller"
+      class="form-control type-ahead-select taller"
       :placeholder="placeholder"
       @keydown.down.prevent="down"
       @keydown.up.prevent="up"
@@ -284,10 +284,10 @@ export default {
 
 <style scoped>
 div.input-group input.form-control.type-ahead-select {
-  border-radius: .25rem;
-  background: #fff url(../assets/search.png) 5px 5px no-repeat;
-  background-size: 20px;
-  padding-left: 28px;
+  /* background: #fff url(../assets/search.png) 5px 5px no-repeat;
+  background-size: 20px; */
+  /* border-radius: .25rem;
+  padding-left: 28px; */
   /* border-top-right-radius: .25rem;
   border-bottom-right-radius: .25rem; */
 }

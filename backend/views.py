@@ -351,6 +351,8 @@ class EventDetail(generics.RetrieveUpdateDestroyAPIView):
 
         data['event_admin'] = check_is_admin(request.user, obj)
         data['event_registered'] = check_event_registered(request.user, obj)
+        if data['event_registered']:
+            data['user_register_event'] = UserRegisterEventSerializer(UserRegisterEvent.objects.get(user=request.user, event=obj)).data
         return Response(data)
 
 
@@ -408,6 +410,9 @@ class TransportView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class EventCheckInToken(APIView):
+
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsOwner|IsEventHostAdmin|IsAdminUser)
+
     def get(self, request, pk, format=None):
         try:
             event = Event.objects.get(pk=pk)

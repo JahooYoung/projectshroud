@@ -1,7 +1,7 @@
 <template>
   <b-row>
     <b-col md="8">
-      <b-form @submit="onSubmit">
+      <b-form>
         <b-form-group
           id="titleInputGroup"
           label-cols-sm="4"
@@ -52,7 +52,7 @@
           label="Location"
           label-for="locationInput"
         >
-          <b-form-input
+          <location-input
             id="locationInput"
             v-model="form.location"
             required
@@ -93,8 +93,8 @@
 
         <b-button
           variant="primary"
-          type="submit"
           :disabled="isLoading"
+          @click="onSubmit"
         >
           <b-spinner
             v-show="isLoading"
@@ -111,11 +111,13 @@
 <script>
 import flatPickr from 'vue-flatpickr-component'
 import 'flatpickr/dist/flatpickr.css'
+import LocationInput from '@/components/LocationInput.vue'
 
 export default {
   name: 'EventAdminInfo',
   components: {
-    flatPickr
+    flatPickr,
+    LocationInput
   },
   props: {
     newEvent: {

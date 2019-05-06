@@ -13,7 +13,7 @@ UserStatus.install = function (Vue, options = {}) {
     methods: {
       checkLogin () {
         if (!this.user) {
-          this.$bvToast.toast('You need to login first', {
+          this.$root.$bvToast.toast('You need to login first', {
             title: 'Not login yet',
             variant: 'warning',
             autoHideDelay: 4000,
@@ -29,7 +29,7 @@ UserStatus.install = function (Vue, options = {}) {
           return false
         }
         if (!this.userActivated) {
-          this.$bvToast.toast('You need to activate first', {
+          this.$root.$bvToast.toast('You need to activate first', {
             title: 'Not activated yet',
             variant: 'warning',
             autoHideDelay: 4000,
@@ -39,6 +39,33 @@ UserStatus.install = function (Vue, options = {}) {
           return false
         }
         return true
+      },
+      checkUserActivation () {
+        return this.axios.get('/api/dummy/')
+          .then(res => {
+            this.$store.commit('setUserActivation', res.data.is_activated)
+            if (!res.data.is_activated) {
+              this.$root.$bvToast.toast('Click here to activate your account!', {
+                title: 'Account not activated',
+                variant: 'warning',
+                autoHideDelay: 5000,
+                solid: true,
+                to: '/user-profile'
+              })
+            }
+          })
+          .catch(err => {
+            if (err.response && err.response.status >= 400 && err.response.status < 500) {
+              this.$store.commit('setUserState', null)
+              this.$root.$bvToast.toast('Your signin seems expired, click here to login again!', {
+                title: 'Error',
+                variant: 'danger',
+                autoHideDelay: 5000,
+                solid: true,
+                to: '/login'
+              })
+            }
+          })
       }
     }
   })

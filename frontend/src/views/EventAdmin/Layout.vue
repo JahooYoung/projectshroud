@@ -140,7 +140,7 @@ export default {
     position: sticky;
     top: 4rem;
     z-index: 500;
-    height: calc(100vh - 5rem);
+    height: calc(100vh - 6rem);
     /* padding-right: 1px; */
     /* border-right: 1px solid rgba(0, 0, 0, 0.1); */
     order: 0;

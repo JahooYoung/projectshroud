@@ -68,9 +68,10 @@ export default {
         })
     },
     getQrcode () {
-      console.log(`${this.location.origin}/checkin/${this.checkinToken}`)
+      const url = `${this.location.origin}/checkin/?token=${this.checkinToken}&id=${this.$route.params.id}`
+      console.log(url)
       this.axios.post('/api/qrcode/', {
-        text: `${this.location.origin}/checkin/${this.checkinToken}`
+        text: url
       }, {
         responseType: 'blob'
       })

@@ -109,7 +109,7 @@ export default {
   name: 'NavBar',
   components: {
     SearchBox: () => ({
-      component: import('./SearchBox.vue'),
+      component: import(/* webpackChunkName: "searchbox" */ './SearchBox.vue'),
       loading: SearchBoxLoading
     })
   },
@@ -131,10 +131,10 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .navbar-div {
-  margin-bottom: 4em
+  margin-bottom: 5rem
 }
 
-#nav_collapse .router-link-exact-active {
+/* #nav_collapse .router-link-exact-active {
   color: #ffffff;
-}
+} */
 </style>
