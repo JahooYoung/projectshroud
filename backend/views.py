@@ -351,6 +351,8 @@ class EventDetail(generics.RetrieveUpdateDestroyAPIView):
 
         data['event_admin'] = check_is_admin(request.user, obj)
         data['event_registered'] = check_event_registered(request.user, obj)
+        if data['event_registered']:
+            data['user_register_event'] = UserRegisterEventSerializer(UserRegisterEvent.objects.get(user=request.user, event=obj)).data
         return Response(data)
 
 

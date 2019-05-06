@@ -1,49 +1,43 @@
 <template>
   <div>
-    <b-spinner
-      v-if="firstLoading"
-      style="width: 3rem; height: 3rem;"
-      label="Loading..."
-    />
-
-    <div v-else>
-      <b-container>
-        <b-row>
-          <b-col
-            cols="12"
-            order="2"
-            lg="9"
-            order-lg="1"
-          >
-            <b-card header="Event Description">
-              <div
-                v-if="event.title"
-                class="markdown-body"
-                style="text-align: initial;"
-                v-html="event.description_html"
-              />
-              <b-card-title v-else>
-                Event is not existed
-              </b-card-title>
-            </b-card>
-          </b-col>
-          <b-col
-            v-if="event.title !== ''"
-            cols="12"
-            order="1"
-            lg="3"
-            order-lg="2"
-          >
+    <b-container>
+      <b-row>
+        <b-col
+          cols="12"
+          order="2"
+          lg="9"
+          order-lg="1"
+        >
+          <b-card header="Event Description">
+            <div
+              v-if="event.title"
+              class="markdown-body"
+              style="text-align: initial;"
+              v-html="event.descriptionHtml"
+            />
+            <b-card-title v-else>
+              Event is not existed
+            </b-card-title>
+          </b-card>
+        </b-col>
+        <b-col
+          v-if="event.title !== ''"
+          cols="12"
+          order="1"
+          lg="3"
+          order-lg="2"
+        >
+          <div class="right-card">
             <b-card
               header="Event Information"
-              class="mb-3 right-card"
+              class="mb-2"
             >
-              <b-card-body>
+              <b-card-text>
                 <h6> {{ event.title }} </h6>
                 <strong>At</strong> {{ event.location }} <br>
-                <strong>From</strong> {{ new Date(event.startTime).toLocaleString() }} <br>
-                <strong>To</strong> {{ new Date(event.endTime).toLocaleString() }} <br>
-              </b-card-body>
+                <strong>From</strong> {{ event.startTime.toLocaleString() }} <br>
+                <strong>To</strong> {{ event.endTime.toLocaleString() }} <br>
+              </b-card-text>
 
               <b-list-group flush>
                 <b-list-group-item>
@@ -51,26 +45,26 @@
                     v-if="!event.registered"
                     variant="primary"
                     :disabled="isLoading"
-                    @click="checkActivated() && $bvModal.show('modal-register')"
+                    @click="checkActivated() && $refs['modal-register'].show()"
                   >
-                    <b-spinner
+                    <!-- <b-spinner
                       v-show="isLoading"
                       small
                       type="grow"
-                    />
+                    /> -->
                     Register
                   </b-button>
                   <b-button
                     v-else
                     variant="danger"
                     :disabled="isLoading"
-                    @click="checkActivated() && $bvModal.show('modal-unregister')"
+                    @click="$refs['modal-unregister'].show()"
                   >
-                    <b-spinner
+                    <!-- <b-spinner
                       v-show="isLoading"
                       small
                       type="grow"
-                    />
+                    /> -->
                     Unregister
                   </b-button>
                 </b-list-group-item>
@@ -84,156 +78,101 @@
                 </b-list-group-item>
               </b-list-group>
             </b-card>
-          </b-col>
-        </b-row>
-      </b-container>
+            <b-card
+              v-if="event.registered"
+              class="mb-2"
+            >
+              <template #header>
+                <div class="d-flex w-100 justify-content-between">
+                  <h6 class="mt-1">
+                    Your Transport
+                  </h6>
+                  <b-button
+                    variant="success"
+                    size="sm"
+                    @click="editTransport"
+                  >
+                    Edit
+                  </b-button>
+                </div>
+              </template>
+              <b-card-text v-if="transport">
+                <strong>{{ transport.transport_type }}</strong> {{ transport.transport_id }} <br>
+                <strong>From</strong> {{ transport.depart_station }} <br>
+                {{ new Date(transport.depart_time).toLocaleString() }} <br>
+                <strong>To</strong> {{ transport.arrival_station }} <br>
+                {{ new Date(transport.arrival_time).toLocaleString() }}
+              </b-card-text>
+              <b-card-text v-else>
+                None
+              </b-card-text>
+            </b-card>
+          </div>
+        </b-col>
+      </b-row>
+    </b-container>
 
-      <b-modal
-        id="modal-register"
-        title="Basic infomation"
-        @ok="register"
-      >
-        <b-form-group
-          label="Your Name:"
-          label-for="input-1"
-        >
-          <b-form-input
-            id="input-1"
-            v-model="attendee.name"
-            placeholder="Enter name"
-          />
-        </b-form-group>
+    <b-modal
+      ref="modal-register"
+      title="Confirm Registration"
+      @ok="register"
+    >
+      <p class="my-4">
+        Are you sure to register? <br>
+        You can also provide your transport info
+      </p>
+      <template #modal-footer>
+        <div class="ml-auto">
+          <b-button
+            variant="secondary"
+            @click="$refs['modal-register'].hide()"
+          >
+            Cancel
+          </b-button>
+          <b-button
+            variant="primary"
+            class="ml-2"
+            @click="$refs['modal-register'].hide(), register()"
+          >
+            Yes
+          </b-button>
+          <b-button
+            variant="primary"
+            class="ml-2"
+            @click="$refs['modal-register'].hide(), registerAndTransport()"
+          >
+            Yes and Provide Transport
+          </b-button>
+        </div>
+      </template>
+    </b-modal>
 
-        <b-form-group
-          label="Your transport type:"
-          label-for="input-2"
-        >
-          <b-form-select
-            id="input-2"
-            v-model="attendee.transport_type"
-            :options="transport_options"
-          />
-        </b-form-group>
+    <b-modal
+      ref="modal-unregister"
+      title="Confirm Unregistration"
+      @ok="unregister"
+    >
+      <p class="my-4">
+        Are you sure to unregister? (Your transport info will be lost)
+      </p>
+    </b-modal>
 
-        <b-form-group
-          label="Your transport id:"
-          label-for="input-3"
-        >
-          <b-form-input
-            id="input-3"
-            v-model="attendee.transport_id"
-            placeholder="Enter transport id"
-          />
-        </b-form-group>
-
-        <b-form-group
-          label="Your depart station:"
-          label-for="input-4"
-        >
-          <b-form-input
-            id="input-4"
-            v-model="attendee.depart_station"
-            placeholder="Enter depart station"
-          />
-        </b-form-group>
-
-        <b-form-group
-          label="Your depart_time:"
-          label-for="input-5"
-        >
-          <b-form-input
-            id="input-5"
-            v-model="attendee.depart_time"
-            type="datetime-local"
-            placeholder="Enter depart time"
-          />
-        </b-form-group>
-
-        <b-form-group
-          label="Your arrival_station:"
-          label-for="input-6"
-        >
-          <b-form-input
-            id="input-6"
-            v-model="attendee.arrival_station"
-            placeholder="Enter arrival station"
-          />
-        </b-form-group>
-
-        <b-form-group
-          label="Your arrival time:"
-          label-for="input-7"
-        >
-          <b-form-input
-            id="input-7"
-            v-model="attendee.arrival_time"
-            type="datetime-local"
-            placeholder="Enter arrival time"
-          />
-        </b-form-group>
-
-        <b-form-group
-          label="Other detail:"
-          label-for="input-8"
-        >
-          <b-form-input
-            id="input-8"
-            v-model="attendee.other_detail"
-            placeholder="Enter other detail"
-          />
-        </b-form-group>
-      </b-modal>
-      <b-modal
-        id="modal-unregister"
-        title="Unregister"
-        @ok="unregister"
-      >
-        <p class="my-4">
-          Are you sure to unregister?
-        </p>
-      </b-modal>
-    </div>
+    <transport-modal ref="tp-modal" />
   </div>
 </template>
 
 <script>
 import 'mavon-editor/dist/markdown/github-markdown.min.css'
-
-function date2input (date) {
-  date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
-  date.setSeconds(0, 0)
-  date = date.toISOString()
-  return date.substr(0, date.length - 1)
-}
-
-function input2date (str) {
-  let date = new Date(str)
-  return date
-}
+import TransportModal from '@/components/TransportModal.vue'
 
 export default {
   name: 'EventDetail',
+  components: {
+    TransportModal
+  },
   data () {
     return {
-      firstLoading: true,
       isAdmin: false,
-      attendee: {
-        name: '',
-        transport_type: null,
-        transport_id: '',
-        depart_station: '',
-        depart_time: date2input(new Date()),
-        arrival_station: '',
-        arrival_time: date2input(new Date()),
-        other_detail: ''
-      },
-      acceptedTerms: true,
-      transport_options: [
-        { value: 'Flight', text: '航班' },
-        { value: 'Train', text: '列车' },
-        { value: 'Other', text: '其他' },
-        { value: null, text: '未决定' }
-      ],
       event: {
         title: null,
         description: '',
@@ -243,8 +182,10 @@ export default {
         location: '',
         public: false,
         registered: false,
+        userRegisterEvent: null,
         requireApprove: false
-      }
+      },
+      transport: null
     }
   },
   watch: {
@@ -252,9 +193,6 @@ export default {
   },
   created () {
     this.refresh()
-      .then(() => {
-        this.firstLoading = false
-      })
   },
   methods: {
     makeToast (succeed, message) {
@@ -266,16 +204,19 @@ export default {
       })
     },
     refresh () {
-      return this.axios.get('/api/event/' + this.$route.params.id)
+      return this.axios.get(`/api/event/${this.$route.params.id}/`)
         .then(res => {
+          console.log(res.data)
           this.event.title = res.data.title
           this.event.description = res.data.description
-          this.event.description_html = res.data.description_html
-          this.event.startTime = date2input(new Date(res.data.start_time))
-          this.event.endTime = date2input(new Date(res.data.end_time))
+          this.event.descriptionHtml = res.data.description_html
+          this.event.startTime = new Date(res.data.start_time)
+          this.event.endTime = new Date(res.data.end_time)
           this.event.location = res.data.location
           this.event.public = res.data.public
           this.event.registered = res.data.event_registered
+          this.event.userRegisterEvent = res.data.user_register_event
+          this.transport = this.event.userRegisterEvent && this.event.userRegisterEvent.transport_info
           this.event.requireApprove = res.data.require_approve
           this.isAdmin = res.data.event_admin
         })
@@ -283,14 +224,10 @@ export default {
           this.event.title = ''
         })
     },
-    postRegister (transportId) {
-      const info = {
+    register () {
+      return this.axios.post('/api/register/', {
         event_id: this.$route.params.id
-      }
-      if (transportId !== null) {
-        info.transport_id = transportId
-      }
-      return this.axios.post('/api/register/', info)
+      })
         .then(res => {
           this.event.registered = true
           this.makeToast(true, 'Register successfully')
@@ -301,47 +238,11 @@ export default {
           }
         })
     },
-    register (evt) {
-      if (!this.acceptedTerms ||
-         (this.attendee.transport_type !== null &&
-         (this.attendee.transport_id === '' || this.attendee.arrival_time === ''))
-      ) {
-        if (!this.acceptedTerms) {
-          alert('Pleast accept the terms first')
-        } else {
-          if (this.attendee.transport_id === '') {
-            alert('Please give transport id')
-          } else {
-            if (this.attendee.arrival_time === '') {
-              alert('Pleast give arrival time')
-            }
-          }
-        }
-        this.status = 'Fail to register'
-        evt.preventDefault()
-        return
-      }
-
-      if (this.attendee.transport_type === null) {
-        this.postRegister(null)
-        return
-      }
-      this.axios.post('/api/trans/', {
-        event_id: this.$route.params.id,
-        transport_type: this.attendee.transport_type,
-        transport_id: this.attendee.transport_id,
-        depart_station: this.attendee.depart_station,
-        depart_time: input2date(this.attendee.depart_time).toISOString(),
-        arrival_station: this.attendee.arrival_station,
-        arrival_time: input2date(this.attendee.arrival_time).toISOString(),
-        other_detail: this.attendee.other_detail
-      })
-        .then(res => {
-          return this.postRegister(res.data.id)
-        })
-        .catch(err => {
-          if (err.response) {
-            this.makeToast(false, err.response.data.detail)
+    registerAndTransport () {
+      this.register()
+        .then(() => {
+          if (this.event.registered) {
+            this.editTransport()
           }
         })
     },
@@ -358,6 +259,14 @@ export default {
             this.makeToast(false, err.response.data.detail)
           }
         })
+    },
+    editTransport () {
+      this.$refs['tp-modal'].show(this.transport, this.$route.params.id)
+        .then(transport => {
+          if (transport !== false) {
+            this.transport = transport
+          }
+        })
     }
   }
 }
@@ -368,6 +277,7 @@ export default {
   .right-card {
     position: fixed;
     margin-right: 2em;
+    min-width: 22%;
   }
 }
 </style>

@@ -109,7 +109,7 @@ export default {
   name: 'NavBar',
   components: {
     SearchBox: () => ({
-      component: import('./SearchBox.vue'),
+      component: import(/* webpackChunkName: "searchbox" */ './SearchBox.vue'),
       loading: SearchBoxLoading
     })
   },
