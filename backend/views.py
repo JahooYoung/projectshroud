@@ -239,7 +239,7 @@ class UserEventRegister(generics.CreateAPIView):
                 if 'application_text' not in data or data.get('application_text') == '':
                     raise ValidationError('Need to provide application info.')
             serializer.save(user=user, event=event, transport=None, approved=False)
-            send_registered_email(user, event, approved=True)
+            send_registered_email(user, event, approved=False)
 
         else:
             transport = None
@@ -278,18 +278,9 @@ class UserEventConflict(APIView):
 
         data = {}
         lst = UserRegisterEvent.objects.filter(user=user,
-                                            event__end_time__gt=event.start_time,
-                                            event__end_time__lte=event.end_time)
-        if lst.exists:
-            data['conflict'] = True
-            if 'user_id' not in data:
-                data['user_register_event'] = UserRegisterEventSerializer(lst[0]).data
-            return Response(data)
-
-        lst = serRegisterEvent.objects.filter(user=user,
-                                            event__start_time__gte=event.start_time,
-                                            event__start_time__lt=event.end_time)
-        if lst.exists:
+                                            event__start_time__lte=event.end_time,
+                                            event__end_time__gte=event.start_time)
+        if lst.exists():
             data['conflict'] = True
             if 'user_id' not in data:
                 data['user_register_event'] = UserRegisterEventSerializer(lst[0]).data

@@ -3,27 +3,27 @@ module.exports = {
 
   devServer: {
     proxy: {
-      '/api': {
+      '/api/': {
         target: 'http://localhost:8000'
-        // pathRewrite: { '^/api': '' }
+      },
+      '/admin/': {
+        target: 'http://localhost:8000'
+      },
+      '/static/rest_framework/': {
+        target: 'http://localhost:8000'
       }
     }
   },
 
-  // publicPath: undefined,
-  // outputDir: undefined,
-  // runtimeCompiler: undefined,
-  // productionSourceMap: undefined,
-  // parallel: undefined,
-  // css: undefined,
-  assetsDir: 'static'
+  chainWebpack: config => {
+    config.plugin('html').tap(options => {
+      if (options[0].minify) {
+        options[0].minify.minifyCSS = true
+      }
+      return options
+    })
+  },
 
-  // pluginOptions: {
-  //   i18n: {
-  //     locale: 'en',
-  //     fallbackLocale: 'en',
-  //     localeDir: 'locales',
-  //     enableInSFC: false
-  //   }
-  // }
+  productionSourceMap: false,
+  assetsDir: 'static'
 }
