@@ -239,7 +239,7 @@ class UserEventRegister(generics.CreateAPIView):
                 if 'application_text' not in data or data.get('application_text') == '':
                     raise ValidationError('Need to provide application info.')
             serializer.save(user=user, event=event, transport=None, approved=False)
-            send_registered_email(user, event, approved=True)
+            send_registered_email(user, event, approved=False)
 
         else:
             transport = None
@@ -251,6 +251,44 @@ class UserEventRegister(generics.CreateAPIView):
 
             serializer.save(user=user, event=event, transport=transport, approved=True)
             send_registered_email(user, event, approved=True)
+
+
+class UserEventConflict(APIView):
+    queryset = UserRegisterEvent.objects.all()
+    serializer_class = UserRegisterEventSerializer
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrSelf|IsSiteAdminOrEventManager)
+
+    def post(self, request, format=None):
+        data = request.data
+
+        user = request.user
+        if 'user_id' in data:
+            try:
+                user = get_user_model().objects.get(id=data.get('user_id'))
+            except get_user_model().DoesNotExist:
+                raise ValidationError('User Not Found.')
+
+        event = Event.objects.get(id=data.get('event_id'))
+
+        if check_event_registered(user, event):
+            if check_event_register_approved(user, event):
+                raise ValidationError('Already Registered this event.')
+            else:
+                raise ValidationError('Already applied this event, waiting for approval.')
+
+        data = {}
+        lst = UserRegisterEvent.objects.filter(user=user,
+                                            event__start_time__lte=event.end_time,
+                                            event__end_time__gte=event.start_time)
+        if lst.exists():
+            data['conflict'] = True
+            if 'user_id' not in data:
+                data['user_register_event'] = UserRegisterEventSerializer(lst[0]).data
+            return Response(data)
+
+        data['conflict'] = False
+
+        return Response(data)
 
 
 class ApproveEventRegister(APIView):
