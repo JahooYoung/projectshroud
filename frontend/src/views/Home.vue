@@ -58,7 +58,7 @@
                   {{ event.title }}
                 </b-link>
               </h4>
-              <em>{{ event.location }}, {{ new Date(event.start_time).toLocaleDateString() }}</em>
+              <em>{{ event.location }}, {{ event.start_time.toLocaleDateString() }}</em>
             </div>
             <p
               class="mb-2"
@@ -93,7 +93,7 @@
                 class="d-flex justify-content-between align-items-center"
               >
                 {{ event.title }}
-                <small>{{ (new Date(event.start_time)).toLocaleDateString() }}</small>
+                <small>{{ event.start_time.toLocaleDateString() }}</small>
               </b-list-group-item>
             </b-list-group>
           </b-card>

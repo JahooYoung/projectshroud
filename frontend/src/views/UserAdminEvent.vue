@@ -77,7 +77,7 @@ export default {
           key: 'start_time',
           label: 'Start Time',
           sortable: true,
-          formatter: value => new Date(value).toLocaleString()
+          formatter: value => value.toLocaleString()
         },
         {
           key: 'actions'
