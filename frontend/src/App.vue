@@ -14,7 +14,7 @@
 
 <script>
 // @ is an alias to /src
-import { whiteList } from '@/router'
+import { whiteList } from '@/plugins/router'
 import NavBar from '@/components/NavBar.vue'
 // import Footer from '@/components/Footer.vue'
 

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
-import axios from 'axios'
-import messages from './locales/en.js'
+import axios from './axios'
+import messages from '../locales/en.js'
 
 Vue.use(VueI18n)
 

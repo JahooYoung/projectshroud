@@ -89,7 +89,6 @@ import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 library.add(faTimes, faCheck)
-// Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 export default {
   name: 'EventAdminAttendee',

@@ -103,7 +103,7 @@
 
 <script>
 import SearchBoxLoading from './SearchBoxLoading.vue'
-import { loadLanguageAsync } from '@/i18n'
+import { loadLanguageAsync } from '@/plugins/i18n'
 
 export default {
   name: 'NavBar',
