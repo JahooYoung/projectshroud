@@ -110,7 +110,21 @@ export default {
   data () {
     return {
       id: null,
-      transport: {
+      transport: null,
+      transport_options: [
+        { value: 'Flight', text: '航班' },
+        { value: 'Train', text: '列车' },
+        { value: 'Other', text: '其他' }
+      ],
+      callback: null
+    }
+  },
+  created () {
+    this.reset()
+  },
+  methods: {
+    reset () {
+      this.transport = {
         user_id: undefined,
         event_id: null,
         transport_type: 'Flight',
@@ -120,16 +134,8 @@ export default {
         arrival_station: '',
         arrival_time: null,
         other_detail: ''
-      },
-      transport_options: [
-        { value: 'Flight', text: '航班' },
-        { value: 'Train', text: '列车' },
-        { value: 'Other', text: '其他' }
-      ],
-      callback: null
-    }
-  },
-  methods: {
+      }
+    },
     showModal () {
       return new Promise(resolve => {
         this.callback = value => {
@@ -155,29 +161,52 @@ export default {
       } else {
         this.id = null
       }
-      console.log(this.id)
+
       if (!await this.showModal()) {
         return false
       }
+
       if (!this.id) {
         if (!eventId) {
           throw new Error('eventId is not provided')
         }
-        const res = await this.axios.post(`/api/trans/`, {
-          ...this.transport,
-          depart_time: new Date(this.transport.depart_time).toISOString(),
-          arrival_time: new Date(this.transport.arrival_time).toISOString(),
-          event_id: eventId,
-          user_id: userId || undefined
-        })
-        return res.data
+        try {
+          const res = await this.axios.post(`/api/trans/`, {
+            ...this.transport,
+            depart_time: new Date(this.transport.depart_time).toISOString(),
+            arrival_time: new Date(this.transport.arrival_time).toISOString(),
+            event_id: eventId,
+            user_id: userId || undefined
+          })
+          return res.data
+        } catch (err) {
+          if (err.response && err.response.status === 400) {
+            this.$root.$bvToast.toast('Failed to save transport info', {
+              title: 'Error',
+              variant: 'danger',
+              autoHideDelay: 4000,
+              solid: true
+            })
+          }
+        }
       } else {
-        const res = await this.axios.put(`/api/trans/${this.id}/`, {
-          ...this.transport,
-          depart_time: new Date(this.transport.depart_time).toISOString(),
-          arrival_time: new Date(this.transport.arrival_time).toISOString()
-        })
-        return res.data
+        try {
+          const res = await this.axios.put(`/api/trans/${this.id}/`, {
+            ...this.transport,
+            depart_time: new Date(this.transport.depart_time).toISOString(),
+            arrival_time: new Date(this.transport.arrival_time).toISOString()
+          })
+          return res.data
+        } catch (err) {
+          if (err.response && (err.response.status === 400 || err.response.status === 404)) {
+            this.$root.$bvToast.toast('Failed to save transport info', {
+              title: 'Error',
+              variant: 'danger',
+              autoHideDelay: 4000,
+              solid: true
+            })
+          }
+        }
       }
     }
   }

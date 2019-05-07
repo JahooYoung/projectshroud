@@ -115,12 +115,26 @@
     <b-modal
       ref="modal-register"
       title="Confirm Registration"
+      @show="checkConflict"
       @ok="register"
     >
-      <p class="my-4">
+      <div class="my-3">
         Are you sure to register? <br>
         You can also provide your transport info
-      </p>
+        <div v-if="conflictEvent">
+          <hr>
+          <b>Warning</b>: this event is in conflict with <br>
+          <b-link
+            :to="`/event/${conflictEvent.id}`"
+            @click="$refs['modal-register'].hide()"
+          >
+            {{ conflictEvent.title }}
+          </b-link> <br>
+          It starts at {{ new Date(conflictEvent.start_time).toLocaleString() }} <br>
+          and ends at {{ new Date(conflictEvent.end_time).toLocaleString() }}
+        </div>
+      </div>
+
       <template #modal-footer>
         <div class="ml-auto">
           <b-button
@@ -132,6 +146,7 @@
           <b-button
             variant="primary"
             class="ml-2"
+            :disabled="isLoading"
             @click="$refs['modal-register'].hide(), register()"
           >
             Yes
@@ -139,6 +154,7 @@
           <b-button
             variant="primary"
             class="ml-2"
+            :disabled="isLoading"
             @click="$refs['modal-register'].hide(), registerAndTransport()"
           >
             Yes and Provide Transport
@@ -152,7 +168,7 @@
       title="Confirm Unregistration"
       @ok="unregister"
     >
-      <p class="my-4">
+      <p class="my-3">
         Are you sure to unregister? (Your transport info will be lost)
       </p>
     </b-modal>
@@ -185,7 +201,13 @@ export default {
         userRegisterEvent: null,
         requireApprove: false
       },
-      transport: null
+      transport: null,
+      conflictEvent: null
+    }
+  },
+  computed: {
+    eventId () {
+      return this.$route.params.id
     }
   },
   watch: {
@@ -204,9 +226,8 @@ export default {
       })
     },
     refresh () {
-      return this.axios.get(`/api/event/${this.$route.params.id}/`)
+      return this.axios.get(`/api/event/${this.eventId}/`)
         .then(res => {
-          console.log(res.data)
           this.event.title = res.data.title
           this.event.description = res.data.description
           this.event.descriptionHtml = res.data.description_html
@@ -216,7 +237,14 @@ export default {
           this.event.public = res.data.public
           this.event.registered = res.data.event_registered
           this.event.userRegisterEvent = res.data.user_register_event
-          this.transport = this.event.userRegisterEvent && this.event.userRegisterEvent.transport_info
+          if (this.event.userRegisterEvent) {
+            this.transport = this.event.userRegisterEvent.transport_info
+          } else {
+            this.transport = null
+            this.$nextTick(() => {
+              this.$refs['tp-modal'].reset()
+            })
+          }
           this.event.requireApprove = res.data.require_approve
           this.isAdmin = res.data.event_admin
         })
@@ -224,9 +252,24 @@ export default {
           this.event.title = ''
         })
     },
+    async checkConflict () {
+      try {
+        const res = await this.axios.post('/api/reg-conflict/', {
+          event_id: this.eventId
+        })
+        console.log(res)
+        if (res.data.conflict) {
+          this.conflictEvent = res.data.user_register_event.event_info
+        } else {
+          this.conflictEvent = null
+        }
+      } catch (err) {
+        // do nothing
+      }
+    },
     register () {
       return this.axios.post('/api/register/', {
-        event_id: this.$route.params.id
+        event_id: this.eventId
       })
         .then(res => {
           this.event.registered = true
@@ -248,7 +291,7 @@ export default {
     },
     unregister () {
       this.axios.post('/api/unregister/', {
-        event_id: this.$route.params.id
+        event_id: this.eventId
       })
         .then(res => {
           this.event.registered = false
@@ -261,7 +304,7 @@ export default {
         })
     },
     editTransport () {
-      this.$refs['tp-modal'].show(this.transport, this.$route.params.id)
+      this.$refs['tp-modal'].show(this.transport, this.eventId)
         .then(transport => {
           if (transport !== false) {
             this.transport = transport
