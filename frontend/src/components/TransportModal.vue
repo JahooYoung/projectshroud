@@ -208,6 +208,10 @@ export default {
           }
         }
       }
+    },
+    resetShow (...args) {
+      this.reset()
+      return this.show(...args)
     }
   }
 }

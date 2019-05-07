@@ -1,4 +1,6 @@
+import Vue from 'vue'
 import nprogress from 'nprogress'
+import axios from './axios'
 
 const defaults = {
   latencyThreshold: 100,
@@ -123,14 +125,19 @@ function NProgress (options) {
 
 NProgress.install = install
 
-NProgress.start = function () {
-
-}
-
 Object.assign(NProgress.prototype, nprogress, {
   init (app) {
     this.app = app
   }
 })
 
-export default NProgress
+Vue.use(NProgress, {
+  latencyThreshold: 200, // Number of ms before progressbar starts showing, default: 100,
+  router: true, // Show progressbar when navigating routes, default: true
+  http: true, // Show progressbar when doing Vue.http or axios, default: true
+  axios
+})
+
+export default new NProgress({
+  showSpinner: false
+})

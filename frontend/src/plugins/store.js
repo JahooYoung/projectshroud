@@ -1,33 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import axios from 'axios'
 
-Vue.prototype.axios = axios
-
-let userToken = null
-
-const CSRFRegex = /.*csrftoken=([^;.]*).*$/
-axios.interceptors.request.use(config => {
-  // only receive json
-  config.headers['Content-Type'] = 'application/json'
-  // // all status code are valid
-  // config.validateStatus = status => status >= 200 && status < 300
-  // handle csrftoken
-  config.headers['X-Requested-With'] = 'XMLHttpRequest'
-  const match = document.cookie.match(CSRFRegex)
-  config.headers['X-CSRFToken'] = match && match[1]
-  // handle authorization
-  config.headers['Authorization'] = userToken && `Token ${userToken}`
-  return config
-})
-
-// Vue.prototype.hasStatus = statusList => {
-//   return {
-//     validateStatus (status) {
-//       return statusList.indexOf(status) !== -1
-//     }
-//   }
-// }
+Vue.use(Vuex)
 
 const readLocalStorage = store => {
   if (window.localStorage && window.localStorage.user) {
@@ -39,12 +13,11 @@ const readLocalStorage = store => {
   }
 }
 
-Vue.use(Vuex)
-
 export default new Vuex.Store({
   state: {
     user: null,
     userActivated: false,
+    userToken: null,
     isLoading: false
   },
   mutations: {
@@ -52,7 +25,7 @@ export default new Vuex.Store({
       if (userState !== null) {
         state.user = userState.user
         state.userActivated = true
-        userToken = userState.key
+        state.userToken = userState.key
         if (window.localStorage) {
           window.localStorage.user = state.user
           window.localStorage.token = userState.key
@@ -60,7 +33,7 @@ export default new Vuex.Store({
       } else {
         state.user = null
         state.userActivated = false
-        userToken = null
+        state.userToken = null
         if (window.localStorage) {
           window.localStorage.user = ''
           window.localStorage.token = ''
@@ -74,7 +47,7 @@ export default new Vuex.Store({
       state.isLoading = isLoading
     },
     clearUserToken (state) {
-      userToken = null
+      state.userToken = null
     }
   },
   actions: {

@@ -1,67 +1,65 @@
 <template>
-  <div>
-    <b-container>
-      <h2>Admin Events</h2>
+  <b-container>
+    <h2>Admin Events</h2>
 
-      <TableLayout
-        item-name="event"
-        :refresh="refresh"
-        :total-rows="events.length"
-      >
-        <template #buttons>
-          <b-button
-            class="mr-2"
-            variant="outline-dark"
-            to="/event/new"
+    <TableLayout
+      item-name="event"
+      :refresh="refresh"
+      :total-rows="events.length"
+    >
+      <template #buttons>
+        <b-button
+          class="mr-2"
+          variant="outline-dark"
+          to="/event/new"
+        >
+          New Event
+        </b-button>
+      </template>
+
+      <template v-slot="config">
+        <b-table
+          v-bind="config"
+          :items="events"
+          :fields="fields"
+          :tbody-tr-class="rowClass"
+          primary-key="id"
+          sort-by="start_time"
+          caption="Blue represents the event is checking in."
+        >
+          <div
+            slot="table-busy"
+            class="text-center text-primary my-2"
           >
-            New Event
-          </b-button>
-        </template>
+            <b-spinner class="align-middle mr-2" />
+            <strong>Loading...</strong>
+          </div>
 
-        <template v-slot="config">
-          <b-table
-            v-bind="config"
-            :items="events"
-            :fields="fields"
-            :tbody-tr-class="rowClass"
-            primary-key="id"
-            sort-by="start_time"
-            caption="Blue represents the event is checking in."
+          <template
+            slot="title"
+            slot-scope="row"
           >
-            <div
-              slot="table-busy"
-              class="text-center text-primary my-2"
-            >
-              <b-spinner class="align-middle mr-2" />
-              <strong>Loading...</strong>
-            </div>
+            <b-link :to="'/event/' + row.item.id">
+              {{ row.value }}
+            </b-link>
+          </template>
 
-            <template
-              slot="title"
-              slot-scope="row"
+          <template
+            slot="actions"
+            slot-scope="row"
+          >
+            <b-button
+              variant="dark"
+              size="sm"
+              :to="`/event/${row.item.id}/admin`"
             >
-              <b-link :to="'/event/' + row.item.id">
-                {{ row.value }}
-              </b-link>
-            </template>
-
-            <template
-              slot="actions"
-              slot-scope="row"
-            >
-              <b-button
-                variant="dark"
-                size="sm"
-                :to="`/event/${row.item.id}/admin`"
-              >
-                Manage
-              </b-button>
-            </template>
-          </b-table>
-        </template>
-      </TableLayout>
-    </b-container>
-  </div>
+              Manage
+            </b-button>
+          </template>
+        </b-table>
+      </template>
+    </TableLayout>
+  </b-container>
 </template>
 
 <script>
