@@ -136,9 +136,8 @@ class EventList(generics.ListCreateAPIView):
 
         event_obj = serializer.save(host=user, description=desc)
 
-        # done in frontend
-        # ume_obj = UserManageEvent(user=user, event=event_obj)
-        # ume_obj.save()
+        ume_obj = UserManageEvent(user=user, event=event_obj)
+        ume_obj.save()
 
 
 class PastEventList(generics.ListAPIView):
