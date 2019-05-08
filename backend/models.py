@@ -92,7 +92,7 @@ class UserProfile(AbstractBaseUser):
             return self.is_site_admin
         if isinstance(obj, Event):
             return (obj.host == self or
-                    UserManageEvent.objects.filter(user=request.user, event=obj).exists())
+                    UserManageEvent.objects.filter(user=self, event=obj).exists())
         if hasattr(obj, 'user'):
             return obj.user == self
         return False
@@ -231,12 +231,12 @@ class UserRegisterEvent(models.Model):
 
     def approve(self):
         self.approved = True
-        send_approve_or_reject_email(user, event)
+        send_approve_or_reject_email(self.user, self.event)
 
     def reject(self):
         if self.approved:
             raise ValidationError('Cannot reject an already approved event registration.')
-        send_approve_or_reject_email(user, event, approved=False)
+        send_approve_or_reject_email(self.user, self.event, approved=False)
 
 
 class UserManageEvent(models.Model):
