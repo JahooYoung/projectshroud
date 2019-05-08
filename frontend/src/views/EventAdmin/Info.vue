@@ -187,16 +187,9 @@ export default {
         require_approve: this.form.requireApprove
       }
       if (this.newEvent) {
-        let eventId
         this.axios.post('/api/event/', data)
           .then(res => {
-            eventId = res.data.id
-            return this.axios.post('/api/assignadmin/', {
-              event_id: eventId
-            })
-          })
-          .then(res => {
-            this.$router.push('/event/' + eventId)
+            this.$router.push('/event/' + res.data.id)
           })
       } else {
         this.axios.put(`/api/event/${this.$route.params.id}/`, data)

@@ -1,8 +1,10 @@
-
+// Variables
+$font-family-sans-serif: "Avenir", Helvetica, Arial, sans-serif;
 $font-size-base: 0.9375rem;
 $input-btn-padding-y: 0.4rem;
 $input-padding-y: 0.5rem;
 $navbar-padding-y: 0.5rem;
+$web-font-path: "";
 
 @import "~bootswatch/dist/materia/variables";
 @import "~bootstrap/scss/bootstrap";
