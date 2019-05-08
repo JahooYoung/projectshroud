@@ -112,6 +112,7 @@ import TransportModal from '@/components/TransportModal.vue'
 library.add(faMinus, faCheck)
 
 export default {
+  name: 'UserRegisterEvent',
   components: {
     FontAwesomeIcon,
     TableLayout,

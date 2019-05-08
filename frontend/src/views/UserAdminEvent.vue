@@ -66,6 +66,7 @@
 import TableLayout from '@/components/TableLayout.vue'
 
 export default {
+  name: 'UserAdminEvent',
   components: {
     TableLayout
   },
