@@ -149,14 +149,14 @@ export default {
       if (typeof dataOrId === 'object' && dataOrId) {
         const data = dataOrId
         for (let key in this.transport) {
-          this.transport[key] = key.indexOf('time') !== -1 ? new Date(data[key]) : data[key]
+          this.transport[key] = data[key]
         }
         this.id = data.id
       } else if (typeof dataOrId === 'number') {
         this.id = dataOrId
         const res = await this.axios.get(`/api/trans/${this.id}/`)
         for (let key in this.transport) {
-          this.transport[key] = key.indexOf('time') !== -1 ? new Date(res.data[key]) : res.data[key]
+          this.transport[key] = res.data[key]
         }
       } else {
         this.id = null
@@ -173,8 +173,8 @@ export default {
         try {
           const res = await this.axios.post(`/api/trans/`, {
             ...this.transport,
-            depart_time: new Date(this.transport.depart_time).toISOString(),
-            arrival_time: new Date(this.transport.arrival_time).toISOString(),
+            depart_time: new Date(this.transport.depart_time),
+            arrival_time: new Date(this.transport.arrival_time),
             event_id: eventId,
             user_id: userId || undefined
           })
@@ -193,8 +193,8 @@ export default {
         try {
           const res = await this.axios.put(`/api/trans/${this.id}/`, {
             ...this.transport,
-            depart_time: new Date(this.transport.depart_time).toISOString(),
-            arrival_time: new Date(this.transport.arrival_time).toISOString()
+            depart_time: new Date(this.transport.depart_time),
+            arrival_time: new Date(this.transport.arrival_time)
           })
           return res.data
         } catch (err) {

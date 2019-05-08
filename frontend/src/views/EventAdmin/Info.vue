@@ -139,10 +139,12 @@ export default {
       configs: {
         start: {
           enableTime: true,
+          time_24hr: true,
           maxDate: null
         },
         end: {
           enableTime: true,
+          time_24hr: true,
           minDate: null
         }
       }
@@ -166,8 +168,8 @@ export default {
     updateForm (data) {
       this.event = data
       this.form.title = data.title
-      this.form.startTime = new Date(data.start_time)
-      this.form.endTime = new Date(data.end_time)
+      this.form.startTime = data.start_time
+      this.form.endTime = data.end_time
       this.form.location = data.location
       this.form.public = data.public
       this.form.requireApprove = data.require_approve
@@ -178,8 +180,8 @@ export default {
         title: this.form.title,
         description: this.event ? this.event.description : '',
         description_html: this.event ? this.event.description_html : '',
-        start_time: new Date(this.form.startTime).toISOString(),
-        end_time: new Date(this.form.endTime).toISOString(),
+        start_time: new Date(this.form.startTime),
+        end_time: new Date(this.form.endTime),
         location: this.form.location,
         public: this.form.public,
         require_approve: this.form.requireApprove

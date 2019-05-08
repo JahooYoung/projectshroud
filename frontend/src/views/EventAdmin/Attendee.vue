@@ -110,7 +110,7 @@ export default {
         {
           key: 'date_registered',
           label: 'Registered Time',
-          formatter: t => new Date(t).toLocaleString()
+          formatter: t => t.toLocaleString()
         },
         {
           key: 'transport_info',

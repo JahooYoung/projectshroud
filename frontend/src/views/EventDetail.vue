@@ -99,9 +99,9 @@
               <b-card-text v-if="transport">
                 <strong>{{ transport.transport_type }}</strong> {{ transport.transport_id }} <br>
                 <strong>From</strong> {{ transport.depart_station }} <br>
-                {{ new Date(transport.depart_time).toLocaleString() }} <br>
+                {{ transport.depart_time.toLocaleString() }} <br>
                 <strong>To</strong> {{ transport.arrival_station }} <br>
-                {{ new Date(transport.arrival_time).toLocaleString() }}
+                {{ transport.arrival_time.toLocaleString() }}
               </b-card-text>
               <b-card-text v-else>
                 None
@@ -130,8 +130,8 @@
           >
             {{ conflictEvent.title }}
           </b-link> <br>
-          It starts at {{ new Date(conflictEvent.start_time).toLocaleString() }} <br>
-          and ends at {{ new Date(conflictEvent.end_time).toLocaleString() }}
+          It starts at {{ conflictEvent.start_time.toLocaleString() }} <br>
+          and ends at {{ conflictEvent.end_time.toLocaleString() }}
         </div>
       </div>
 
@@ -231,8 +231,8 @@ export default {
           this.event.title = res.data.title
           this.event.description = res.data.description
           this.event.descriptionHtml = res.data.description_html
-          this.event.startTime = new Date(res.data.start_time)
-          this.event.endTime = new Date(res.data.end_time)
+          this.event.startTime = res.data.start_time
+          this.event.endTime = res.data.end_time
           this.event.location = res.data.location
           this.event.public = res.data.public
           this.event.registered = res.data.event_registered

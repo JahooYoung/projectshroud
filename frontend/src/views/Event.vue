@@ -58,7 +58,7 @@ export default {
         {
           key: 'start_time',
           sortable: true,
-          formatter: value => new Date(value).toLocaleString()
+          formatter: value => value.toLocaleString()
         },
         'location',
         {

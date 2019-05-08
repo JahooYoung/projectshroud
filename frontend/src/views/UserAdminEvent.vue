@@ -66,6 +66,7 @@
 import TableLayout from '@/components/TableLayout.vue'
 
 export default {
+  name: 'UserAdminEvent',
   components: {
     TableLayout
   },
@@ -77,7 +78,7 @@ export default {
           key: 'start_time',
           label: 'Start Time',
           sortable: true,
-          formatter: value => new Date(value).toLocaleString()
+          formatter: value => value.toLocaleString()
         },
         {
           key: 'actions'

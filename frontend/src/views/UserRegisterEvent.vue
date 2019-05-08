@@ -85,9 +85,9 @@
                 <b-card-text v-if="row.item.transport_info">
                   <strong>{{ row.item.transport_info.transport_type }}</strong> {{ row.item.transport_info.transport_id }} <br>
                   <strong>From</strong> {{ row.item.transport_info.depart_station }} <br>
-                  {{ new Date(row.item.transport_info.depart_time).toLocaleString() }} <br>
+                  {{ row.item.transport_info.depart_time.toLocaleString() }} <br>
                   <strong>To</strong> {{ row.item.transport_info.arrival_station }} <br>
-                  {{ new Date(row.item.transport_info.arrival_time).toLocaleString() }}
+                  {{ row.item.transport_info.arrival_time.toLocaleString() }}
                 </b-card-text>
                 <b-card-text v-else>
                   None
@@ -112,6 +112,7 @@ import TransportModal from '@/components/TransportModal.vue'
 library.add(faMinus, faCheck)
 
 export default {
+  name: 'UserRegisterEvent',
   components: {
     FontAwesomeIcon,
     TableLayout,
