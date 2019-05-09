@@ -4,6 +4,8 @@
 *.sqlite3
 __pycache__/
 
-venv/
+venv*/
 cert/
 log/
+
+*.http

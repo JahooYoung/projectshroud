@@ -23,22 +23,21 @@ export default {
   data () {
     return {
       description: '',
-      event: null,
+      savedDescription: '',
       saved: true
     }
   },
   created () {
     this.axios.get(`/api/event/${this.$route.params.id}/`)
       .then(res => {
-        this.event = res.data
-        this.description = res.data.description
+        this.description = this.savedDescription = res.data.description
         if (this.description === '') {
-          this.description = `# ${this.event.title}\nGive your description here...`
+          this.description = `# ${res.data.title}\nGive your description here...`
         }
       })
   },
   beforeRouteLeave (to, from, next) {
-    if (this.saved || this.description === this.event.description) {
+    if (this.saved || this.description === this.savedDescription) {
       next()
     } else {
       this.$bvModal.msgBoxConfirm('Do you want to save the description?', {
@@ -59,12 +58,14 @@ export default {
     change () {
       this.saved = false
     },
-    save (value, render) {
-      this.event.description = value
-      this.event.description_html = render
-      return this.axios.put(`/api/event/${this.$route.params.id}/`, this.event)
+    save (value, html) {
+      return this.axios.patch(`/api/event/${this.$route.params.id}/`, {
+        description: value,
+        description_html: html
+      })
         .then(res => {
           this.saved = true
+          this.savedDescription = res.data.description
           this.$bvToast.toast('Description saved successfully', {
             title: `Success`,
             autoHideDelay: 1000,
