@@ -135,7 +135,6 @@ export default {
         public: false,
         requireApprove: false
       },
-      event: null,
       configs: {
         start: {
           enableTime: true,
@@ -166,7 +165,6 @@ export default {
       this.$set(this.configs.start, 'maxDate', dateStr)
     },
     updateForm (data) {
-      this.event = data
       this.form.title = data.title
       this.form.startTime = data.start_time
       this.form.endTime = data.end_time
@@ -178,8 +176,6 @@ export default {
       evt.preventDefault()
       const data = {
         title: this.form.title,
-        description: this.event ? this.event.description : '',
-        description_html: this.event ? this.event.description_html : '',
         start_time: new Date(this.form.startTime),
         end_time: new Date(this.form.endTime),
         location: this.form.location,
@@ -192,7 +188,7 @@ export default {
             this.$router.push('/event/' + res.data.id)
           })
       } else {
-        this.axios.put(`/api/event/${this.$route.params.id}/`, data)
+        this.axios.patch(`/api/event/${this.$route.params.id}/`, data)
           .then(res => {
             this.$bvToast.toast(`Event "${res.data.title}" saved successfully`, {
               title: `Success`,

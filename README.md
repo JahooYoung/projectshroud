@@ -1,6 +1,6 @@
 # projectshroud
 
-## TODOs
+## TODOs and Pages
 见[github projects](https://github.com/JahooYoung/projectshroud/projects/1)
 
 ## 说明
@@ -15,10 +15,11 @@
   - [bootswatch](https://bootswatch.com) for bootstrap theming
   - [vue-amap](https://github.com/ElemeFE/vue-amap/) for location autocomplete
   - [vue-i18n](https://kazupon.github.io/vue-i18n/zh/) for internationalization
+  - [vuelidate](https://vuelidate.netlify.com) for form validation
   - [husky](https://github.com/typicode/husky) and [lint-staged](https://github.com/okonet/lint-staged) for githooks
 - 后端采用[Django](https://djangoproject.com) and [Django rest framework](https://www.django-rest-framework.org)。 目前涉及的东西有：
   - [algoliasearch](https://www.algolia.com) for search indexing
-  - [MyQR] for QRcode generation
+  - [MyQR](https://github.com/sylnsfar/qrcode) for QRcode generation
   - [Django Channels](https://channels.readthedocs.io/en/latest/index.html) for websocket
 - 前后端通信使用[RESTful API](https://www.runoob.com/w3cnote/restful-architecture.html)，文档见[API_doc.md](./backend/API_doc.md)
 - 服务器采用[Nginx](http://nginx.org/en/)
@@ -45,12 +46,8 @@
 2. `yarn serve`
 3. 浏览器访问`http://localhost:8080`
 
-## 页面
-
-见frontend的[README.md](./frontend/README.md)
-
 ## 数据模式
-See [models.py][./backend/models.py]
+See [models.py](./backend/models.py)
 
 ### 关于自定义UserProfile
 使用非Django自带的User Model，必须作为整个项目的第一次migrations

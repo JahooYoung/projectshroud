@@ -4,9 +4,10 @@
 *.sqlite3
 __pycache__/
 
-venv/
-log/
-cert/
-
 *.pid
 *.pk
+venv*/
+cert/
+log/
+
+*.http
