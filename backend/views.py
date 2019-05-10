@@ -440,11 +440,17 @@ class TransportCreateView(generics.CreateAPIView):
             user = get_user_model().objects.get(id=data['user_id'])
 
         event = Event.objects.get(id=data.get('event_id'))
-        instance = serializer.save(user=user, event=event)
+        try:
+            tp_obj = Transport.objects.get(user=user, event=eveny)
+            tp_obj.delete()
+        except Transport.DoesNotExists:
+            pass
+        finally:
+            tp_obj = serializer.save(user=user, event=event)
 
         try:
             ure_obj = UserRegisterEvent.objects.get(user=user, event=event)
-            ure_obj.transport = instance
+            ure_obj.transport = tp_obj
             ure_obj.save()
         except UserRegisterEvent.DoesNotExist:
             pass
