@@ -57,11 +57,12 @@ class UserRegisterEventSerializer(serializers.ModelSerializer):
     date_registered = serializers.ReadOnlyField()
     date_approved = serializers.ReadOnlyField()
     checked_in = serializers.ReadOnlyField()
+    is_admin = serializers.ReadOnlyField()
 
     class Meta:
         model = UserRegisterEvent
         fields = ['user_info', 'event_info', 'date_registered', 'transport_info', 'checked_in',
-                  'date_approved', 'application_text', 'approved']
+                  'date_approved', 'application_text', 'approved', 'is_admin']
 
 
 class UserManageEventSerializer(serializers.ModelSerializer):

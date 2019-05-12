@@ -238,6 +238,10 @@ class UserRegisterEvent(models.Model):
             raise ValidationError('Cannot reject an already approved event registration.')
         send_approve_or_reject_email(self.user, self.event, approved=False)
 
+    @property
+    def is_admin(self):
+        return UserManageEvent.objects.filter(user=self.user, event=self.event).exists()
+
 
 class UserManageEvent(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
