@@ -275,19 +275,19 @@ class UserEventConflict(APIView):
             else:
                 raise ValidationError('Already applied this event, waiting for approval.')
 
-        data = {}
+        ret_data = {}
         lst = UserRegisterEvent.objects.filter(user=user,
                                             event__start_time__lte=event.end_time,
                                             event__end_time__gte=event.start_time)
         if lst.exists():
-            data['conflict'] = True
+            ret_data['conflict'] = True
             if 'user_id' not in data:
-                data['user_register_event'] = UserRegisterEventSerializer(lst[0]).data
-            return Response(data)
+                ret_data['user_register_event'] = UserRegisterEventSerializer(lst[0]).data
+            return Response(ret_data)
 
-        data['conflict'] = False
+        ret_data['conflict'] = False
 
-        return Response(data)
+        return Response(ret_data)
 
 
 class ApproveEventRegister(APIView):
