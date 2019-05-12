@@ -539,7 +539,10 @@ class StartCheckIn(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         data = self.request.data
-        event = Event.objects.get(id=data.get('event_id'))
+        try:
+            event = Event.objects.get(id=data.get('event_id'))
+        except Event.DoesNotExist:
+            raise Http404
         if event.checkin_enabled:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Check-in already started.'})
         event.enable_checkin()
