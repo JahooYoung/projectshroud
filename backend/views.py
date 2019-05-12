@@ -559,7 +559,7 @@ class StartCheckIn(generics.CreateAPIView):
 class StopCheckIn(generics.DestroyAPIView):
     queryset = CheckIn.objects.all()
     serializer_class = CheckInSerializer
-    permission_classes = (permissions.IsAuthenticated, IsActivated, IsEventHostAdmin|IsAdminUser)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
 
     def perform_destroy(self, instance):
         if instance is None:
