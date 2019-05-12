@@ -557,7 +557,7 @@ class StopCheckIn(generics.DestroyAPIView):
 
     def perform_destroy(self, instance):
         if instance is None:
-            raise ValidationError('Check-in not started.')
+            raise Http404
         event = instance.event
         event.disable_checkin()
         event.save()
