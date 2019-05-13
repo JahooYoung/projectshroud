@@ -72,7 +72,7 @@ def send_activation(request):
     if 'user_id' in data:
         try:
             user = get_user_model().objects.get(id=data.get('user_id'))
-        except Event.DoesNotExist:
+        except get_user_model().DoesNotExist:
             raise ValidationError('User Not Found.')
 
     if user is None or isinstance(user, AnonymousUser):
