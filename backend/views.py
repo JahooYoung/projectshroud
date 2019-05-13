@@ -482,6 +482,7 @@ class EventCheckInToken(APIView):
 
 class UserCheckInEvent(APIView):
     permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrSelf|IsSiteAdminOrEventManager)
+
     def get(self, request, pk, format=None):
         try:
             checkinobj = CheckIn.objects.get(pk=pk)
