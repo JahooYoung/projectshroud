@@ -24,7 +24,9 @@ export default {
     return {
       description: '',
       savedDescription: '',
-      saved: true
+      saved: true,
+      value: null,
+      html: null
     }
   },
   created () {
@@ -46,7 +48,7 @@ export default {
       })
         .then(ans => {
           if (ans === true) {
-            this.save()
+            this.save(this.value, this.html)
               .then(() => next())
           } else if (ans === false) {
             next()
@@ -55,8 +57,10 @@ export default {
     }
   },
   methods: {
-    change () {
+    change (value, html) {
       this.saved = false
+      this.value = value
+      this.html = html
     },
     save (value, html) {
       return this.axios.patch(`/api/event/${this.$route.params.id}/`, {
@@ -66,7 +70,7 @@ export default {
         .then(res => {
           this.saved = true
           this.savedDescription = res.data.description
-          this.$bvToast.toast('Description saved successfully', {
+          this.$root.$bvToast.toast('Description saved successfully', {
             title: `Success`,
             autoHideDelay: 1000,
             solid: true
