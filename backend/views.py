@@ -321,7 +321,7 @@ class ApproveEventRegister(APIView):
             ure_obj.approve()
 
         if not approve:
-            ure_obj.disapprove()
+            ure_obj.reject()
             ure_obj.delete()
 
         return Response(status=status.HTTP_200_OK)
@@ -441,9 +441,9 @@ class TransportCreateView(generics.CreateAPIView):
 
         event = Event.objects.get(id=data.get('event_id'))
         try:
-            tp_obj = Transport.objects.get(user=user, event=eveny)
+            tp_obj = Transport.objects.get(user=user, event=event)
             tp_obj.delete()
-        except Transport.DoesNotExists:
+        except Transport.DoesNotExist:
             pass
         finally:
             tp_obj = serializer.save(user=user, event=event)

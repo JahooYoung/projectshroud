@@ -132,7 +132,7 @@ export default {
         startTime: null,
         endTime: null,
         location: '',
-        public: false,
+        public: true,
         requireApprove: false
       },
       configs: {

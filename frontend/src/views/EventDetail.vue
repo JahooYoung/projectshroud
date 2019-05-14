@@ -1,6 +1,11 @@
 <template>
   <div>
-    <b-container>
+    <b-spinner
+      v-if="refreshing"
+      style="width: 3rem; height: 3rem;"
+      label="Loading..."
+    />
+    <b-container v-else>
       <b-row>
         <b-col
           cols="12"
@@ -10,18 +15,18 @@
         >
           <b-card header="Event Description">
             <div
-              v-if="event.title"
+              v-if="event"
               class="markdown-body"
               style="text-align: initial;"
               v-html="event.descriptionHtml"
             />
             <b-card-title v-else>
-              Event is not existed
+              This event does not exist
             </b-card-title>
           </b-card>
         </b-col>
         <b-col
-          v-if="event.title !== ''"
+          v-if="event"
           cols="12"
           order="1"
           lg="3"
@@ -41,17 +46,38 @@
 
               <b-list-group flush>
                 <b-list-group-item>
+                  <div
+                    v-if="event.requireApprove"
+                    class="mb-2"
+                  >
+                    <b v-if="!event.eventRegistered">
+                      <font-awesome-icon
+                        icon="file-alt"
+                      />
+                      Require approvement
+                    </b>
+                    <b v-else-if="!event.userRegisterEvent.approved">
+                      <font-awesome-icon
+                        icon="circle-notch"
+                        class="fa-spin"
+                        :style="{ color: '#2196F3' }"
+                      />
+                      Waiting for approvement
+                    </b>
+                    <b v-else>
+                      <font-awesome-icon
+                        icon="check"
+                        :style="{ color: 'green' }"
+                      />
+                      Approved
+                    </b>
+                  </div>
                   <b-button
-                    v-if="!event.registered"
+                    v-if="!event.eventRegistered"
                     variant="primary"
                     :disabled="isLoading"
                     @click="checkActivated() && $refs['modal-register'].show()"
                   >
-                    <!-- <b-spinner
-                      v-show="isLoading"
-                      small
-                      type="grow"
-                    /> -->
                     Register
                   </b-button>
                   <b-button
@@ -60,15 +86,10 @@
                     :disabled="isLoading"
                     @click="$refs['modal-unregister'].show()"
                   >
-                    <!-- <b-spinner
-                      v-show="isLoading"
-                      small
-                      type="grow"
-                    /> -->
                     Unregister
                   </b-button>
                 </b-list-group-item>
-                <b-list-group-item v-if="isAdmin">
+                <b-list-group-item v-if="event.eventAdmin">
                   <b-button
                     variant="dark"
                     :to="`/event/${$route.params.id}/admin`"
@@ -79,7 +100,7 @@
               </b-list-group>
             </b-card>
             <b-card
-              v-if="event.registered"
+              v-if="event.eventRegistered"
               class="mb-2"
             >
               <template #header>
@@ -97,11 +118,14 @@
                 </div>
               </template>
               <b-card-text v-if="transport">
-                <strong>{{ transport.transport_type }}</strong> {{ transport.transport_id }} <br>
-                <strong>From</strong> {{ transport.depart_station }} <br>
-                {{ transport.depart_time.toLocaleString() }} <br>
-                <strong>To</strong> {{ transport.arrival_station }} <br>
-                {{ transport.arrival_time.toLocaleString() }}
+                <strong>{{ transport.transportType }}</strong> {{ transport.transportId }} <br>
+                <strong>From</strong> {{ transport.departStation }} <br>
+                {{ transport.departTime.toLocaleString() }} <br>
+                <strong>To</strong> {{ transport.arrivalStation }} <br>
+                {{ transport.arrivalTime.toLocaleString() }}
+                <div v-if="transport.otherDetail">
+                  <strong>p.s.</strong> {{ transport.otherDetail }}
+                </div>
               </b-card-text>
               <b-card-text v-else>
                 None
@@ -118,9 +142,21 @@
       @show="checkConflict"
       @ok="register"
     >
-      <div class="my-3">
+      <div
+        class="my-2"
+        align="center"
+      >
         Are you sure to register? <br>
         You can also provide your transport info
+        <div v-if="event.requireApprove">
+          <hr>
+          <b>Application Text</b>
+          <b-textarea
+            v-model="applicationText"
+            class="application-text"
+            rows="5"
+          />
+        </div>
         <div v-if="conflictEvent">
           <hr>
           <b>Warning</b>: this event is in conflict with <br>
@@ -130,8 +166,8 @@
           >
             {{ conflictEvent.title }}
           </b-link> <br>
-          It starts at {{ conflictEvent.start_time.toLocaleString() }} <br>
-          and ends at {{ conflictEvent.end_time.toLocaleString() }}
+          It starts at {{ conflictEvent.startTime.toLocaleString() }} <br>
+          and ends at {{ conflictEvent.endTime.toLocaleString() }}
         </div>
       </div>
 
@@ -180,29 +216,25 @@
 <script>
 import 'mavon-editor/dist/markdown/github-markdown.min.css'
 import TransportModal from '@/components/TransportModal.vue'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faCircleNotch, faCheck, faFileAlt } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+library.add(faCircleNotch, faCheck, faFileAlt)
 
 export default {
   name: 'EventDetail',
   components: {
-    TransportModal
+    TransportModal,
+    FontAwesomeIcon
   },
   data () {
     return {
-      isAdmin: false,
-      event: {
-        title: null,
-        description: '',
-        description_html: '',
-        startTime: '',
-        endTime: '',
-        location: '',
-        public: false,
-        registered: false,
-        userRegisterEvent: null,
-        requireApprove: false
-      },
+      event: null,
+      applicationText: '',
       transport: null,
-      conflictEvent: null
+      conflictEvent: null,
+      refreshing: false
     }
   },
   computed: {
@@ -218,48 +250,38 @@ export default {
   },
   methods: {
     makeToast (succeed, message) {
-      this.$bvToast.toast(message, {
+      this.$root.$bvToast.toast(message, {
         title: succeed ? 'Succeed' : 'Error',
         variant: succeed ? 'default' : 'danger',
         autoHideDelay: 3000,
         solid: true
       })
     },
-    refresh () {
-      return this.axios.get(`/api/event/${this.eventId}/`)
-        .then(res => {
-          this.event.title = res.data.title
-          this.event.description = res.data.description
-          this.event.descriptionHtml = res.data.description_html
-          this.event.startTime = res.data.start_time
-          this.event.endTime = res.data.end_time
-          this.event.location = res.data.location
-          this.event.public = res.data.public
-          this.event.registered = res.data.event_registered
-          this.event.userRegisterEvent = res.data.user_register_event
-          if (this.event.userRegisterEvent) {
-            this.transport = this.event.userRegisterEvent.transport_info
-          } else {
-            this.transport = null
-            this.$nextTick(() => {
-              this.$refs['tp-modal'].reset()
-            })
-          }
-          this.event.requireApprove = res.data.require_approve
-          this.isAdmin = res.data.event_admin
-        })
-        .catch(() => {
-          this.event.title = ''
-        })
+    async refresh () {
+      this.refreshing = true
+      try {
+        const res = await this.axios.get(`/api/event/${this.eventId}/`)
+        this.event = res.data
+        if (this.event.userRegisterEvent) {
+          this.transport = this.event.userRegisterEvent.transportInfo
+        } else {
+          this.transport = null
+          this.$nextTick(() => {
+            this.$refs['tp-modal'].reset()
+          })
+        }
+      } catch (err) {
+        this.event = null
+      }
+      this.refreshing = false
     },
     async checkConflict () {
       try {
         const res = await this.axios.post('/api/reg-conflict/', {
-          event_id: this.eventId
+          eventId: this.eventId
         })
-        console.log(res)
         if (res.data.conflict) {
-          this.conflictEvent = res.data.user_register_event.event_info
+          this.conflictEvent = res.data.userRegisterEvent.eventInfo
         } else {
           this.conflictEvent = null
         }
@@ -267,49 +289,49 @@ export default {
         // do nothing
       }
     },
-    register () {
-      return this.axios.post('/api/register/', {
-        event_id: this.eventId
-      })
-        .then(res => {
-          this.event.registered = true
-          this.makeToast(true, 'Register successfully')
+    async register () {
+      try {
+        const res = await this.axios.post('/api/register/', {
+          eventId: this.eventId,
+          applicationText: this.applicationText || undefined
         })
-        .catch(err => {
-          if (err.response && err.response.status === 400) {
-            this.makeToast(false, err.response.data.detail)
-          }
-        })
+        this.event.eventRegistered = true
+        this.event.userRegisterEvent = res.data
+        this.makeToast(true, 'Register successfully')
+      } catch (err) {
+        if (err.response && err.response.status === 400) {
+          this.makeToast(false, err.response.data.detail)
+        }
+      }
     },
-    registerAndTransport () {
-      this.register()
-        .then(() => {
-          if (this.event.registered) {
-            this.editTransport()
-          }
-        })
+    async registerAndTransport () {
+      await this.register()
+      if (this.event.eventRegistered) {
+        await this.editTransport()
+      }
     },
-    unregister () {
-      this.axios.post('/api/unregister/', {
-        event_id: this.eventId
-      })
-        .then(res => {
-          this.event.registered = false
-          this.makeToast(true, 'Unegister successfully')
+    async unregister () {
+      try {
+        await this.axios.post('/api/unregister/', {
+          eventId: this.eventId
         })
-        .catch(err => {
-          if (err.response) {
-            this.makeToast(false, err.response.data.detail)
-          }
-        })
+        this.event.eventRegistered = false
+        this.event.userRegisterEvent = null
+        this.makeToast(true, 'Unegister successfully')
+      } catch (err) {
+        if (err.response) {
+          this.makeToast(false, err.response.data.detail)
+        }
+      }
     },
-    editTransport () {
-      this.$refs['tp-modal'].show(this.transport, this.eventId)
-        .then(transport => {
-          if (transport !== false) {
-            this.transport = transport
-          }
-        })
+    async editTransport () {
+      const transport = await this.$refs['tp-modal'].show(
+        this.transport,
+        this.eventId
+      )
+      if (transport !== false) {
+        this.transport = transport
+      }
     }
   }
 }
@@ -322,5 +344,14 @@ export default {
     margin-right: 2em;
     min-width: 22%;
   }
+}
+
+/* .application-text {
+  border: 1px solid;
+} */
+
+.fa-spin {
+  -webkit-animation: fa-spin 2s infinite linear;
+  animation: fa-spin 2s infinite linear;
 }
 </style>

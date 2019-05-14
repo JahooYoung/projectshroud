@@ -196,7 +196,11 @@ class Transport(models.Model):
     arrival_time = models.DateTimeField('到达时间', blank=False)
     other_detail = models.TextField('详细信息', blank=True)
 
+    class Meta:
+        unique_together = ('user', 'event')
+
     def __str__(self):
+        return self.user.real_name + ' ' + self.event.title
         if self.transport_type == 'Flight':
             return '航班: %s' % self.transport_id
         elif self.transport_type == 'Train':
@@ -231,6 +235,7 @@ class UserRegisterEvent(models.Model):
 
     def approve(self):
         self.approved = True
+        self.save()
         send_approve_or_reject_email(self.user, self.event)
 
     def reject(self):

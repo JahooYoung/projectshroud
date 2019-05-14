@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import _axios from 'axios'
+import { camelCase, snakeCase } from 'lodash'
 import store from './store'
 
 const CSRFRegex = /.*csrftoken=([^;.]*).*$/
@@ -13,32 +14,50 @@ const axios = _axios.create({
   }
 })
 
-function transformDate2String (obj) {
+function transformObject2JSON (obj) {
   if (typeof obj !== 'object' || !obj) {
     return obj
   }
+  if (obj instanceof Array) {
+    return obj.map(transformObject2JSON)
+  }
+  const result = {}
   for (let key in obj) {
-    if (key.endsWith('time') && obj[key] instanceof Date) {
-      obj[key] = obj[key].toISOString()
-    } else if (typeof obj[key] === 'object') {
-      obj[key] = transformDate2String(obj[key])
+    const field = obj[key]
+    key = snakeCase(key)
+    if (field instanceof Date) {
+      result[key] = field.toISOString()
+    } else if (typeof field === 'object') {
+      result[key] = transformObject2JSON(field)
+    } else {
+      result[key] = field
     }
   }
-  return obj
+  return result
 }
 
-function transformString2Date (obj) {
+function transformJSON2Object (obj) {
   if (typeof obj !== 'object' || !obj) {
     return obj
   }
-  for (let key in obj) {
-    if (key.endsWith('time') && typeof obj[key] === 'string') {
-      obj[key] = new Date(obj[key])
-    } else if (typeof obj[key] === 'object') {
-      obj[key] = transformString2Date(obj[key])
-    }
+  if (obj instanceof Array) {
+    return obj.map(transformJSON2Object)
   }
-  return obj
+  const result = {}
+  for (let key in obj) {
+    const field = obj[key]
+    const objKey = camelCase(key)
+    if (key.endsWith('time') && typeof field === 'string') {
+      result[objKey] = new Date(field)
+    } else if (typeof field === 'object') {
+      result[objKey] = transformJSON2Object(field)
+    } else {
+      result[objKey] = field
+    }
+    // TODO: get rid of the following line
+    result[key] = result[objKey]
+  }
+  return result
 }
 
 axios.interceptors.request.use(config => {
@@ -47,12 +66,12 @@ axios.interceptors.request.use(config => {
     config.headers['Authorization'] = `Token ${store.state.userToken}`
   }
 
-  config.data = transformDate2String(config.data)
+  config.data = transformObject2JSON(config.data)
   return config
 })
 
 axios.interceptors.response.use(res => {
-  res.data = transformString2Date(res.data)
+  res.data = transformJSON2Object(res.data)
   return res
 })
 
