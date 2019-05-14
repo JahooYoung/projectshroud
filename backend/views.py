@@ -72,7 +72,7 @@ def send_activation(request):
     if 'user_id' in data:
         try:
             user = get_user_model().objects.get(id=data.get('user_id'))
-        except Event.DoesNotExist:
+        except get_user_model().DoesNotExist:
             raise ValidationError('User Not Found.')
 
     if user is None or isinstance(user, AnonymousUser):
@@ -275,19 +275,19 @@ class UserEventConflict(APIView):
             else:
                 raise ValidationError('Already applied this event, waiting for approval.')
 
-        data = {}
+        ret_data = {}
         lst = UserRegisterEvent.objects.filter(user=user,
                                             event__start_time__lte=event.end_time,
                                             event__end_time__gte=event.start_time)
         if lst.exists():
-            data['conflict'] = True
+            ret_data['conflict'] = True
             if 'user_id' not in data:
-                data['user_register_event'] = UserRegisterEventSerializer(lst[0]).data
-            return Response(data)
+                ret_data['user_register_event'] = UserRegisterEventSerializer(lst[0]).data
+            return Response(ret_data)
 
-        data['conflict'] = False
+        ret_data['conflict'] = False
 
-        return Response(data)
+        return Response(ret_data)
 
 
 class ApproveEventRegister(APIView):
@@ -475,15 +475,13 @@ class EventCheckInToken(APIView):
             raise Http404
 
         if not event.checkin_enabled:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Event Check-in not enabled.'})
+            raise ValidationError('Event Check-in not enabled.')
         data = {'checkin_token': CheckIn.objects.get(event=event).token}
         return Response(status=status.HTTP_200_OK, data=data)
 
 
 class UserCheckInEvent(APIView):
-    # Not Tested
-
-    permission_classes = (permissions.IsAuthenticated, IsActivated, IsOwner|IsEventHostAdmin|IsAdminUser)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrSelf|IsSiteAdminOrEventManager)
 
     def get(self, request, pk, format=None):
         try:
@@ -494,7 +492,7 @@ class UserCheckInEvent(APIView):
         event = checkinobj.event
         if not event.checkin_enabled:
             # Should not reach here
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Event Check-in not enabled.'})
+            raise ValidationError('Event Check-in not enabled.')
         user = request.user
         if 'user_id' in request.data:
             user = get_user_model().objects.get(id=request.data.get('user_id'))
@@ -502,11 +500,11 @@ class UserCheckInEvent(APIView):
         try:
             ure_obj = UserRegisterEvent.objects.get(user=user, event=event)
         except UserRegisterEvent.DoesNotExist:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Not registered.'})
+            raise ValidationError('Not registered.')
 
         self.check_object_permissions(request, ure_obj)
         if ure_obj.checked_in:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Already checked in.'})
+            raise ValidationError('Already checked in.')
         # ure_obj.checkin()
         # ure_obj.save()
         return Response(status=status.HTTP_200_OK)
@@ -520,7 +518,7 @@ class UserCheckInEvent(APIView):
         event = checkinobj.event
         if not event.checkin_enabled:
             # Should not reach here
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Event Check-in not enabled.'})
+            raise ValidationError('Event Check-in not enabled.')
         user = request.user
         if 'user_id' in request.data:
             user = get_user_model().objects.get(id=request.data.get('user_id'))
@@ -528,11 +526,11 @@ class UserCheckInEvent(APIView):
         try:
             ure_obj = UserRegisterEvent.objects.get(user=user, event=event)
         except UserRegisterEvent.DoesNotExist:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Not registered.'})
+            raise ValidationError('Not registered.')
 
         self.check_object_permissions(request, ure_obj)
         if ure_obj.checked_in:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Already checked in.'})
+            raise ValidationError('Already checked in.')
         ure_obj.checkin()
         ure_obj.save()
         return Response(status=status.HTTP_202_ACCEPTED)
@@ -545,9 +543,12 @@ class StartCheckIn(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         data = self.request.data
-        event = Event.objects.get(id=data.get('event_id'))
+        try:
+            event = Event.objects.get(id=data.get('event_id'))
+        except Event.DoesNotExist:
+            raise Http404
         if event.checkin_enabled:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Check-in already started.'})
+            raise ValidationError('Check-in already started.')
         event.enable_checkin()
         event.save()
         serializer.save(event=event)
@@ -556,11 +557,11 @@ class StartCheckIn(generics.CreateAPIView):
 class StopCheckIn(generics.DestroyAPIView):
     queryset = CheckIn.objects.all()
     serializer_class = CheckInSerializer
-    permission_classes = (permissions.IsAuthenticated, IsActivated, IsEventHostAdmin|IsAdminUser)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
 
     def perform_destroy(self, instance):
         if instance is None:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'msg': 'Check-in not started.'})
+            raise Http404
         event = instance.event
         event.disable_checkin()
         event.save()
