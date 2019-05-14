@@ -45,7 +45,7 @@ class TransportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transport
-        fields = ['id', 'transport_type', 'transport_id', 'depart_station', 'depart_station',
+        fields = ['id', 'transport_type', 'transport_id', 'depart_station',
                   'depart_time', 'arrival_station', 'arrival_time', 'other_detail',
                   'user_info', 'event_info']
 
@@ -58,6 +58,7 @@ class UserRegisterEventSerializer(serializers.ModelSerializer):
     date_approved = serializers.ReadOnlyField()
     checked_in = serializers.ReadOnlyField()
     is_admin = serializers.ReadOnlyField()
+    approved = serializers.ReadOnlyField()
 
     class Meta:
         model = UserRegisterEvent
