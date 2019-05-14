@@ -1945,7 +1945,7 @@ boolbase@^1.0.0, boolbase@~1.0.0:
   resolved "https://registry.npm.taobao.org/boolbase/download/boolbase-1.0.0.tgz#68dff5fbe60c51eb37725ea9e3ed310dcc1e776e"
   integrity sha1-aN/1++YMUes3cl6p4+0xDcwed24=
 
-bootstrap-vue@^2.0.0-rc.19:
+bootstrap-vue@^2.0.0-rc.20:
   version "2.0.0-rc.20"
   resolved "https://registry.npm.taobao.org/bootstrap-vue/download/bootstrap-vue-2.0.0-rc.20.tgz#3d1fcc90f0ac0c260bf75ae287fe6b2bc3b7e950"
   integrity sha1-PR/MkPCsDCYL91rih/5rK8O36VA=
