@@ -37,7 +37,7 @@ const customMapSearchbox = createCustomComponent({
       default: 'Other'
     }
   },
-  // init(options, map) {
+  init (options, map) {
   //   return new Promise(resolve => {
   //     AMap.plugin(['AMap.Autocomplete','AMap.PlaceSearch'], () => {
   //       const autocomplete = new AMap.Autocomplete(options)
@@ -47,7 +47,7 @@ const customMapSearchbox = createCustomComponent({
   //       resolve(autocomplete)
   //     })
   //   })
-  // },
+  },
   computed: {
     poiType () {
       switch (this.type) {
@@ -107,7 +107,7 @@ export default {
   data () {
     return {
       inputId: 'map-searchbox-input-' + Math.random(),
-      query: ''
+      query: this.value
     }
   },
   watch: {
@@ -120,7 +120,7 @@ export default {
   },
   methods: {
     selectSearch (poi) {
-      console.log(poi)
+      // console.log(poi)
       this.query = poi.name
       // this.query = poi.district + poi.name
     }

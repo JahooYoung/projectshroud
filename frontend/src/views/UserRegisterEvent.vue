@@ -15,32 +15,32 @@
           :tbody-tr-class="rowClass"
           primary-key="id"
         >
-          <template #event_info.title="row">
-            <b-link :to="'/event/' + row.item.event_info.id">
+          <template #eventInfo.title="row">
+            <b-link :to="'/event/' + row.item.eventInfo.id">
               {{ row.value }}
             </b-link>
           </template>
 
-          <template #transport_info="row">
+          <template #transportInfo="row">
             <div v-if="row.value">
-              {{ row.value.depart_station }} <br>
-              {{ row.value.depart_time.toLocaleString() }}
+              {{ row.value.departStation }} <br>
+              {{ row.value.departTime.toLocaleString() }}
             </div>
             <div v-else>
               None
             </div>
           </template>
 
-          <template #checked_in="row">
+          <template #checkedIn="row">
             <font-awesome-icon
               v-if="row.value"
-              :id="'checkin-popover-' + row.item.user_info.id"
+              :id="'checkin-popover-' + row.item.userInfo.id"
               icon="check"
               :style="{ color: 'green' }"
             />
             <font-awesome-icon
               v-else
-              :id="'checkin-popover-' + row.item.user_info.id"
+              :id="'checkin-popover-' + row.item.userInfo.id"
               icon="minus"
               :style="{ color: '#2196F3' }"
             />
@@ -61,10 +61,10 @@
                 header="Event Information"
               >
                 <b-card-text>
-                  <h6> {{ row.item.event_info.title }} </h6>
-                  <strong>At</strong> {{ row.item.event_info.location }} <br>
-                  <strong>From</strong> {{ row.item.event_info.start_time.toLocaleString() }} <br>
-                  <strong>To</strong> {{ row.item.event_info.end_time.toLocaleString() }} <br>
+                  <h6> {{ row.item.eventInfo.title }} </h6>
+                  <strong>At</strong> {{ row.item.eventInfo.location }} <br>
+                  <strong>From</strong> {{ row.item.eventInfo.startTime.toLocaleString() }} <br>
+                  <strong>To</strong> {{ row.item.eventInfo.endTime.toLocaleString() }} <br>
                 </b-card-text>
               </b-card>
               <b-card>
@@ -82,12 +82,12 @@
                     </b-button>
                   </div>
                 </template>
-                <b-card-text v-if="row.item.transport_info">
-                  <strong>{{ row.item.transport_info.transport_type }}</strong> {{ row.item.transport_info.transport_id }} <br>
-                  <strong>From</strong> {{ row.item.transport_info.depart_station }} <br>
-                  {{ row.item.transport_info.depart_time.toLocaleString() }} <br>
-                  <strong>To</strong> {{ row.item.transport_info.arrival_station }} <br>
-                  {{ row.item.transport_info.arrival_time.toLocaleString() }}
+                <b-card-text v-if="row.item.transportInfo">
+                  <strong>{{ row.item.transportInfo.transportType }}</strong> {{ row.item.transportInfo.transportId }} <br>
+                  <strong>From</strong> {{ row.item.transportInfo.departStation }} <br>
+                  {{ row.item.transportInfo.departTime.toLocaleString() }} <br>
+                  <strong>To</strong> {{ row.item.transportInfo.arrivalStation }} <br>
+                  {{ row.item.transportInfo.arrivalTime.toLocaleString() }}
                 </b-card-text>
                 <b-card-text v-else>
                   None
@@ -122,21 +122,21 @@ export default {
     return {
       fields: [
         {
-          key: 'event_info.title',
+          key: 'eventInfo.title',
           label: 'Event'
         },
         {
-          key: 'event_info.start_time',
+          key: 'eventInfo.startTime',
           label: 'Start Time',
           sortable: true,
           formatter: value => value.toLocaleString()
         },
         {
-          key: 'transport_info',
+          key: 'transportInfo',
           label: 'Depart Info'
         },
         {
-          key: 'checked_in',
+          key: 'checkedIn',
           label: 'Checked in'
         },
         {
@@ -160,10 +160,10 @@ export default {
     },
     editTransport (row) {
       const item = this.userRegisterEvent[row.index]
-      this.$refs['tp-modal'].resetShow(item.transport_info, item.event_info.id)
+      this.$refs['tp-modal'].resetShow(item.transportInfo, item.eventInfo.id)
         .then(transport => {
           if (transport !== false) {
-            item.transport_info = transport
+            item.transportInfo = transport
           }
         })
     }

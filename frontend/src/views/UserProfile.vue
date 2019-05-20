@@ -122,7 +122,7 @@ export default {
   computed: {
     modified () {
       return this.userProfile && (this.mobile !== this.userProfile.mobile ||
-        this.realName !== this.userProfile.real_name ||
+        this.realName !== this.userProfile.realName ||
         this.email !== this.userProfile.email)
     }
   },
@@ -135,9 +135,9 @@ export default {
         .then(res => {
           this.userProfile = res.data
           this.mobile = res.data.mobile
-          this.realName = res.data.real_name
+          this.realName = res.data.realName
           this.email = res.data.email
-          this.$store.commit('setUserActivation', res.data.is_activated)
+          this.$store.commit('setUserActivation', res.data.isActivated)
         })
     },
     activate () {
@@ -160,7 +160,7 @@ export default {
     saveUserProfile () {
       this.axios.put(`/api/users/${this.userProfile.id}/`, {
         mobile: this.mobile,
-        real_name: this.realName,
+        realName: this.realName,
         email: this.email
       })
         .then(res => {

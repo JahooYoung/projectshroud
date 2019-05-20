@@ -55,7 +55,7 @@ export default {
   data () {
     return {
       fields: [
-        { key: 'real_name', label: 'Name' },
+        { key: 'realName', label: 'Name' },
         { key: 'mobile', label: 'Mobile' },
         { key: 'email', label: 'Email' }
       ],
@@ -72,7 +72,7 @@ export default {
     refresh () {
       this.axios.get('/api/event/' + this.$route.params.id + '/admins/')
         .then(res => {
-          this.administrators = res.data.map(x => x.user_info)
+          this.administrators = res.data.map(x => x.userInfo)
         })
     }
   }

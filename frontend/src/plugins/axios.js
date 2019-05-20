@@ -54,8 +54,6 @@ function transformJSON2Object (obj) {
     } else {
       result[objKey] = field
     }
-    // TODO: get rid of the following line
-    result[key] = result[objKey]
   }
   return result
 }
@@ -65,13 +63,16 @@ axios.interceptors.request.use(config => {
   if (store.state.userToken) {
     config.headers['Authorization'] = `Token ${store.state.userToken}`
   }
-
-  config.data = transformObject2JSON(config.data)
+  if (config.headers['Content-Type'] === 'application/json') {
+    config.data = transformObject2JSON(config.data)
+  }
   return config
 })
 
 axios.interceptors.response.use(res => {
-  res.data = transformJSON2Object(res.data)
+  if (res.headers['content-type'] === 'application/json') {
+    res.data = transformJSON2Object(res.data)
+  }
   return res
 })
 

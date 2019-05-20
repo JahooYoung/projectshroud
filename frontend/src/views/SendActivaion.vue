@@ -3,10 +3,11 @@
     <b-modal
       id="modal-success"
       ok-only
-      ok-disabled
+      ok-title="Close Now"
       no-close-on-esc
       no-close-on-backdrop
       centered
+      @ok="close"
     >
       <template #modal-header>
         <h5>Activation succeeded</h5>

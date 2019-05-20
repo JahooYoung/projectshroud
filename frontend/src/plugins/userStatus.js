@@ -43,8 +43,8 @@ UserStatus.install = function (Vue, options = {}) {
       checkUserActivation () {
         return this.axios.get('/api/dummy/')
           .then(res => {
-            this.$store.commit('setUserActivation', res.data.is_activated)
-            if (!res.data.is_activated) {
+            this.$store.commit('setUserActivation', res.data.isActivated)
+            if (!res.data.isActivated) {
               this.$root.$bvToast.toast('Click here to activate your account!', {
                 title: 'Account not activated',
                 variant: 'warning',

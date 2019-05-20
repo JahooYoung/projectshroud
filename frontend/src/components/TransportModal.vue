@@ -15,8 +15,8 @@
     >
       <b-form-select
         id="transport-modal-input-2"
-        v-model="transport.transport_type"
-        :options="transport_options"
+        v-model="transport.transportType"
+        :options="transportOptions"
       />
     </b-form-group>
 
@@ -27,7 +27,7 @@
     >
       <b-form-input
         id="transport-modal-input-3"
-        v-model="transport.transport_id"
+        v-model="transport.transportId"
         placeholder="Flight No. or Train No."
       />
     </b-form-group>
@@ -39,8 +39,8 @@
     >
       <location-input
         id="transport-modal-input-4"
-        v-model="transport.depart_station"
-        :type="transport.transport_type"
+        v-model="transport.departStation"
+        :type="transport.transportType"
       />
     </b-form-group>
 
@@ -49,11 +49,9 @@
       label-for="transport-modal-input-5"
       label-cols-lg="3"
     >
-      <flat-pickr
+      <time-picker
         id="transport-modal-input-5"
-        v-model="transport.depart_time"
-        class="form-control"
-        :config="{ enableTime: true, time_24hr: true }"
+        v-model="transport.departTime"
       />
     </b-form-group>
 
@@ -64,8 +62,8 @@
     >
       <location-input
         id="transport-modal-input-6"
-        v-model="transport.arrival_station"
-        :type="transport.transport_type"
+        v-model="transport.arrivalStation"
+        :type="transport.transportType"
       />
     </b-form-group>
 
@@ -74,11 +72,9 @@
       label-for="transport-modal-input-7"
       label-cols-lg="3"
     >
-      <flat-pickr
+      <time-picker
         id="transport-modal-input-7"
-        v-model="transport.arrival_time"
-        class="form-control"
-        :config="{ enableTime: true, time_24hr: true }"
+        v-model="transport.arrivalTime"
       />
     </b-form-group>
 
@@ -89,7 +85,7 @@
     >
       <b-form-input
         id="transport-modal-input-8"
-        v-model="transport.other_detail"
+        v-model="transport.otherDetail"
         placeholder="Enter other detail"
       />
     </b-form-group>
@@ -97,25 +93,26 @@
 </template>
 
 <script>
-import flatPickr from 'vue-flatpickr-component'
-import 'flatpickr/dist/flatpickr.css'
+import TimePicker from '@/components/TimePicker.vue'
 import LocationInput from '@/components/LocationInput.vue'
+
+const transportOptions = Object.freeze([
+  { value: 'Flight', text: '航班' },
+  { value: 'Train', text: '列车' },
+  { value: 'Other', text: '其他' }
+])
 
 export default {
   name: 'TransportModal',
   components: {
-    flatPickr,
+    TimePicker,
     LocationInput
   },
   data () {
     return {
       id: null,
       transport: null,
-      transport_options: [
-        { value: 'Flight', text: '航班' },
-        { value: 'Train', text: '列车' },
-        { value: 'Other', text: '其他' }
-      ],
+      transportOptions,
       callback: null
     }
   },
@@ -125,15 +122,14 @@ export default {
   methods: {
     reset () {
       this.transport = {
-        user_id: undefined,
-        event_id: null,
-        transport_type: 'Flight',
-        transport_id: '',
-        depart_station: '',
-        depart_time: null,
-        arrival_station: '',
-        arrival_time: null,
-        other_detail: ''
+        eventId: null,
+        transportType: 'Flight',
+        transportId: '',
+        departStation: '',
+        departTime: null,
+        arrivalStation: '',
+        arrivalTime: null,
+        otherDetail: ''
       }
     },
     showModal () {
@@ -173,38 +169,22 @@ export default {
         try {
           const res = await this.axios.post(`/api/trans/`, {
             ...this.transport,
-            depart_time: new Date(this.transport.depart_time),
-            arrival_time: new Date(this.transport.arrival_time),
-            event_id: eventId,
-            user_id: userId || undefined
+            eventId,
+            userId
           })
           return res.data
         } catch (err) {
-          if (err.response && err.response.status === 400) {
-            this.$root.$bvToast.toast('Failed to save transport info', {
-              title: 'Error',
-              variant: 'danger',
-              autoHideDelay: 4000,
-              solid: true
-            })
+          if (err.response) {
+            this.toastError('Failed to save transport info')
           }
         }
       } else {
         try {
-          const res = await this.axios.put(`/api/trans/${this.id}/`, {
-            ...this.transport,
-            depart_time: new Date(this.transport.depart_time),
-            arrival_time: new Date(this.transport.arrival_time)
-          })
+          const res = await this.axios.put(`/api/trans/${this.id}/`, this.transport)
           return res.data
         } catch (err) {
-          if (err.response && (err.response.status === 400 || err.response.status === 404)) {
-            this.$root.$bvToast.toast('Failed to save transport info', {
-              title: 'Error',
-              variant: 'danger',
-              autoHideDelay: 4000,
-              solid: true
-            })
+          if (err.response) {
+            this.toastError('Failed to save transport info')
           }
         }
       }
