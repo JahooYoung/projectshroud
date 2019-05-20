@@ -12,7 +12,6 @@
           v-bind="config"
           :items="userRegisterEvent"
           :fields="fields"
-          :tbody-tr-class="rowClass"
           primary-key="id"
         >
           <template #eventInfo.title="row">
@@ -88,6 +87,9 @@
                   {{ row.item.transportInfo.departTime.toLocaleString() }} <br>
                   <strong>To</strong> {{ row.item.transportInfo.arrivalStation }} <br>
                   {{ row.item.transportInfo.arrivalTime.toLocaleString() }}
+                  <div v-if="row.item.transportInfo.otherDetail">
+                    <strong>p.s.</strong> {{ row.item.transportInfo.otherDetail }}
+                  </div>
                 </b-card-text>
                 <b-card-text v-else>
                   None

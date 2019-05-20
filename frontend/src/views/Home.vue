@@ -147,11 +147,11 @@ export default {
     }
     this.axios.get('/api/event/registered/future/')
       .then(res => {
-        this.registeredFutureEvents = res.data.map(x => x.eventInfo)
+        this.registeredFutureEvents = res.data.slice(0, 5).map(x => x.eventInfo)
       })
     this.axios.get('/api/event/admins/')
       .then(res => {
-        this.manageEvents = res.data.map(x => x.eventInfo)
+        this.manageEvents = res.data.slice(0, 5).map(x => x.eventInfo)
       })
   }
 }

@@ -1,7 +1,15 @@
 import Vue from 'vue'
 import _axios from 'axios'
-import { camelCase, snakeCase } from 'lodash'
+// import { camelCase, snakeCase } from 'lodash'
 import store from './store'
+
+function camelCase (str) {
+  return str.replace(/_([a-z])/g, match => match[1].toUpperCase())
+}
+
+function snakeCase (str) {
+  return str.replace(/[A-Z]/g, match => '_' + match[0].toLowerCase())
+}
 
 const CSRFRegex = /.*csrftoken=([^;.]*).*$/
 const CSRFMatch = document.cookie.match(CSRFRegex)
@@ -47,6 +55,7 @@ function transformJSON2Object (obj) {
   for (let key in obj) {
     const field = obj[key]
     const objKey = camelCase(key)
+    // const objKey = key
     if (key.endsWith('time') && typeof field === 'string') {
       result[objKey] = new Date(field)
     } else if (typeof field === 'object') {
