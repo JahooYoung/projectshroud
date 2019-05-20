@@ -34,6 +34,11 @@ export default {
       location: window.location
     }
   },
+  computed: {
+    eventId () {
+      return this.$route.params.id
+    }
+  },
   watch: {
     '$route': 'refresh'
   },
@@ -50,11 +55,11 @@ export default {
           })
       } else {
         this.axios.post('/api/checkin/start/', {
-          event_id: this.$route.params.id
+          eventId: this.eventId
         })
           .then(res => {
             this.checkingIn = true
-            this.checkinToken = res.data.checkin_token
+            this.checkinToken = res.data.checkinToken
             this.getQrcode()
           })
       }
@@ -63,7 +68,7 @@ export default {
       this.axios.get(`/api/event/${this.$route.params.id}/checkin/`)
         .then(res => {
           this.checkingIn = true
-          this.checkinToken = res.data.checkin_token
+          this.checkinToken = res.data.checkinToken
           this.getQrcode()
         })
     },

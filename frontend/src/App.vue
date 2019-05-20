@@ -57,8 +57,8 @@ export default {
           case 401:
             // Unauthorized: probably not login.
             // If 401 is returned, it is probable that you forget to
-            // call `checkLogin()`, so I call it here.
-            this.checkLogin()
+            // call `checkLogin()`.
+            // this.checkLogin()
             break
           case 403:
             // Forbidden: user does not have permission.

@@ -46,6 +46,30 @@
 <script>
 import TableLayout from '@/components/TableLayout.vue'
 
+const fields = Object.freeze([
+  {
+    key: 'title',
+    label: 'Title'
+  },
+  {
+    key: 'startTime',
+    sortable: true,
+    formatter: value => value.toLocaleString()
+  },
+  {
+    key: 'location',
+    label: 'Location'
+  },
+  {
+    key: 'hostDisplayInfo',
+    label: 'Host'
+  },
+  {
+    key: 'requireApprove',
+    formatter: value => value ? 'Yes' : 'No'
+  }
+])
+
 export default {
   name: 'EventList',
   components: {
@@ -53,23 +77,7 @@ export default {
   },
   data () {
     return {
-      fields: [
-        'title',
-        {
-          key: 'start_time',
-          sortable: true,
-          formatter: value => value.toLocaleString()
-        },
-        'location',
-        {
-          key: 'host_display_info',
-          label: 'Host'
-        },
-        {
-          key: 'require_approve',
-          formatter: value => value ? 'Yes' : 'No'
-        }
-      ],
+      fields,
       events: []
     }
   },

@@ -137,6 +137,7 @@
     </b-container>
 
     <b-modal
+      v-if="event"
       ref="modal-register"
       title="Confirm Registration"
       @show="checkConflict"

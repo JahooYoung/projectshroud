@@ -17,8 +17,8 @@ const install = _Vue => {
       toastSuccess (msg, title, to) {
         this.$root.$bvToast.toast(msg, {
           title: title || 'Success',
-          variant: 'success',
-          autoHideDelay: 4000,
+          variant: 'default',
+          autoHideDelay: 3000,
           solid: true,
           to: to
         })
@@ -27,7 +27,7 @@ const install = _Vue => {
         this.$root.$bvToast.toast(msg, {
           title: title || 'Error',
           variant: 'danger',
-          autoHideDelay: 4000,
+          autoHideDelay: 5000,
           solid: true,
           to: to
         })

@@ -4,6 +4,8 @@
 *.sqlite3
 __pycache__/
 
+*.pid
+*.pk
 venv*/
 cert/
 log/

@@ -34,21 +34,21 @@
           v-bind="config"
           :items="attendee"
           :fields="fields"
-          primary-key="user_info.id"
+          primary-key="userInfo.id"
         >
-          <template #transport_info="row">
+          <template #transportInfo="row">
             <div v-if="row.value">
-              {{ row.value.depart_station }} <br>
-              {{ row.value.depart_time.toLocaleString() }}
+              {{ row.value.departStation }} <br>
+              {{ row.value.departTime.toLocaleString() }}
             </div>
             <div v-else>
               None
             </div>
           </template>
 
-          <template #approve="row">
+          <template #approved="row">
             <font-awesome-icon
-              v-if="row.item.approved"
+              v-if="row.value"
               icon="check"
               :style="{ color: 'green' }"
             />
@@ -56,30 +56,30 @@
               v-else
               size="sm"
               variant="warning"
-              @click="approve(row.item)"
+              @click="approve(row)"
             >
               See detail
             </b-button>
           </template>
 
           <template
-            slot="checked_in"
+            slot="checkedIn"
             slot-scope="row"
           >
             <font-awesome-icon
               v-if="row.value"
-              :id="'checkin-popover-' + row.item.user_info.id"
+              :id="'checkin-popover-' + row.item.userInfo.id"
               icon="check"
               :style="{ color: 'green' }"
             />
             <font-awesome-icon
               v-else
-              :id="'checkin-popover-' + row.item.user_info.id"
+              :id="'checkin-popover-' + row.item.userInfo.id"
               icon="times"
               :style="{ color: 'red' }"
             />
             <b-popover
-              :target="'checkin-popover-' + row.item.user_info.id"
+              :target="'checkin-popover-' + row.item.userInfo.id"
               triggers="hover focus"
             >
               <template slot="title">
@@ -96,24 +96,24 @@
           </template>
 
           <template
-            slot="is_admin"
+            slot="isAdmin"
             slot-scope="row"
           >
             <font-awesome-icon
               v-if="row.value"
-              :id="'checkin-popover-' + row.item.user_info.id"
+              :id="'checkin-popover-' + row.item.userInfo.id"
               icon="check"
               :style="{ color: 'green' }"
             />
             <font-awesome-icon
               v-else
-              :id="'checkin-popover-' + row.item.user_info.id"
+              :id="'checkin-popover-' + row.item.userInfo.id"
               icon="times"
               :style="{ color: 'red' }"
             />
             <font-awesome-icon
               v-if="!row.value"
-              :id="'checkin-popover-' + row.item.user_info.id"
+              :id="'checkin-popover-' + row.item.userInfo.id"
               icon="plus"
               :style="{ color: '#2196F3' }"
               class="ml-3"
@@ -159,35 +159,35 @@ export default {
     return {
       fields: [
         {
-          key: 'user_info.real_name',
+          key: 'userInfo.realName',
           label: 'Name'
         },
         {
-          key: 'user_info.mobile',
+          key: 'userInfo.mobile',
           label: 'Mobile'
         },
         // {
-        //   key: 'date_registered',
+        //   key: 'dateRegistered',
         //   label: 'Registered Time',
         //   formatter: t => t.toLocaleString()
         // },
         {
-          key: 'transport_info',
+          key: 'transportInfo',
           label: 'Arrival Info',
           sortable: true
         },
         {
-          key: 'approve',
+          key: 'approved',
           label: 'Approve',
           sortable: true
         },
         {
-          key: 'checked_in',
+          key: 'checkedIn',
           label: 'Checked in',
           sortable: true
         },
         {
-          key: 'is_admin',
+          key: 'isAdmin',
           label: 'Is Admin',
           sortable: true
         }
@@ -216,10 +216,10 @@ export default {
     async assignAdmin (rowItem) {
       try {
         await this.axios.post('/api/assignadmin/', {
-          user_id: rowItem.user_info.id,
-          event_id: this.eventId
+          userId: rowItem.userInfo.id,
+          eventId: this.eventId
         })
-        rowItem.is_admin = true
+        rowItem.isAdmin = true
       } catch (err) {
         this.toastError('Failed to assign admin')
       }
@@ -233,25 +233,32 @@ export default {
         this.$refs['modal-approve'].show()
       })
     },
-    async approve (rowItem) {
-      this.modalData = rowItem
+    async approve (row) {
+      this.modalData = row.item
       const answer = await this.showApproveModal()
       if (answer !== null) {
-        const user = rowItem.userInfo.realName
+        const user = row.item.userInfo.realName
         try {
           await this.axios.post(`/api/approve/`, {
-            userId: rowItem.userInfo.id,
+            userId: row.item.userInfo.id,
             eventId: this.eventId,
             approve: answer
           })
           if (answer) {
-            rowItem.approved = true
+            row.item.approved = true
             this.toastSuccess('Succeed to approve user ' + user)
           } else {
+            this.attendee = this.attendee.filter(
+              x => x.userInfo.id !== row.item.userInfo.id
+            )
             this.toastSuccess('Succeed to reject user ' + user)
           }
         } catch (err) {
-          this.toastError('Failed to approve user ' + user)
+          if (answer) {
+            this.toastError('Failed to approve user ' + user)
+          } else {
+            this.toastError('Failed to reject user ' + user)
+          }
         }
       }
     }

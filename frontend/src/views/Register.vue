@@ -138,7 +138,7 @@
                   This field is required.
                 </div>
                 <div v-else-if="!$v.realName.noServerError">
-                  {{ err.real_name[0] }}
+                  {{ err.realName[0] }}
                 </div>
               </template>
             </b-form-group>
@@ -219,7 +219,7 @@ export default {
     realName: {
       required,
       noServerError (value) {
-        return value !== this.submitted.real_name || !this.err.real_name
+        return value !== this.submitted.realName || !this.err.realName
       }
     }
   },
@@ -232,7 +232,7 @@ export default {
           password1: this.password,
           password2: this.repeatPassword,
           email: this.email,
-          real_name: this.realName
+          realName: this.realName
         }
         const res = await this.axios.post('/api/auth/registration/', this.submitted)
         this.$store.commit('setUserState', {

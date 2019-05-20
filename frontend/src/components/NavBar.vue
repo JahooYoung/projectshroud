@@ -11,10 +11,10 @@
         {{ $t('Website name') }}
       </b-navbar-brand>
 
-      <b-navbar-toggle target="nav_collapse" />
+      <b-navbar-toggle target="nav-collapse" />
 
       <b-collapse
-        id="nav_collapse"
+        id="nav-collapse"
         is-nav
       >
         <b-navbar-nav>
@@ -134,7 +134,7 @@ export default {
   margin-bottom: 5rem
 }
 
-/* #nav_collapse .router-link-exact-active {
+/* #nav-collapse .router-link-exact-active {
   color: #ffffff;
 } */
 </style>

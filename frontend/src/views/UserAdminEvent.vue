@@ -24,7 +24,7 @@
           :fields="fields"
           :tbody-tr-class="rowClass"
           primary-key="id"
-          sort-by="start_time"
+          sort-by="startTime"
           caption="Blue represents the event is checking in."
         >
           <div
@@ -75,7 +75,7 @@ export default {
       fields: [
         'title',
         {
-          key: 'start_time',
+          key: 'startTime',
           label: 'Start Time',
           sortable: true,
           formatter: value => value.toLocaleString()
@@ -94,11 +94,11 @@ export default {
     refresh () {
       this.axios.get('/api/event/admins/')
         .then(res => {
-          this.events = res.data.map(x => x.event_info)
+          this.events = res.data.map(x => x.eventInfo)
         })
     },
     rowClass (item, type) {
-      if (item && item.checkin_enabled) {
+      if (item && item.checkinEnabled) {
         return 'table-primary'
       }
     }

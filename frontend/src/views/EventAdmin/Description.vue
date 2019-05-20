@@ -65,7 +65,7 @@ export default {
     save (value, html) {
       return this.axios.patch(`/api/event/${this.$route.params.id}/`, {
         description: value,
-        description_html: html
+        descriptionHtml: html
       })
         .then(res => {
           this.saved = true

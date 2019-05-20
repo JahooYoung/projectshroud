@@ -58,7 +58,7 @@
                   {{ event.title }}
                 </b-link>
               </h4>
-              <em>{{ event.location }}, {{ event.start_time.toLocaleDateString() }}</em>
+              <em>{{ event.location }}, {{ event.startTime.toLocaleDateString() }}</em>
             </div>
             <p
               class="mb-2"
@@ -93,7 +93,7 @@
                 class="d-flex justify-content-between align-items-center"
               >
                 {{ event.title }}
-                <small>{{ event.start_time.toLocaleDateString() }}</small>
+                <small>{{ event.startTime.toLocaleDateString() }}</small>
               </b-list-group-item>
             </b-list-group>
           </b-card>
@@ -147,11 +147,11 @@ export default {
     }
     this.axios.get('/api/event/registered/future/')
       .then(res => {
-        this.registeredFutureEvents = res.data.map(x => x.event_info)
+        this.registeredFutureEvents = res.data.map(x => x.eventInfo)
       })
     this.axios.get('/api/event/admins/')
       .then(res => {
-        this.manageEvents = res.data.map(x => x.event_info)
+        this.manageEvents = res.data.map(x => x.eventInfo)
       })
   }
 }
