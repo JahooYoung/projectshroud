@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "start": "node git_auto_deploy.js",
-    "serve": "forever start -l ../log/forever.log -o ../log/git_auto_deploy.log -e ../log/git_auto_deploy_error.log git_auto_deploy.js"
+    "serve": "forever start -l /home/projectshroud/log/forever.log -o /home/projectshroud/log/git_auto_deploy.log -e /home/projectshroud/log/git_auto_deploy_error.log git_auto_deploy.js"
   },
   "dependencies": {
     "forever": "^1.0.0",
