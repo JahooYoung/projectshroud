@@ -188,3 +188,12 @@ else:
 SITE_DOMAIN_NAME = 'testshroud.top'
 
 USER_ACTIVATE_URL = '/send/activation/'
+
+# Cache
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+#         # 'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#         'LOCATION': '127.0.0.1:11211',
+#     }
+# }
