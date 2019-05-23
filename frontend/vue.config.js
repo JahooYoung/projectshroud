@@ -1,6 +1,4 @@
 module.exports = {
-  lintOnSave: true,
-
   devServer: {
     proxy: {
       '/api/': {

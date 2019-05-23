@@ -128,6 +128,7 @@
       ref="modal-approve"
       ok-title="Accept"
       cancel-title="Reject"
+      cancel-variant="danger"
       @ok="modalCallback && modalCallback(true)"
       @cancel="modalCallback && modalCallback(false)"
       @hide="modalCallback && modalCallback(null)"

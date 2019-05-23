@@ -23,7 +23,7 @@ do
         p)
         echo "Installing python dependencies"
         source /home/pyweb/bin/activate
-        pip install -r requirements.pip
+        pip install -r requirements.txt
         deactivate
         ;;
     esac

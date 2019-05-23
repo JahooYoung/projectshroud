@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import _axios from 'axios'
-// import { camelCase, snakeCase } from 'lodash'
 import store from './store'
 
 function camelCase (str) {
@@ -10,17 +9,6 @@ function camelCase (str) {
 function snakeCase (str) {
   return str.replace(/[A-Z]/g, match => '_' + match[0].toLowerCase())
 }
-
-const CSRFRegex = /.*csrftoken=([^;.]*).*$/
-const CSRFMatch = document.cookie.match(CSRFRegex)
-
-const axios = _axios.create({
-  headers: {
-    'Content-Type': 'application/json',
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-CSRFToken': CSRFMatch && CSRFMatch[1]
-  }
-})
 
 function transformObject2JSON (obj) {
   if (typeof obj !== 'object' || !obj) {
@@ -55,7 +43,6 @@ function transformJSON2Object (obj) {
   for (let key in obj) {
     const field = obj[key]
     const objKey = camelCase(key)
-    // const objKey = key
     if (key.endsWith('time') && typeof field === 'string') {
       result[objKey] = new Date(field)
     } else if (typeof field === 'object') {
@@ -63,11 +50,20 @@ function transformJSON2Object (obj) {
     } else {
       result[objKey] = field
     }
-    // TODO: get rid of the following line
-    result[key] = result[objKey]
   }
   return result
 }
+
+const CSRFRegex = /.*csrftoken=([^;.]*).*$/
+const CSRFMatch = document.cookie.match(CSRFRegex)
+
+const axios = _axios.create({
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-CSRFToken': CSRFMatch && CSRFMatch[1]
+  }
+})
 
 axios.interceptors.request.use(config => {
   // handle authorization

@@ -57,7 +57,7 @@ handler.on('push', event => {
           frontendDependencyUpdated = true;
         if (file.match('backend/models.py'))
           backendModelsUpdated = true;
-        if (file.match('requirements.pip'))
+        if (file.match('requirements.txt'))
           backendDependencyUpdated = true;
       });
     });

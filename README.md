@@ -29,7 +29,7 @@
 ### 环境
 
 1. 建议使用virtualenv
-2. `pip install -r requirements.pip`
+2. `pip install -r requirements.txt`
 3. 安装[yarn](https://yarnpkg.com/zh-Hant/)
 4. `cd frontend && yarn install`（前端依赖改了就要做一次）
 
