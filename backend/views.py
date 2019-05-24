@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -35,15 +34,6 @@ def check_event_registered(user, event):
 
 def check_event_register_approved(user, event):
     return UserRegisterEvent.objects.filter(user=user, event=event, approved=True).exists()
-
-
-@api_view(['POST'])
-def github_push(request):
-    import pickle
-    from django.conf import settings
-    with open(os.path.join(settings.BASE_DIR, 'github_push.pk'), 'wb') as f:
-        pickle.dump(request.data, f)
-    return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['GET', 'POST'])
@@ -566,8 +556,3 @@ class StopCheckIn(generics.DestroyAPIView):
         event.disable_checkin()
         event.save()
         instance.delete()
-
-
-def index(request):
-    return render(request, 'index.html', {})
-
