@@ -124,8 +124,8 @@ class Event(models.Model):
     description = models.TextField('描述', blank=True)
     description_html = models.TextField(blank=True)
     create_time = models.DateTimeField('创建时间', auto_now_add=True)
-    start_time = models.DateTimeField('开始时间')
-    end_time = models.DateTimeField('结束时间')
+    start_time = models.DateTimeField('开始时间', db_index=True)
+    end_time = models.DateTimeField('结束时间', db_index=True)
     location = models.CharField(max_length=50, blank=False)
     host = models.ForeignKey(get_user_model(), related_name='event_host', on_delete=models.CASCADE, verbose_name='创建者')
     admins = models.ManyToManyField(get_user_model(), through='UserManageEvent', related_name='admins')
@@ -225,7 +225,9 @@ class UserRegisterEvent(models.Model):
     approved = models.BooleanField(default=False)
 
     class Meta:
-        unique_together = ('user', 'event')
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'event'], name='unique_registration'),
+        ]
 
     def __str__(self):
         return '人员: %s, 活动: %s, 交通信息: %s' % (self.user, self.event, self.transport)
@@ -253,7 +255,9 @@ class UserManageEvent(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('user', 'event')
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'event'], name='unique_registration'),
+        ]
 
     def __str__(self):
         return '管理员: %s, 活动: %s' % (self.user, self.event)
