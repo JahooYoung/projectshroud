@@ -146,11 +146,11 @@ class Event(models.Model):
     def host_display_info(self):
         return self.host.real_name
 
-    def enable_checkin(self):
-        self.checkin_enabled = True
+    # def enable_checkin(self):
+    #     self.checkin_enabled = True
 
-    def disable_checkin(self):
-        self.checkin_enabled = False
+    # def disable_checkin(self):
+    #     self.checkin_enabled = False
 
     # def save(self, *args, **kwargs):
     #     """
@@ -175,6 +175,9 @@ class CheckIn(models.Model):
     event = models.OneToOneField(Event, on_delete=models.CASCADE)
     name = models.CharField(max_length=30, blank=False)
     started = models.BooleanField(default=False)
+
+    def toggle(self):
+        self.started = not self.started
 
 
 class UserCheckIn(models.Model):

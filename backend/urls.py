@@ -25,15 +25,14 @@ urlpatterns = [
     path('event/registered/future/', views.UserRegisterFutureEventList.as_view()),
 
     path('event/<pk>/', views.EventDetail.as_view()),
-    path('event/<pk>/checkin/', views.EventCheckInToken.as_view()),
+    path('event/<pk>/checkin/', views.EventCheckInList.as_view()),
     path('event/<pk>/attendee/', views.EventAttendeeList.as_view()),
     path('event/<pk>/admins/', views.EventAdminList.as_view()),
 
     path('trans/', views.TransportCreateView.as_view()),
     path('trans/<pk>/', views.TransportView.as_view()),
 
-    path('checkin/start/', views.StartCheckIn.as_view()),
-    path('checkin/<pk>/stop/', views.StopCheckIn.as_view()),
+    path('checkin/<pk>/toggle/', views.ToggleCheckIn.as_view()),
     path('checkin/<pk>/', views.UserCheckInEvent.as_view()),
 
     path('dummy/', views.DummyView.as_view()),
