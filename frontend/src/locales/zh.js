@@ -11,5 +11,7 @@ export default {
   'Login': '登陆',
   'Recent Events': '近期举办的活动',
   'Registered Future Events': '准备参加的活动',
-  'Manage Events': '管理活动'
+  'Manage Events': '管理活动',
+  'Try to checkin again': '再试一次',
+  'Return to event info': '返回到活动信息'
 }

@@ -1,6 +1,5 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
-from graphene_django.views import GraphQLView
 from backend import views
 
 urlpatterns = [
@@ -43,8 +42,6 @@ urlpatterns = [
     # Activation email
     path('activate/', views.activate_user),
     path('send/activation/', views.send_activation),
-
-    path("graphql/", GraphQLView.as_view(graphiql=True)),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
