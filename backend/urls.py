@@ -34,6 +34,7 @@ urlpatterns = [
 
     path('checkin/<pk>/toggle/', views.ToggleCheckIn.as_view()),
     path('checkin/<pk>/', views.UserCheckInEvent.as_view()),
+    path('checkin/<pk>/delete/', views.DeleteCheckIn.as_view()),
 
     path('dummy/', views.DummyView.as_view()),
 

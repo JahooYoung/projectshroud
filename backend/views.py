@@ -544,3 +544,10 @@ class ToggleCheckIn(APIView):
 
         return Response(CheckInSerializer(obj).data, status=status.HTTP_202_ACCEPTED)
 
+
+class DeleteCheckIn(generics.DestroyAPIView):
+    queryset = CheckIn.objects.all()
+    serializer_class = CheckInSerializer
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
+
+
