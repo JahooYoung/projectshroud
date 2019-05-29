@@ -75,7 +75,7 @@ export default {
           if (err.response) {
             switch (err.response.status) {
               case 400:
-                this.msg = err.response.data.msg
+                this.msg = err.response.data[0]
                 if (this.msg === 'Already checked in.') {
                   this.checked = true
                 }

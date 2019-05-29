@@ -172,17 +172,12 @@ class CheckIn(models.Model):
         default=generate_checkin_uuid,
         editable=False
     )
-    event = models.OneToOneField(Event, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     name = models.CharField(max_length=30, blank=False)
     started = models.BooleanField(default=False)
 
     def toggle(self):
         self.started = not self.started
-
-
-class UserCheckIn(models.Model):
-    ure = models.ForeignKey(UserRegisterEvent, on_delete=models.CASCADE)
-    checkin = models.ForeignKey(CheckIn, on_delete=models.CASCADE)
 
 
 class Transport(models.Model):
@@ -272,3 +267,7 @@ class UserManageEvent(models.Model):
     def __str__(self):
         return '管理员: %s, 活动: %s' % (self.user, self.event)
 
+
+class UserCheckIn(models.Model):
+    ure = models.ForeignKey(UserRegisterEvent, on_delete=models.CASCADE)
+    checkin = models.ForeignKey(CheckIn, on_delete=models.CASCADE)

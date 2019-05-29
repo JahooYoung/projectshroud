@@ -491,7 +491,7 @@ class UserCheckInEvent(APIView):
             raise ValidationError('Not registered.')
 
         self.check_object_permissions(request, ure_obj)
-        if ure_obj.checked_in and UserCheckIn.objects.filter(ure=ure_obj, checkin=checkinobj).exists()::
+        if ure_obj.checked_in and UserCheckIn.objects.filter(ure=ure_obj, checkin=checkinobj).exists():
             raise ValidationError('Already checked in.')
 
         return Response(status=status.HTTP_200_OK)
@@ -541,4 +541,6 @@ class ToggleCheckIn(APIView):
             raise Http404
         obj.toggle()
         obj.save()
+
+        return Response(CheckInSerializer(obj).data, status=status.HTTP_202_ACCEPTED)
 

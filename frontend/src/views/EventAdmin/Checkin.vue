@@ -22,11 +22,11 @@
           v-bind="config"
           :items="channel"
           :fields="fields"
-          primary-key="token"
+          primary-key="checkinToken"
         >
           <template #activate="row">
             <b-button
-              v-if="row.item.started"
+              v-if="!row.item.started"
               size="sm"
               variant="primary"
               @click="toggle(row.item)"
@@ -75,11 +75,10 @@
 
     <b-modal
       ref="show-QRcode"
-      lazy
       size="lg"
     >
       <b-img
-        v-if="checkingIn && qrcodeURL"
+        v-if="qrcodeURL"
         center
         fluid
         :src="qrcodeURL"
@@ -132,6 +131,7 @@ export default {
         }
       ],
       channel: [],
+      newChannelName: '',
       checkingIn: false,
       checkinToken: null,
       qrcodeURL: null,
@@ -171,10 +171,7 @@ export default {
     refresh () {
       this.axios.get(`/api/event/${this.eventId}/checkin/`)
         .then(res => {
-          this.channels = res.data
-          // this.checkingIn = true
-          // this.checkinToken = res.data.checkinToken
-          // this.getQrcode()
+          this.channel = res.data
         })
     },
     addChannel () {
@@ -188,7 +185,7 @@ export default {
         })
     },
     toggle (channel) {
-      this.axios.post(`/api/checkin/${channel.token}/toggle/`, {
+      this.axios.post(`/api/checkin/${channel.checkinToken}/toggle/`, {
 
       })
         .then(res => {
@@ -196,10 +193,11 @@ export default {
         })
     },
     showQRcode (channel) {
-
+      this.getQrcode(channel)
+      this.$refs['show-QRcode'].show()
     },
     getQrcode (channel) {
-      const url = `${this.location.origin}/checkin/?token=${channel.token}&id=${this.eventId}`
+      const url = `${this.location.origin}/checkin/?token=${channel.checkinToken}&id=${this.eventId}`
       console.log(url)
       this.axios.post('/api/qrcode/', {
         text: url
