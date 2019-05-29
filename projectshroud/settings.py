@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     'backend.apps.BackendConfig',
     'algoliasearch_django',
+    'huey.contrib.djhuey',
 ]
 
 MIDDLEWARE = [
@@ -197,3 +198,15 @@ USER_ACTIVATE_URL = '/send/activation/'
 #         'LOCATION': '127.0.0.1:11211',
 #     }
 # }
+
+from huey import SqliteHuey
+
+# HUEY = SqliteHuey('scheduled_job', filename='huey.sqlite3')
+
+HUEY = {
+    'huey_class': 'huey.SqliteHuey',
+    'name': 'scheduled_job',
+    'filename': 'huey.sqlite3',
+    'immediate': False
+    # 'utc': False
+}

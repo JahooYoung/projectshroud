@@ -1,3 +1,4 @@
+import os
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 
@@ -36,3 +37,10 @@ def send_registered_email(user, event, approved=True):
     # Todo
     return True
 
+
+def send_notification_email(user, message):
+    '''
+    @message '您注册的<a href="">event.title</a>将于（）后在event.location举行，请按时参加。'
+    '''
+    # Todo
+    print('Send Notification Email to user %s: %s' % (user.real_name, message))
