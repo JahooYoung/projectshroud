@@ -1,48 +1,49 @@
-from django.urls import path, re_path, include
+from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
+from graphene_django.views import GraphQLView
 from backend import views
 
 urlpatterns = [
-    re_path(r'^(?!api/)', views.index),
-    path('api/user/', views.UserProfileView.as_view()),
-    path('api/users/<pk>/', views.UserView.as_view()),
+    path('user/', views.UserProfileView.as_view()),
+    path('users/<pk>/', views.UserView.as_view()),
 
-    path('api/event/', views.EventList.as_view()),
-    path('api/event/past/', views.PastEventList.as_view()),
-    path('api/event/ongoing/', views.OngoingEventList.as_view()),
-    path('api/event/future/', views.FutureEventList.as_view()),
+    path('event/', views.EventList.as_view()),
+    path('event/past/', views.PastEventList.as_view()),
+    path('event/ongoing/', views.OngoingEventList.as_view()),
+    path('event/future/', views.FutureEventList.as_view()),
 
-    path('api/reg-conflict/', views.UserEventConflict.as_view()),
-    path('api/register/', views.UserEventRegister.as_view()),
-    path('api/approve/', views.ApproveEventRegister.as_view()),
-    path('api/unregister/', views.UserEventUnregister.as_view()),
-    path('api/assignadmin/', views.AssignEventAdmin.as_view()),
+    path('reg-conflict/', views.UserEventConflict.as_view()),
+    path('register/', views.UserEventRegister.as_view()),
+    path('approve/', views.ApproveEventRegister.as_view()),
+    path('unregister/', views.UserEventUnregister.as_view()),
+    path('assignadmin/', views.AssignEventAdmin.as_view()),
 
-    path('api/event/admins/', views.UserManageEventList.as_view()),
-    path('api/event/registered/', views.UserRegisterEventList.as_view()),
-    path('api/event/registered/past/', views.UserRegisterPastEventList.as_view()),
-    path('api/event/registered/ongoing/', views.UserRegisterOngoingEventList.as_view()),
-    path('api/event/registered/future/', views.UserRegisterFutureEventList.as_view()),
+    path('event/admins/', views.UserManageEventList.as_view()),
+    path('event/registered/', views.UserRegisterEventList.as_view()),
+    path('event/registered/past/', views.UserRegisterPastEventList.as_view()),
+    path('event/registered/ongoing/', views.UserRegisterOngoingEventList.as_view()),
+    path('event/registered/future/', views.UserRegisterFutureEventList.as_view()),
 
-    path('api/event/<pk>/', views.EventDetail.as_view()),
-    path('api/event/<pk>/checkin/', views.EventCheckInToken.as_view()),
-    path('api/event/<pk>/attendee/', views.EventAttendeeList.as_view()),
-    path('api/event/<pk>/admins/', views.EventAdminList.as_view()),
+    path('event/<pk>/', views.EventDetail.as_view()),
+    path('event/<pk>/checkin/', views.EventCheckInList.as_view()),
+    path('event/<pk>/attendee/', views.EventAttendeeList.as_view()),
+    path('event/<pk>/admins/', views.EventAdminList.as_view()),
 
-    path('api/trans/', views.TransportCreateView.as_view()),
-    path('api/trans/<pk>/', views.TransportView.as_view()),
+    path('trans/', views.TransportCreateView.as_view()),
+    path('trans/<pk>/', views.TransportView.as_view()),
 
-    path('api/checkin/start/', views.StartCheckIn.as_view()),
-    path('api/checkin/<pk>/stop/', views.StopCheckIn.as_view()),
-    path('api/checkin/<pk>/', views.UserCheckInEvent.as_view()),
+    path('checkin/<pk>/toggle/', views.ToggleCheckIn.as_view()),
+    path('checkin/<pk>/', views.UserCheckInEvent.as_view()),
 
-    path('api/dummy/', views.DummyView.as_view()),
+    path('dummy/', views.DummyView.as_view()),
 
-    path('api/qrcode/', views.gen_qrcode),
+    path('qrcode/', views.gen_qrcode),
 
     # Activation email
-    path('api/activate/', views.activate_user),
-    path('api/send/activation/', views.send_activation)
+    path('activate/', views.activate_user),
+    path('send/activation/', views.send_activation),
+
+    path("graphql/", GraphQLView.as_view(graphiql=True)),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
