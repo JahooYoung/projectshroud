@@ -21,7 +21,7 @@
         :disabled="isLoading"
         @click="checkin"
       >
-        Try to checkin again
+        {{ $t('Try to checkin again') }}
       </b-button>
     </div>
     <div class="pt-4">
@@ -30,7 +30,7 @@
         :disabled="isLoading"
         :to="`/event/${$route.query.id}`"
       >
-        Return to event info
+        {{ $t('Return to event info') }}
       </b-button>
     </div>
   </div>
