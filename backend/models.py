@@ -134,7 +134,7 @@ class Event(models.Model):
     require_approve = models.BooleanField('注册需要审核', default=False)
     require_application = models.BooleanField('需要填写申请信息', default=False)
     require_attachment = models.BooleanField('需要提交申请文件', default=False)
-    checkin_enabled = models.BooleanField('正在签到', default=False)
+    # checkin_enabled = models.BooleanField('正在签到', default=False)
 
     class Meta:
         ordering = ('create_time',)
@@ -173,6 +173,13 @@ class CheckIn(models.Model):
         editable=False
     )
     event = models.OneToOneField(Event, on_delete=models.CASCADE)
+    name = models.CharField(max_length=30, blank=False)
+    started = models.BooleanField(default=False)
+
+
+class UserCheckIn(models.Model):
+    ure = models.ForeignKey(UserRegisterEvent, on_delete=models.CASCADE)
+    checkin = models.ForeignKey(CheckIn, on_delete=models.CASCADE)
 
 
 class Transport(models.Model):

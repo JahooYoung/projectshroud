@@ -38,9 +38,24 @@ def send_registered_email(user, event, approved=True):
     return True
 
 
-def send_notification_email(user, message):
+def send_notification_email(ure, day_msg):
     '''
     @message '您注册的<a href="">event.title</a>将于（）后在event.location举行，请按时参加。'
     '''
-    # Todo
-    print('Send Notification Email to user %s: %s' % (user.real_name, message))
+    id = ure.user.id
+    name = ure.user.real_name
+
+    href = 'http://%s/event/%s' % (site_host, ure.event.id)
+    message = '您注册的<a href="%s">%s</a>将于%s在%s举行，请按时参加。'
+    message %= (href, ure.event.title, before_days[1], ure.event.location)
+
+    subject = '%s提醒您: 您注册的%s将于%s开始' % (site_name, ure.event.title, day_msg)
+    content = '<p>亲爱的 <strong>%s</strong> 您好:</p>\n' % name
+    content += '<p>%s</p>\n' % message
+    content += '<p> <a href="%s">%s</a> team</p>\n' % (site_host, site_name)
+
+    from_email = settings.DEFAULT_FROM_EMAIL
+    msg = EmailMultiAlternatives(subject, content, from_email, [user.email])
+    msg.attach_alternative(content, "text/html")
+
+    return msg.send()
