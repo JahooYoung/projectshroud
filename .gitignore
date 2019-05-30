@@ -10,5 +10,6 @@ __pycache__/
 venv*/
 cert/
 log/
+backend/migrations/
 
 *.http
