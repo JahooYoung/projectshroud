@@ -73,7 +73,10 @@ export default {
   data () {
     return {
       fields: [
-        'title',
+        {
+          key: 'title',
+          label: 'Title'
+        },
         {
           key: 'startTime',
           label: 'Start Time',
@@ -81,7 +84,18 @@ export default {
           formatter: value => value.toLocaleString()
         },
         {
-          key: 'actions'
+          key: 'attendeeCount',
+          label: 'No. Attendee',
+          sortable: true
+        },
+        {
+          key: 'applicantCount',
+          label: 'No. Applicant',
+          sortable: true
+        },
+        {
+          key: 'actions',
+          label: 'Actions'
         }
       ],
       events: []

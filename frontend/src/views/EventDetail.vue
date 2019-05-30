@@ -81,13 +81,20 @@
                     Register
                   </b-button>
                   <b-button
-                    v-else
+                    v-else-if="!event.userRegisterEvent.checkedIn"
                     variant="danger"
                     :disabled="isLoading"
                     @click="$refs['modal-unregister'].show()"
                   >
                     Unregister
                   </b-button>
+                  <b v-else>
+                    <font-awesome-icon
+                      icon="check"
+                      :style="{ color: 'green' }"
+                    />
+                    Checked in
+                  </b>
                 </b-list-group-item>
                 <b-list-group-item v-if="event.eventAdmin">
                   <b-button

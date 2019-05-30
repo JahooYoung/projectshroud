@@ -39,7 +39,9 @@ export default {
     })
 
     this.axios.interceptors.response.use(res => res, err => {
+      err.needHandle = true
       if (!err.response) {
+        err.needHandle = false
         this.$bvToast.toast('Fail to connect server', {
           title: 'Network Error',
           variant: 'secondary',
@@ -62,6 +64,7 @@ export default {
             break
           case 403:
             // Forbidden: user does not have permission.
+            err.needHandle = false
             this.$bvToast.toast('You do not have permission', {
               title: 'Forbidden',
               variant: 'secondary',
@@ -75,6 +78,7 @@ export default {
             break
           case 500:
             // Internal Server Error
+            err.needHandle = false
             this.$bvToast.toast('It seems some error occured in the server', {
               title: 'Internal Server Error',
               variant: 'secondary',
@@ -83,6 +87,7 @@ export default {
             })
             break
           default:
+            err.needHandle = false
             this.$bvToast.toast('Unknown status code ' + err.response.status, {
               title: 'Unknown Error',
               variant: 'secondary',

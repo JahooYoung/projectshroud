@@ -36,7 +36,7 @@
             <b-button
               v-else
               size="sm"
-              variant="danger"
+              variant="warning"
               @click="toggle(row.item)"
             >
               Inactivate
@@ -45,11 +45,21 @@
 
           <template #QRcode="row">
             <b-button
+              variant="outline-dark"
               size="sm"
-              variant="primary"
               @click="showQRcode(row.item)"
             >
               Show QRcode
+            </b-button>
+          </template>
+
+          <template #delete="row">
+            <b-button
+              variant="danger"
+              size="sm"
+              @click="deleteChannel(row.item)"
+            >
+              Delete
             </b-button>
           </template>
         </b-table>
@@ -58,23 +68,29 @@
 
     <b-modal
       ref="add-channel"
+      title="Add new channel"
       ok-title="Add"
+      @shown="$refs['channel-name-input'].focus()"
       @ok="addChannel()"
     >
-      <b-form-group
-        label="Channel name:"
-        label-for="channel-name"
-        label-cols-lg="3"
-      >
-        <b-form-input
-          id="channel-name"
-          v-model="newChannelName"
-        />
-      </b-form-group>
+      <b-form @submit.prevent="$refs['add-channel'].hide(), addChannel()">
+        <b-form-group
+          label="Channel name:"
+          label-for="channel-name-input"
+          label-cols-lg="3"
+        >
+          <b-form-input
+            id="channel-name-input"
+            ref="channel-name-input"
+            v-model="newChannelName"
+          />
+        </b-form-group>
+      </b-form>
     </b-modal>
 
     <b-modal
       ref="show-QRcode"
+      :title="'QRcode For Channel ' + currentChannelName"
       size="lg"
     >
       <b-img
@@ -85,28 +101,11 @@
         alt="Qrcode cannot display correctly"
       />
     </b-modal>
-    <!-- <b-button
-      size="lg"
-      :variant="checkingIn ? 'danger' : 'primary'"
-      :disabled="isLoading"
-      @click="onClick"
-    >
-      <b-spinner
-        v-show="isLoading"
-        small
-        type="grow"
-      />
-      {{ checkingIn ? 'Stop' : 'Start' }} Check In
-    </b-button>
-    -->
   </b-container>
 </template>
 
 <script>
 import TableLayout from '@/components/TableLayout.vue'
-
-// Send event_id
-// Return name,token,started,(count),
 
 export default {
   name: 'EventAdminCheckin',
@@ -122,20 +121,27 @@ export default {
           sortable: true
         },
         {
+          key: 'count',
+          label: 'Attendee Count',
+          sortable: true
+        },
+        {
           key: 'activate',
           label: 'activate'
         },
         {
           key: 'QRcode',
           label: 'QRcode'
+        },
+        {
+          key: 'delete',
+          label: 'Delete'
         }
       ],
       channel: [],
       newChannelName: '',
-      checkingIn: false,
-      checkinToken: null,
-      qrcodeURL: null,
-      location: window.location
+      currentChannelName: '',
+      qrcodeURL: null
     }
   },
   computed: {
@@ -150,64 +156,60 @@ export default {
     this.refresh()
   },
   methods: {
-    onClick () {
-      if (this.checkingIn) {
-        this.qrcodeURL = null
-        this.axios.delete(`/api/checkin/${this.checkinToken}/stop/`)
-          .then(res => {
-            this.checkingIn = false
-          })
-      } else {
-        this.axios.post('/api/checkin/start/', {
-          eventId: this.eventId
+    async refresh () {
+      const res = await this.axios.get(`/api/event/${this.eventId}/checkin/`)
+      this.channel = res.data
+    },
+    async addChannel () {
+      try {
+        await this.axios.post(`/api/event/${this.eventId}/checkin/`, {
+          name: this.newChannelName
         })
-          .then(res => {
-            this.checkingIn = true
-            this.checkinToken = res.data.checkinToken
-            this.getQrcode()
-          })
+        this.toastSuccess('Successfully added channel ' + this.newChannelName)
+        this.newChannelName = ''
+        this.refresh()
+      } catch (err) {
+        if (err.needHandle) {
+          this.toastError('Failed to add channel ' + this.newChannelName)
+        }
       }
     },
-    refresh () {
-      this.axios.get(`/api/event/${this.eventId}/checkin/`)
-        .then(res => {
-          this.channel = res.data
-        })
+    async toggle (channel) {
+      await this.axios.post(`/api/checkin/${channel.checkinToken}/toggle/`)
+      this.refresh()
     },
-    addChannel () {
-      this.axios.post(`/api/event/${this.eventId}/checkin/`, {
-        name: this.newChannelName
+    async deleteChannel (channel) {
+      const message = 'Are you sure?'
+      const answer = await this.$bvModal.msgBoxConfirm(message, {
+        // centered: true,
+        title: 'Confirm Deletion'
       })
-        .then(res => {
-          this.refresh()
-        })
-        .catch(() => {
-        })
+      if (answer) {
+        await this.axios.delete(`/api/checkin/${channel.checkinToken}/delete/`)
+        this.refresh()
+      }
     },
-    toggle (channel) {
-      this.axios.post(`/api/checkin/${channel.checkinToken}/toggle/`, {
-
-      })
-        .then(res => {
-          this.refresh()
-        })
+    async showQRcode (channel) {
+      this.currentChannelName = channel.name
+      try {
+        await this.getQrcode(channel)
+        this.$refs['show-QRcode'].show()
+      } catch (err) {
+        if (err.needHandle) {
+          this.toastError('Failed to get QRcode')
+        }
+      }
     },
-    showQRcode (channel) {
-      this.getQrcode(channel)
-      this.$refs['show-QRcode'].show()
-    },
-    getQrcode (channel) {
-      const url = `${this.location.origin}/checkin/?token=${channel.checkinToken}&id=${this.eventId}`
+    async getQrcode (channel) {
+      const url = `${window.location.origin}/checkin/?token=${channel.checkinToken}&id=${this.eventId}`
       console.log(url)
-      this.axios.post('/api/qrcode/', {
+      const res = await this.axios.post('/api/qrcode/', {
         text: url
       }, {
         responseType: 'blob'
       })
-        .then(res => {
-          const qrcode = new Blob([res.data], { type: 'image/png' })
-          this.qrcodeURL = URL.createObjectURL(qrcode)
-        })
+      const qrcode = new Blob([res.data], { type: 'image/png' })
+      this.qrcodeURL = URL.createObjectURL(qrcode)
     }
   }
 }

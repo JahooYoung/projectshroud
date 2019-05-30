@@ -89,5 +89,5 @@ class CheckInSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CheckIn
-        fields = ['checkin_token', 'event_info', 'name', 'started']
+        fields = ['checkin_token', 'event_info', 'name', 'started', 'count']
 
