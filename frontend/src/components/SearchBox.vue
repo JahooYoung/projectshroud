@@ -3,7 +3,7 @@
     <type-ahead
       v-model="query"
       placeholder="Search events..."
-      no-result-text="No result matching your query"
+      no-result-text="No result."
       searching-text="Just a moment..."
       select-first
       :min-chars="1"
@@ -53,8 +53,8 @@ export default {
         .replace(/<\/em>/g, `</span>`)
     },
     highlighting (item) {
-      return this.replaceTag(item._highlightResult.title.value)
-      // const title = this.replaceTag(item._highlightResult.title.value)
+      const title = this.replaceTag(item._highlightResult.title.value)
+      return `<h6><b>${title}</b></h6><small>Short description?</small>`
       // const description = this.replaceTag(item._snippetResult.description.value)
       // return `<h5>${title}</h5>${description}`
     },
@@ -69,6 +69,6 @@ export default {
 
 <style>
 .search-highlight {
-  color: #dc3545
+  color: #2196F3
 }
 </style>

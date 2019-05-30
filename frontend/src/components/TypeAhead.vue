@@ -25,16 +25,28 @@
       role="menu"
       aria-labelledby="dropdownMenu"
     >
+      <li>
+        Search results for {{ query }}:
+        <hr class="mt-1 mb-0">
+      </li>
       <li
         v-for="(item, index) in items"
-        :key="'li'+index"
-        :class="{active:activeClass(index)}"
+        :key="'li' + index"
         @mousedown="hit"
         @mousemove="setActive(index)"
       >
-        <a v-html="highlighting(item, vue)" />
+        <div
+          class="py-2"
+          :class="{active:activeClass(index)}"
+        >
+          <a v-html="highlighting(item, vue)" />
+        </div>
+        <hr class="my-0">
       </li>
-      <li v-show="!hasItems">
+      <li
+        v-show="!hasItems"
+        class="py-2"
+      >
         <a>
           <span
             v-if="!loading"
@@ -45,8 +57,9 @@
             v-html="searchingText"
           />
         </a>
+        <hr class="my-1">
       </li>
-      <li>
+      <li align="right">
         <ais-powered-by />
       </li>
     </ul>
@@ -283,25 +296,28 @@ export default {
 </script>
 
 <style scoped>
-div.input-group input.form-control.type-ahead-select {
-  /* background: #fff url(../assets/search.png) 5px 5px no-repeat;
-  background-size: 20px; */
-  /* border-radius: .25rem;
-  padding-left: 28px; */
-  /* border-top-right-radius: .25rem;
-  border-bottom-right-radius: .25rem; */
-}
+/* div.input-group input.form-control.type-ahead-select {
+  background: #fff url(../assets/search.png) 5px 5px no-repeat;
+  background-size: 20px;
+  border-radius: .25rem;
+  padding-left: 28px;
+  border-top-right-radius: .25rem;
+  border-bottom-right-radius: .25rem;
+} */
 .dropdown-menu-list {
   display: list-item;
   width: 100%;
 }
 ul li {
-  padding: 5px .50rem;
+  padding: 0px .25rem;
   margin: 0px .25rem;
   cursor: pointer;
   border-radius: 4px;
 }
-ul li.active {
-  background-color: #e4e4e4;
+ul li div {
+  border-radius: 4px;
+}
+ul li div.active {
+  background-color: #e4e4e4d0;
 }
 </style>
