@@ -127,7 +127,7 @@ export default {
         },
         {
           key: 'activate',
-          label: 'activate'
+          label: 'Activate'
         },
         {
           key: 'QRcode',

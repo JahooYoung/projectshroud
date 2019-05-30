@@ -3,9 +3,19 @@
     <h2>Attendee List</h2>
 
     <b-progress
-      :value="30"
-      class="my-2"
-    />
+      class="my-3"
+      :max="attendee.length"
+      show-value
+    >
+      <b-progress-bar
+        :value="attendee.filter(x => x.checkedIn).length"
+        variant="success"
+      />
+      <b-progress-bar
+        :value="attendee.filter(x => !x.checkedIn && x.approved).length"
+        variant="primary"
+      />
+    </b-progress>
 
     <TableLayout
       item-name="attendee"

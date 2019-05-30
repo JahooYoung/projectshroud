@@ -18,7 +18,7 @@
               <b-form-input
                 id="usernameInput"
                 v-model="form.username"
-                v-focus
+                autofocus
                 type="text"
                 required
               />
@@ -58,13 +58,13 @@
 <script>
 export default {
   name: 'Login',
-  directives: {
-    focus: {
-      inserted: el => {
-        el.focus()
-      }
-    }
-  },
+  // directives: {
+  //   focus: {
+  //     inserted: el => {
+  //       el.focus()
+  //     }
+  //   }
+  // },
   data () {
     return {
       form: {

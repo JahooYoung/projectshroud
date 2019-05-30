@@ -16,7 +16,7 @@
     "algoliasearch": "^3.32.1",
     "axios": "^0.18.0",
     "bootstrap": "^4.3.1",
-    "bootstrap-vue": "^2.0.0-rc.20",
+    "bootstrap-vue": "^2.0.0-rc.21",
     "bootswatch": "^4.3.1",
     "core-js": "^2.6.5",
     "mavon-editor": "^2.7.4",

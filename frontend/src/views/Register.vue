@@ -22,6 +22,7 @@
               <b-form-input
                 id="mobileInput"
                 v-model.trim="$v.mobile.$model"
+                autofocus
                 @blur="$v.mobile.$touch()"
               />
               <template #invalid-feedback>

@@ -116,7 +116,7 @@
                   variant="dark"
                   pill
                 >
-                  14
+                  {{ event.attendeeCount }}
                 </b-badge>
               </b-list-group-item>
             </b-list-group>
