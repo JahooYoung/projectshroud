@@ -9,7 +9,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ('id', 'mobile', 'real_name', 'email', 'is_activated')
+        fields = ('id', 'mobile', 'real_name', 'email', 'is_activated', 'receive_email')
 
 
 class EventListSerializer(serializers.ModelSerializer):
@@ -17,11 +17,14 @@ class EventListSerializer(serializers.ModelSerializer):
     checkin_enabled = serializers.ReadOnlyField()
     host_display_info = serializers.ReadOnlyField()
     host_id = serializers.ReadOnlyField(source='host.id')
+    attendee_count = serializers.ReadOnlyField()
+    applicant_count = serializers.ReadOnlyField()
 
     class Meta:
         model = Event
         fields = ['id', 'title', 'host_id', 'host_display_info', 'checkin_enabled',
-                  'start_time', 'end_time', 'location', 'require_approve']
+                  'start_time', 'end_time', 'location', 'require_approve',
+                  'attendee_count', 'applicant_count']
 
 
 class EventDetailSerializer(serializers.ModelSerializer):
@@ -29,13 +32,16 @@ class EventDetailSerializer(serializers.ModelSerializer):
     checkin_enabled = serializers.ReadOnlyField()
     host_display_info = serializers.ReadOnlyField()
     host_id = serializers.ReadOnlyField(source='host.id')
+    attendee_count = serializers.ReadOnlyField()
+    applicant_count = serializers.ReadOnlyField()
 
     class Meta:
         model = Event
         fields = ['id', 'title', 'host_id', 'host_display_info',
                   'description', 'description_html', 'checkin_enabled', 'start_time',
                   'end_time', 'location', 'public', 'require_approve',
-                  'require_application', 'require_attachment']
+                  'require_application', 'require_attachment',
+                  'attendee_count', 'applicant_count']
 
 
 class TransportSerializer(serializers.ModelSerializer):
@@ -79,6 +85,7 @@ class CheckInSerializer(serializers.ModelSerializer):
     event_info = EventListSerializer(source='event', read_only=True)
     checkin_token = serializers.ReadOnlyField(source='token')
     started = serializers.ReadOnlyField()
+    count = serializers.ReadOnlyField()
 
     class Meta:
         model = CheckIn

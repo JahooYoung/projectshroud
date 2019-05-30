@@ -228,6 +228,7 @@ class UserEventRegister(generics.CreateAPIView):
                 if 'application_text' not in data or data.get('application_text') == '':
                     raise ValidationError('Need to provide application info.')
             serializer.save(user=user, event=event, transport=None, approved=False)
+            event.newregistration()
             send_registered_email(user, event, approved=False)
 
         else:
@@ -237,8 +238,8 @@ class UserEventRegister(generics.CreateAPIView):
                     transport = Transport.objects.get(id=data.get('transport_id'))
                 except Event.DoesNotExist:
                     raise ValidationError('Transport Not found.')
-
             serializer.save(user=user, event=event, transport=transport, approved=True)
+            event.newregistration()
             send_registered_email(user, event, approved=True)
 
 
@@ -309,8 +310,10 @@ class ApproveEventRegister(APIView):
             if ure_obj.approved:
                 raise ValidationError('Already Approved.')
             ure_obj.approve()
+            event.newapproved()
 
         if not approve:
+            event.newunregistration(approve)
             ure_obj.reject()
             ure_obj.delete()
 
@@ -335,6 +338,8 @@ class UserEventUnregister(APIView):
         ure_obj = UserRegisterEvent.objects.get(user=user, event=event)
         if ure_obj.transport is not None:
             ure_obj.transport.delete()
+
+        event.newunregistration(ure_obj.approved)
 
         ure_obj.delete()
         return Response(status=status.HTTP_200_OK)
@@ -522,6 +527,8 @@ class UserCheckInEvent(APIView):
 
         uc_obj = UserCheckIn(ure=ure_obj, checkin=checkinobj)
         uc_obj.save()
+
+        chceckinobj.newcheckin()
 
         if not ure_obj.checked_in:
             ure_obj.checkin()

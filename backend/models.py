@@ -75,6 +75,7 @@ class UserProfile(AbstractBaseUser):
     # IDtype, ID number
 
     activate_token = models.CharField(max_length=32, default=generate_uuid)
+    receive_email = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'mobile'
     EMAIL_FIELD = 'email'
@@ -134,6 +135,8 @@ class Event(models.Model):
     require_approve = models.BooleanField('注册需要审核', default=False)
     require_application = models.BooleanField('需要填写申请信息', default=False)
     require_attachment = models.BooleanField('需要提交申请文件', default=False)
+    attendee_count = models.IntegerField(default=0)
+    applicant_count = models.IntegerField(default=0)
     # checkin_enabled = models.BooleanField('正在签到', default=False)
 
     class Meta:
@@ -145,6 +148,25 @@ class Event(models.Model):
     @property
     def host_display_info(self):
         return self.host.real_name
+
+    def newregistration(self):
+        if self.require_approve:
+            self.applicant_count += 1
+        else:
+            self.attendee_count += 1
+        self.save()
+
+    def newapproved(self):
+        self.applicant_count -= 1
+        self.attendee_count += 1
+        self.save()
+
+    def newunregistration(self, approved):
+        if not approved:
+            self.applicant_count -= 1
+        else:
+            self.attendee_count -= 1
+        self.save()
 
     # def enable_checkin(self):
     #     self.checkin_enabled = True
@@ -175,9 +197,14 @@ class CheckIn(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     name = models.CharField(max_length=30, blank=False)
     started = models.BooleanField(default=False)
+    count = models.IntegerField(default=0)
 
     def toggle(self):
         self.started = not self.started
+
+    def newcheckin(self):
+        self.count += 1
+        self.save()
 
 
 class Transport(models.Model):
@@ -205,7 +232,6 @@ class Transport(models.Model):
         unique_together = ('user', 'event')
 
     def __str__(self):
-        return self.user.real_name + ' ' + self.event.title
         if self.transport_type == 'Flight':
             return '航班: %s' % self.transport_id
         elif self.transport_type == 'Train':
