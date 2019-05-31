@@ -9,19 +9,17 @@
     >
       <template #buttons>
         <b-button
+          id="add-admin-tooltip"
           class="mr-2"
           variant="outline-dark"
-          href="#"
-        >
-          Export
-        </b-button>
-        <b-button
-          class="mr-2"
-          variant="outline-dark"
-          href="#"
+          to="attendee"
         >
           Add admin
         </b-button>
+        <b-tooltip
+          target="add-admin-tooltip"
+          title="Click '+' in attendee list to make an attendee an admin"
+        />
       </template>
 
       <template v-slot="config">

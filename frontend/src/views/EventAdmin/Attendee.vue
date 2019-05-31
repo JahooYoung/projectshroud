@@ -88,7 +88,7 @@
               icon="times"
               :style="{ color: 'red' }"
             />
-            <b-popover
+            <!-- <b-popover
               :target="'checkin-popover-' + row.item.userInfo.id"
               triggers="hover focus"
             >
@@ -102,7 +102,7 @@
               >
                 Manually check in
               </b-button>
-            </b-popover>
+            </b-popover> -->
           </template>
 
           <template
@@ -148,6 +148,19 @@
       </template>
       <h5>Application Text:</h5>
       {{ modalData && (modalData.applicationText || 'Empty') }}
+    </b-modal>
+
+    <b-modal
+      ref="modal-add-admin"
+      title="Confirm"
+      @ok="modalCallback && modalCallback(true)"
+      @cancel="modalCallback && modalCallback(false)"
+      @hide="modalCallback && modalCallback(null)"
+    >
+      <p class="my-3">
+        Are you sure to add {{ newAdminName }} as an administrator? <br>
+        <b>Warning:</b> You cannot undo this operation!
+      </p>
     </b-modal>
   </b-container>
 </template>
@@ -205,7 +218,8 @@ export default {
       ],
       attendee: [],
       modalCallback: null,
-      modalData: null
+      modalData: null,
+      newAdminName: ''
     }
   },
   computed: {
@@ -221,10 +235,24 @@ export default {
       const res = await this.axios.get(`/api/event/${this.eventId}/attendee/`)
       this.attendee = res.data
     },
-    manualCheckIn (rowItem) {
-      // Todo
+    // manualCheckIn (rowItem) {
+    //   // Todo
+    // },
+    showModal (modal) {
+      return new Promise(resolve => {
+        this.modalCallback = answer => {
+          this.modalCallback = null
+          resolve(answer)
+        }
+        this.$refs[modal].show()
+      })
     },
     async assignAdmin (rowItem) {
+      this.newAdminName = rowItem.userInfo.realName
+      const answer = await this.showModal('modal-add-admin')
+      if (!answer) {
+        return
+      }
       try {
         await this.axios.post('/api/assignadmin/', {
           userId: rowItem.userInfo.id,
@@ -235,18 +263,9 @@ export default {
         this.toastError('Failed to assign admin')
       }
     },
-    showApproveModal () {
-      return new Promise(resolve => {
-        this.modalCallback = answer => {
-          this.modalCallback = null
-          resolve(answer)
-        }
-        this.$refs['modal-approve'].show()
-      })
-    },
     async approve (row) {
       this.modalData = row.item
-      const answer = await this.showApproveModal()
+      const answer = await this.showModal('modal-approve')
       if (answer !== null) {
         const user = row.item.userInfo.realName
         try {

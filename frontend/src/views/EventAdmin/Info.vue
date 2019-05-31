@@ -95,6 +95,37 @@
         />
         {{ newEvent ? 'Create' : 'Save' }}
       </b-button>
+
+      <b-button
+        v-if="!newEvent"
+        class="ml-5"
+        variant="danger"
+        :disabled="isLoading"
+        @click="$refs['modal-delete'].show()"
+      >
+        Delete
+      </b-button>
+
+      <b-modal
+        ref="modal-delete"
+        title="Confirm Deletion"
+        lazy
+        @show="deleteInput = ''"
+        @shown="$refs.deleteConfirmInput.focus()"
+        @ok.prevent="deleteEvent"
+      >
+        <b-form @submit.prevent="deleteEvent">
+          <b-form-input
+            ref="deleteConfirmInput"
+            v-model="deleteInput"
+            :state="deleteInputState"
+            :placeholder="`Enter '${confirmMessage}'`"
+          />
+          <b-form-text v-if="isLoading">
+            Deleting... Hold on a minute please...
+          </b-form-text>
+        </b-form>
+      </b-modal>
     </b-col>
   </b-row>
 </template>
@@ -124,7 +155,14 @@ export default {
         location: '',
         public: true,
         requireApprove: false
-      }
+      },
+      confirmMessage: 'I am sure',
+      deleteInput: ''
+    }
+  },
+  computed: {
+    deleteInputState () {
+      return this.deleteInput === this.confirmMessage
     }
   },
   watch: {
@@ -136,6 +174,10 @@ export default {
     }
   },
   methods: {
+    async refresh () {
+      const res = await this.axios.get(`/api/event/${this.$route.params.id}/`)
+      this.event = res.data
+    },
     async onSubmit () {
       if (this.newEvent) {
         const res = await this.axios.post('/api/event/', this.event)
@@ -146,9 +188,13 @@ export default {
         this.toastSuccess(`Event "${res.data.title}" saved successfully`)
       }
     },
-    async refresh () {
-      const res = await this.axios.get(`/api/event/${this.$route.params.id}/`)
-      this.event = res.data
+    async deleteEvent () {
+      if (!this.deleteInputState) {
+        return
+      }
+      await this.axios.delete(`/api/event/${this.$route.params.id}/`)
+      this.toastSuccess('Successfully delete event ' + this.event.title)
+      this.$router.push('/admin-event')
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-form @submit="onSubmit">
+    <b-form @submit.prevent="onSubmit">
       <b-container>
         <b-row>
           <b-col
@@ -74,8 +74,7 @@ export default {
     }
   },
   methods: {
-    onSubmit (evt) {
-      evt.preventDefault()
+    onSubmit () {
       this.axios.post('/api/auth/login/', {
         username: this.form.username,
         password: this.form.password

@@ -18,27 +18,6 @@
         <router-view />
       </transition>
     </b-container>
-
-    <b-modal
-      id="modal-delete"
-      title="Confirm Deletion"
-      lazy
-      @show="deleteInput = ''"
-      @shown="$refs.deleteConfirmInput.focus()"
-      @ok="deleteEvent"
-    >
-      <b-form @submit.prevent="deleteEvent">
-        <b-form-input
-          ref="deleteConfirmInput"
-          v-model="deleteInput"
-          :state="deleteInputState"
-          :placeholder="`Enter '${confirmMessage}'`"
-        />
-        <b-form-text v-if="isLoading">
-          Deleting... Hold on a minute please...
-        </b-form-text>
-      </b-form>
-    </b-modal>
   </div>
 </template>
 
@@ -60,8 +39,6 @@ export default {
   },
   data () {
     return {
-      confirmMessage: 'I am sure',
-      deleteInput: '',
       collapsed: true,
       menu: [
         {
@@ -130,21 +107,6 @@ export default {
           }
         }
       ]
-    }
-  },
-  computed: {
-    deleteInputState () {
-      return this.deleteInput === this.confirmMessage
-    }
-  },
-  methods: {
-    async deleteEvent () {
-      if (!this.deleteInputState) {
-        return
-      }
-      await this.axios.delete(`/api/event/${this.$route.params.id}/`)
-      this.toastSuccess('Successfully delete event')
-      this.$router.push('/admin-event')
     }
   }
 }
