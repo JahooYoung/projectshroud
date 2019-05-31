@@ -44,7 +44,9 @@ export default {
     } else {
       this.$bvModal.msgBoxConfirm('Do you want to save the description?', {
         title: 'Not saved yet',
-        centered: true
+        centered: true,
+        okTitle: 'Yes',
+        cancelTitle: 'No'
       })
         .then(ans => {
           if (ans === true) {

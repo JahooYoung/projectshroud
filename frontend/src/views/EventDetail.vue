@@ -213,7 +213,8 @@
       @ok="unregister"
     >
       <p class="my-3">
-        Are you sure to unregister? (Your transport info will be lost)
+        Are you sure to unregister? <br>
+        <b>Warning:</b> Your current registration status will be lost!
       </p>
     </b-modal>
 

@@ -84,12 +84,14 @@
               type="submit"
               :disabled="!modified || isLoading"
             >
-              <b-spinner
-                v-show="isLoading"
-                small
-                type="grow"
-              />
               Save
+            </b-button>
+            <b-button
+              class="ml-5"
+              variant="info"
+              to="/change-password"
+            >
+              Change Password
             </b-button>
           </b-form>
         </b-card>

@@ -118,6 +118,11 @@ export default new Router({
       }
     },
     {
+      path: '/change-password',
+      name: 'changePassword',
+      component: () => import(/* webpackChunkName: "user" */ '@/views/ChangePassword.vue')
+    },
+    {
       path: '*',
       component: () => import(/* webpackChunkName: "notfound" */ '@/views/NotFound.vue')
     }
