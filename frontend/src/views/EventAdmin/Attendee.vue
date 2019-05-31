@@ -23,6 +23,17 @@
       :total-rows="attendee.length"
     >
       <template #buttons>
+        <b-dropdown
+          split
+          text="Import"
+          variant="outline-dark"
+          class="mr-2"
+          @click="importExcel"
+        >
+          <b-dropdown-item @click="downloadTemplate">
+            Download template
+          </b-dropdown-item>
+        </b-dropdown>
         <b-button
           class="mr-2"
           variant="outline-dark"
@@ -48,8 +59,8 @@
         >
           <template #transportInfo="row">
             <div v-if="row.value">
-              {{ row.value.departStation }} <br>
-              {{ row.value.departTime.toLocaleString() }}
+              {{ row.value.arrivalStation }} <br>
+              {{ row.value.arrivalTime.toLocaleString() }}
             </div>
             <div v-else>
               None
@@ -162,6 +173,22 @@
         <b>Warning:</b> You cannot undo this operation!
       </p>
     </b-modal>
+
+    <b-modal
+      ref="modal-import-excel"
+      title="Import excel (.xlsx)"
+      @ok="modalCallback && modalCallback(true)"
+      @cancel="modalCallback && modalCallback(false)"
+      @hide="modalCallback && modalCallback(null)"
+    >
+      <b-form-file
+        v-model="excelFile"
+        :state="Boolean(excelFile)"
+        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        placeholder="Choose a file..."
+        drop-placeholder="Drop file here..."
+      />
+    </b-modal>
   </b-container>
 </template>
 
@@ -219,7 +246,8 @@ export default {
       attendee: [],
       modalCallback: null,
       modalData: null,
-      newAdminName: ''
+      newAdminName: '',
+      excelFile: null
     }
   },
   computed: {
@@ -250,17 +278,16 @@ export default {
     async assignAdmin (rowItem) {
       this.newAdminName = rowItem.userInfo.realName
       const answer = await this.showModal('modal-add-admin')
-      if (!answer) {
-        return
-      }
-      try {
-        await this.axios.post('/api/assignadmin/', {
-          userId: rowItem.userInfo.id,
-          eventId: this.eventId
-        })
-        rowItem.isAdmin = true
-      } catch (err) {
-        this.toastError('Failed to assign admin')
+      if (answer) {
+        try {
+          await this.axios.post('/api/assignadmin/', {
+            userId: rowItem.userInfo.id,
+            eventId: this.eventId
+          })
+          rowItem.isAdmin = true
+        } catch (err) {
+          this.toastError('Failed to assign admin')
+        }
       }
     },
     async approve (row) {
@@ -292,20 +319,45 @@ export default {
         }
       }
     },
-    async exportExcel () {
-      const res = await this.axios.get(`/api/event/${this.eventId}/export/`, {
+    async download (url) {
+      const res = await this.axios.get(url, {
         responseType: 'blob'
       })
-      console.log(res)
       const blob = new Blob([res.data], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        // type: 'application/octet-stream'
       })
       const a = document.createElement('a')
       a.download = decodeURI(res.headers['content-disposition'].match(/^.*filename=(.*)$/)[1])
       a.href = URL.createObjectURL(blob)
       a.click()
       URL.revokeObjectURL(a.href)
+    },
+    async exportExcel () {
+      this.download(`/api/event/${this.eventId}/export/`)
+    },
+    async downloadTemplate () {
+      this.download(`/api/download/import/`)
+    },
+    async importExcel () {
+      const answer = await this.showModal('modal-import-excel')
+      if (answer) {
+        console.log(this.excelFile)
+        const formData = new FormData()
+        formData.append('file', this.excelFile)
+        try {
+          const res = await this.axios.post(`/api/event/${this.eventId}/import/`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          })
+          this.toastSuccess(JSON.parse(res.data))
+          this.refresh()
+        } catch (err) {
+          if (err.needHandle) {
+            this.toastError('Failed to import, use template!')
+          }
+        }
+      }
     }
   }
 }

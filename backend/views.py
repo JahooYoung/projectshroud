@@ -538,7 +538,7 @@ class DeleteCheckIn(generics.DestroyAPIView):
 
 
 class ExportExcel(APIView):
-    # permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
 
     def get(self, request, pk, format=None):
         try:
@@ -569,7 +569,7 @@ class ImportExcel(APIView):
         try:
             suc, fail, user_count = import_excel(event, file)
         except Exception as e:
-            raise ValidationError(e)
+            raise
 
         res = {'success_count': suc, 'fail_count': fail, 'user_count': user_count}
         return Response(res)

@@ -1,13 +1,13 @@
 module.exports = {
   devServer: {
     proxy: {
-      '/api/': {
+      '^/api/': {
         target: 'http://localhost:8000'
       },
-      '/admin/': {
+      '^/admin/': {
         target: 'http://localhost:8000'
       },
-      '/static/rest_framework/': {
+      '^/static/rest_framework/': {
         target: 'http://localhost:8000'
       }
     }

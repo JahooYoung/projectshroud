@@ -28,7 +28,7 @@ urlpatterns = [
     path('event/<pk>/attendee/', views.EventAttendeeList.as_view()),
     path('event/<pk>/admins/', views.EventAdminList.as_view()),
     path('event/<pk>/export/', views.ExportExcel.as_view()),
-    path('event/<pk>/export/', views.ImportExcel.as_view()),
+    path('event/<pk>/import/', views.ImportExcel.as_view()),
 
     path('download/import/', views.DownloadExcelTemplate.as_view()),
 

@@ -136,4 +136,9 @@ $baseBg: #3d3d3d;
 .v-sidebar-menu .vsm-icon {
   padding: 0.3rem;
 }
+
+.v-sidebar-menu .vsm-mobile-bg {
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+}
 </style>

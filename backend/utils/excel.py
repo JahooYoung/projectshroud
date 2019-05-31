@@ -129,7 +129,7 @@ def parserow(rdata, event):
     colnum = 0
     data = {}
     for field in import_fields['user']:
-        data[field] = rdata[colnum]
+        data[field] = rdata[colnum].value
         colnum += 1
     if data['mobile'] is None or not re.match(mobile_re, data['mobile']):
         return 0
@@ -139,7 +139,7 @@ def parserow(rdata, event):
         user = get_user_model().objects.get(mobile=data['mobile'])
     except get_user_model().DoesNotExist:
         status = 2
-        if data['real_name'] is None or data['real_num'] == '' or re.match(empty_re, data['real_name']):
+        if data['real_name'] is None or data['real_name'] == '' or re.match(empty_re, data['real_name']):
             return 0
         if data['email'] is None or not re.match(email_re, data['email']):
             return 0
@@ -156,35 +156,42 @@ def parserow(rdata, event):
                 return 0
 
     # Registration Success or already registered here
+    if UserRegisterEvent.objects.filter(user=user, event=event).exists():
+        return status
     for field in import_fields['transport']:
-        data[field] = rdata[colnum] if rdata[colnum] is not None else ''
+        data[field] = rdata[colnum].value if rdata[colnum].value is not None else ''
+        if isinstance(data[field], datetime.datetime):
+            print(data[field])
+            data[field] = data[field].replace(tzinfo=pytz.timezone(settings.TIME_ZONE))
+            print(data[field])
         colnum += 1
-    if data['transport_id'] not in ['Flight', '航班', 'Train', '列车', 'Other', '其他']:
-        if data['transport_id'] == '航班':
-            data['transport_id'] = 'Flight'
-        if data['transport_id'] == '列车':
-            data['transport_id'] = 'Train'
-        if data['transport_id'] == '其他':
-            data['transport_id'] = 'Other'
-        UserRegisterEvent(user=user, event=event, transport=None, approved=False).save()
+    if data['transport_type'] not in ['Flight', '航班', 'Train', '列车', 'Other', '其他']:
+        if data['transport_type'] == '航班':
+            data['transport_type'] = 'Flight'
+        if data['transport_type'] == '列车':
+            data['transport_type'] = 'Train'
+        if data['transport_type'] == '其他':
+            data['transport_type'] = 'Other'
+        UserRegisterEvent(user=user, event=event, transport=None, approved=True).save()
         return status
-    if ['transport_id'] == '' or re.match(empty_re, data['transport_id']):
-        UserRegisterEvent(user=user, event=event, transport=None, approved=False).save()
+    if data['transport_id'] == '' or re.match(empty_re, data['transport_id']):
+        UserRegisterEvent(user=user, event=event, transport=None, approved=True).save()
         return status
-    if ['arrival_time'] == '' or re.match(empty_re, data['arrival_time']):
-        UserRegisterEvent(user=user, event=event, transport=None, approved=False).save()
+    if data['arrival_time'] == '':
+        UserRegisterEvent(user=user, event=event, transport=None, approved=True).save()
         return status
 
     for field in import_fields['transport']:
         if field.endswith('time'):
             if isinstance(data[field], str):
                 data[field] = datetime.datetime.strptime(data[field], '%Y/%m/%d %H:%M')
+                data[field] = data[field].replace(tzinfo=pytz.timezone(settings.TIME_ZONE))
     for field in import_fields['user']:
         del data[field]
     transport = Transport(user=user, event=event, **data)
     transport.save()
 
-    UserRegisterEvent(user=user, event=event, transport=transport).save()
+    UserRegisterEvent(user=user, event=event, transport=transport, approved=True).save()
     return status
 
 
@@ -196,7 +203,7 @@ def import_excel(event, file):
     file = openpyxl.load_workbook(file_path)
 
     sheet = file['注册参会者']
-    if sheet.cell('D1').value != 'mgc-' + MAGIC_STRING:
+    if sheet['D1'].value != 'mgc-' + MAGIC_STRING:
         raise ValueError('Magic String Altered!')
     rows = list(sheet.rows)
     suc, fail, user_count = 0, 0, 0

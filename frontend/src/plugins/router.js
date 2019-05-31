@@ -18,7 +18,7 @@ export default new Router({
       // route level code-splitting
       // this generates a separate chunk (event.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "event" */ '@/views/Event.vue')
+      component: () => import(/* webpackChunkName: "event" */ '@/views/EventList.vue')
     },
     {
       path: '/event/new',
@@ -67,12 +67,12 @@ export default new Router({
     {
       path: '/registered-event',
       name: 'registeredEvent',
-      component: () => import(/* webpackChunkName: "user" */ '@/views/UserRegisterEvent.vue')
+      component: () => import(/* webpackChunkName: "user" */ '@/views/User/UserRegisterEvent.vue')
     },
     {
       path: '/admin-event',
       name: 'adminEvent',
-      component: () => import(/* webpackChunkName: "user" */ '@/views/UserAdminEvent.vue')
+      component: () => import(/* webpackChunkName: "user" */ '@/views/User/UserAdminEvent.vue')
     },
     {
       path: '/checkin',
@@ -82,12 +82,12 @@ export default new Router({
     {
       path: '/user-profile',
       name: 'userProfile',
-      component: () => import(/* webpackChunkName: "user" */ '@/views/UserProfile.vue')
+      component: () => import(/* webpackChunkName: "user" */ '@/views/User/UserProfile.vue')
     },
     {
       path: '/send/activation/',
       name: 'sendActivation',
-      component: () => import(/* webpackChunkName: "user" */ '@/views/SendActivaion.vue'),
+      component: () => import(/* webpackChunkName: "user" */ '@/views/User/SendActivaion.vue'),
       beforeEnter: (to, from, next) => {
         store.commit('setUserState', null)
         next()
@@ -96,7 +96,7 @@ export default new Router({
     {
       path: '/login',
       name: 'login',
-      component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue'),
+      component: () => import(/* webpackChunkName: "login" */ '@/views/User/Login.vue'),
       beforeEnter: (to, from, next) => {
         if (store.state.user) {
           next('/')
@@ -108,7 +108,7 @@ export default new Router({
     {
       path: '/register',
       name: 'register',
-      component: () => import(/* webpackChunkName: "register" */ '@/views/Register.vue'),
+      component: () => import(/* webpackChunkName: "user" */ '@/views/User/Register.vue'),
       beforeEnter: (to, from, next) => {
         if (store.state.user) {
           next('/')
@@ -120,7 +120,7 @@ export default new Router({
     {
       path: '/change-password',
       name: 'changePassword',
-      component: () => import(/* webpackChunkName: "user" */ '@/views/ChangePassword.vue')
+      component: () => import(/* webpackChunkName: "user" */ '@/views/User/ChangePassword.vue')
     },
     {
       path: '*',
