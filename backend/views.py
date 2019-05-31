@@ -538,7 +538,7 @@ class DeleteCheckIn(generics.DestroyAPIView):
 
 
 class ExportExcel(APIView):
-    # permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
 
     def get(self, request, pk, format=None):
         try:

@@ -1,85 +1,22 @@
 <template>
   <div>
-    <b-container fluid>
-      <b-row>
-        <b-col
-          lg="3"
-          xl="2"
-        >
-          <b-card
-            bg-variant="light"
-            class="event-detail-sidebar mb-3"
-          >
-            <div class="no-lg">
-              Tip: use computer to get better manage experience
-              <hr>
-            </div>
-            <b-nav
-              vertical
-              pills
-              justified
-            >
-              <b-nav-item
-                :active="$route.name === 'eventAdminInfo'"
-                to="info"
-              >
-                Basic Info
-              </b-nav-item>
-              <b-nav-item
-                :active="$route.name === 'eventAdminDescription'"
-                to="description"
-              >
-                Description
-              </b-nav-item>
-              <b-nav-item
-                :active="$route.name === 'eventAdminAdministrator'"
-                to="administrator"
-              >
-                Administrator
-              </b-nav-item>
-              <b-nav-item
-                :active="$route.name === 'eventAdminAttendee'"
-                to="attendee"
-              >
-                Attendee
-              </b-nav-item>
-              <b-nav-item
-                :active="$route.name === 'eventAdminCheckin'"
-                to="checkin"
-              >
-                Checkin
-              </b-nav-item>
-              <b-button
-                block
-                class="my-4"
-                variant="danger"
-                @click="$bvModal.show('modal-delete')"
-              >
-                Delete
-              </b-button>
-              <hr>
-              <b-button
-                block
-                variant="outline-dark"
-                :to="`/event/${$route.params.id}`"
-              >
-                Back
-              </b-button>
-            </b-nav>
-          </b-card>
-        </b-col>
-        <b-col
-          lg="9"
-          xl="10"
-        >
-          <transition
-            name="fade"
-            mode="out-in"
-          >
-            <router-view />
-          </transition>
-        </b-col>
-      </b-row>
+    <sidebar-menu
+      :menu="menu"
+      width="200px"
+      collapsed
+      @collapse="x => collapsed = x"
+    />
+    <b-container
+      id="admin-content"
+      fluid
+      :class="[{collapsed}]"
+    >
+      <transition
+        name="fade"
+        mode="out-in"
+      >
+        <router-view />
+      </transition>
     </b-container>
 
     <b-modal
@@ -90,7 +27,7 @@
       @shown="$refs.deleteConfirmInput.focus()"
       @ok="deleteEvent"
     >
-      <b-form @submit="deleteEvent">
+      <b-form @submit.prevent="deleteEvent">
         <b-form-input
           ref="deleteConfirmInput"
           v-model="deleteInput"
@@ -106,12 +43,93 @@
 </template>
 
 <script>
+import { SidebarMenu } from 'vue-sidebar-menu'
+import Separator from './Separator.vue'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import {
+  faCode, faInfo, faPlus, faUsers, faUserCog, faAngleLeft, faTasks, faArrowsAltH
+} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+library.add(faCode, faInfo, faPlus, faUsers, faUserCog, faAngleLeft, faTasks, faArrowsAltH)
+
 export default {
   name: 'EventAdminLayout',
+  components: {
+    SidebarMenu
+  },
   data () {
     return {
       confirmMessage: 'I am sure',
-      deleteInput: ''
+      deleteInput: '',
+      collapsed: true,
+      menu: [
+        {
+          href: 'info',
+          title: 'Basic Info',
+          icon: {
+            element: FontAwesomeIcon,
+            attributes: {
+              icon: 'info'
+            }
+          }
+        },
+        {
+          href: 'description',
+          title: 'Description',
+          icon: {
+            element: FontAwesomeIcon,
+            attributes: {
+              icon: 'code'
+            }
+          }
+        },
+        {
+          href: 'administrator',
+          title: 'Administrator',
+          icon: {
+            element: FontAwesomeIcon,
+            attributes: {
+              icon: 'user-cog'
+            }
+          }
+        },
+        {
+          href: 'attendee',
+          title: 'Attendee',
+          icon: {
+            element: FontAwesomeIcon,
+            attributes: {
+              icon: 'users'
+            }
+          }
+        },
+        {
+          href: 'checkin',
+          title: 'Checkin',
+          icon: {
+            element: FontAwesomeIcon,
+            attributes: {
+              icon: 'tasks'
+            }
+          }
+        },
+        {
+          header: true,
+          component: Separator,
+          visibleOnCollapse: true
+        },
+        {
+          href: `/event/${this.$route.params.id}`,
+          title: 'Back',
+          icon: {
+            element: FontAwesomeIcon,
+            attributes: {
+              icon: 'angle-left'
+            }
+          }
+        }
+      ]
     }
   },
   computed: {
@@ -120,33 +138,40 @@ export default {
     }
   },
   methods: {
-    deleteEvent (evt) {
-      evt.preventDefault()
+    async deleteEvent () {
       if (!this.deleteInputState) {
         return
       }
-      this.axios.delete(`/api/event/${this.$route.params.id}/`)
-        .then(res => {
-          this.$router.push('/admin-event')
-        })
+      await this.axios.delete(`/api/event/${this.$route.params.id}/`)
+      this.toastSuccess('Successfully delete event')
+      this.$router.push('/admin-event')
     }
   }
 }
 </script>
 
-<style>
-@media (min-width: 992px) {
-  .event-detail-sidebar {
-    position: sticky;
-    top: 4rem;
-    z-index: 500;
-    height: calc(100vh - 6.5rem);
-    /* padding-right: 1px; */
-    /* border-right: 1px solid rgba(0, 0, 0, 0.1); */
-    order: 0;
-  }
-  .no-lg {
-    display: none;
-  }
+<style lang="scss">
+$primaryColor: #2196F3;
+$baseBg: #3d3d3d;
+
+@import "vue-sidebar-menu/src/scss/vue-sidebar-menu.scss";
+
+#admin-content {
+  padding-left: 210px;
+  transition: 0.3s padding-left;
+}
+
+#admin-content.collapsed {
+  padding-left: 60px;
+  transition: 0.3s padding-left;
+}
+
+.v-sidebar-menu {
+  margin-top: 4rem;
+  height: calc(100vh - 4rem);
+}
+
+.v-sidebar-menu .vsm-icon {
+  padding: 0.3rem;
 }
 </style>

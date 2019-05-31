@@ -26,7 +26,7 @@
         <b-button
           class="mr-2"
           variant="outline-dark"
-          href="#"
+          @click="exportExcel"
         >
           Export
         </b-button>
@@ -272,6 +272,21 @@ export default {
           }
         }
       }
+    },
+    async exportExcel () {
+      const res = await this.axios.get(`/api/event/${this.eventId}/export/`, {
+        responseType: 'blob'
+      })
+      console.log(res)
+      const blob = new Blob([res.data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        // type: 'application/octet-stream'
+      })
+      const a = document.createElement('a')
+      a.download = decodeURI(res.headers['content-disposition'].match(/^.*filename=(.*)$/)[1])
+      a.href = URL.createObjectURL(blob)
+      a.click()
+      URL.revokeObjectURL(a.href)
     }
   }
 }
