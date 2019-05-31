@@ -1,16 +1,41 @@
-import os
-import re
+import os, re, string, random
 import openpyxl
+import datetime, pytz
+import requests
 from django.conf import settings
-from backend.models import UserRegisterEvent
+from backend.models import *
+from backend.utils.email import send_activation_email
 
 
-TEMPLATE_FILE_PATH = os.path.join(settings.FILES_DIR, 'template/Export_template.xlsx')
+VERSION = '0.1.1'
+REGISTRATION_API = 'http://localhost:8000/api/auth/registration/'
+IMPORT_TEMPLATE_FILE_PATH = os.path.join(settings.FILES_DIR, 'template/Import_template.xlsx')
+EXPORT_TEMPLATE_FILE_PATH = os.path.join(settings.FILES_DIR, 'template/Export_template.xlsx')
+TEMP_FILES_DIR = os.path.join(settings.FILES_DIR, 'temp')
 export_fields = {'user': ['real_name', 'mobile', 'email', 'is_activated'],
                  'status': ['approved', 'application_text'],
                  'transport': ['transport_type', 'transport_id', 'depart_station', 'depart_time',
                                'arrival_station', 'arrival_time', 'other_detail']
                 }
+import_fields = {'user': ['real_name', 'mobile', 'email'],
+                 'transport': ['transport_type', 'transport_id', 'depart_station', 'depart_time',
+                               'arrival_station', 'arrival_time', 'other_detail']
+                }
+MAGIC_STRING = 'tE5St3Sh1rOuD'
+empty_re = r'^[\s]+$'
+mobile_re = r'^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$'
+email_re = r'^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$'
+EXPORT_START_ROW = 4
+IMPORT_START_ROW = 9
+
+
+def get_import_template():
+    file = openpyxl.load_workbook(IMPORT_TEMPLATE_FILE_PATH)
+    sheet = file['注册参会者']
+    sheet['A1'].value = '%s VERSION %s' % (settings.SITE_OFFICIAL_NAME, VERSION)
+    sheet['D1'].value = 'mgc-' + MAGIC_STRING
+    file.save(IMPORT_TEMPLATE_FILE_PATH)
+    return IMPORT_TEMPLATE_FILE_PATH
 
 
 def fillrow(sheet, row, require_approve, ure):
@@ -35,21 +60,28 @@ def fillrow(sheet, row, require_approve, ure):
 
     if transport is not None:
         for field in export_fields['transport']:
-            sheet.cell(row=row, column=col).value = getattr(transport, field)
+            val = getattr(transport, field)
+            if isinstance(val, datetime.datetime):
+                sheet.cell(row=row, column=col).number_format = 'yyyy/mm/dd hh:mm'
+                val = val.astimezone(pytz.timezone(settings.TIME_ZONE))
+                val = datetime.datetime(val.year, val.month, val.day, val.hour, val.minute)
+            sheet.cell(row=row, column=col).value = val
+
             col += 1
 
     return 1
 
 
-def export(event):
+def export_excel(event):
     ure_list = UserRegisterEvent.objects.filter(event=event)
-    file = openpyxl.load_workbook(TEMPLATE_FILE_PATH)
+    file = openpyxl.load_workbook(EXPORT_TEMPLATE_FILE_PATH)
 
     sheet1 = file['已注册参会者']
     sheet2 = file['申请参会者']
 
-    row1 = 3
-    row2 = 3
+    sheet2['A1'].value = sheet1['A1'].value = '%s VERSION %s' % (settings.SITE_OFFICIAL_NAME, VERSION)
+
+    row1 = row2 = EXPORT_START_ROW
 
     for ure in ure_list:
         col = 0
@@ -60,17 +92,122 @@ def export(event):
 
     row1 += 1
     sheet1.cell(row=row1, column=1).value = '总人数:'
-    sheet1.cell(row=row1, column=2).value = row1 - 4
+    sheet1.cell(row=row1+1, column=1).value = row1 - 4
 
     row2 += 1
-    sheet2.cell(row=row2, column=1).value = '总人数:'
-    sheet2.cell(row=row2, column=2).value = row2 - 4
+    sheet2.cell(row=row2, column=1).value = '总人数'
+    sheet2.cell(row=row2+1, column=1).value = row2 - 4
     if not event.require_approve:
         del file['申请参会者']
 
-    file_name = '%s_参会信息.xlsx' % re.sub(r'[\s]+', '-', event.title)
-    file_path = os.path.join(os.path.join(settings.FILES_DIR, 'temp'), file_name)
+    file_name = '%s_参会信息.xlsx' % re.sub(empty_re, '-', event.title)
+    file_path = os.path.join(TEMP_FILES_DIR, file_name)
     file.save(file_path)
 
     return file_path, file_name
+
+
+def register_new_user(data):
+    def gen_password():
+        passwd = ''
+        passwd += ''.join(random.sample(string.digits, 2))
+        passwd += ''.join(random.sample(string.ascii_letters, 7))
+        passwd += ''.join(random.sample(string.digits, 1))
+        return passwd
+
+    passwd = gen_password()
+    post_data = {}
+    post_data['username'] = data['mobile']
+    post_data['password1'] = post_data['password2'] = passwd
+    post_data['real_name'] = data['real_name']
+    post_data['email'] = data['email']
+
+    return requests.post(REGISTRATION_API, data=post_data), passwd
+
+
+def parserow(rdata, event):
+    colnum = 0
+    data = {}
+    for field in import_fields['user']:
+        data[field] = rdata[colnum]
+        colnum += 1
+    if data['mobile'] is None or not re.match(mobile_re, data['mobile']):
+        return 0
+
+    status = 1 # 0: failed; 1: User exists; 2: New user
+    try:
+        user = get_user_model().objects.get(mobile=data['mobile'])
+    except get_user_model().DoesNotExist:
+        status = 2
+        if data['real_name'] is None or data['real_num'] == '' or re.match(empty_re, data['real_name']):
+            return 0
+        if data['email'] is None or not re.match(email_re, data['email']):
+            return 0
+        r, password = register_new_user(data)
+        try:
+            user = get_user_model().objects.get(mobile=data['mobile'])
+        except get_user_model().DoesNotExist:
+            return 0
+        if r.status_code == 201:
+            try:
+                send_activation_email(user, event, password)
+            except Exception:
+                user.delete()
+                return 0
+
+    # Registration Success or already registered here
+    for field in import_fields['transport']:
+        data[field] = rdata[colnum] if rdata[colnum] is not None else ''
+        colnum += 1
+    if data['transport_id'] not in ['Flight', '航班', 'Train', '列车', 'Other', '其他']:
+        if data['transport_id'] == '航班':
+            data['transport_id'] = 'Flight'
+        if data['transport_id'] == '列车':
+            data['transport_id'] = 'Train'
+        if data['transport_id'] == '其他':
+            data['transport_id'] = 'Other'
+        UserRegisterEvent(user=user, event=event, transport=None, approved=False).save()
+        return status
+    if ['transport_id'] == '' or re.match(empty_re, data['transport_id']):
+        UserRegisterEvent(user=user, event=event, transport=None, approved=False).save()
+        return status
+    if ['arrival_time'] == '' or re.match(empty_re, data['arrival_time']):
+        UserRegisterEvent(user=user, event=event, transport=None, approved=False).save()
+        return status
+
+    for field in import_fields['transport']:
+        if field.endswith('time'):
+            if isinstance(data[field], str):
+                data[field] = datetime.datetime.strptime(data[field], '%Y/%m/%d %H:%M')
+    for field in import_fields['user']:
+        del data[field]
+    transport = Transport(user=user, event=event, **data)
+    transport.save()
+
+    UserRegisterEvent(user=user, event=event, transport=transport).save()
+    return status
+
+
+def import_excel(event, file):
+    file_path = os.path.join(TEMP_FILES_DIR, '%s_upload.xlsx')
+    with open(file_path, 'wb+') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
+    file = openpyxl.load_workbook(file_path)
+
+    sheet = file['注册参会者']
+    if sheet.cell('D1').value != 'mgc-' + MAGIC_STRING:
+        raise ValueError('Magic String Altered!')
+    rows = list(sheet.rows)
+    suc, fail, user_count = 0, 0, 0
+
+    for rownum in range(IMPORT_START_ROW-1, sheet.max_row):
+        r = parserow(rows[rownum], event)
+        if r != 0:
+            suc += 1
+            user_count += r - 1
+        else:
+            fail += 1
+
+    return suc, fail, user_count
 

@@ -9,16 +9,24 @@ site_domain = settings.SITE_DOMAIN_NAME
 activate_url = settings.USER_ACTIVATE_URL
 
 
-def send_activation_email(user):
+def send_activation_email(user, event=None, passwd=None):
     id = user.id
     name = user.real_name
     token = user.activate_token
     activation_link = 'http://%s%s?token=%s' % (site_host, activate_url, token)
 
-    subject = '请激活您的%s账户' % site_name
     content = '<p>亲爱的 <strong>%s</strong> 您好:</p>\n' % name
-    content += '<p>感谢您注册 <strong>%s</strong> 的账户，请点击以下链接验证您的邮箱并激活账户：</p>\n' % site_name
-    content += '<p><a href="%s">激活账户</a> (如不成功请将链接复制到地址栏访问: %s)</p>\n' % (activation_link, activation_link)
+    if event is None:
+        subject = '请激活您的%s账号' % site_name
+        content += '<p>感谢您注册 <strong>%s</strong> 的账号，请点击以下链接验证您的邮箱并激活账号：</p>\n' % site_name
+    else:
+        href = 'http://%s/event/%s' % (site_host, event.id)
+        subject = '%s的管理员邀请您激活您的%s账号' % (event.title, site_name)
+        content += '<p>您的 <strong>%s</strong> 账户已由 <a href="%s">%s</a> 活动的管理员开通。</p>\n' % (site_name, href, event.title)
+        content += '<p>您的登录凭证为您的手机号: %s, 初始密码为: %s</p>' % (user.mobile, passwd)
+        content += '请点击以下链接验证您的邮箱并激活账号，登录后请尽快修改密码。</p>\n'
+
+    content += '<p><a href="%s">激活账号</a> (如不成功请将链接复制到地址栏访问: %s)</p>\n' % (activation_link, activation_link)
     content += '<p> <a href="%s">%s</a> team</p>\n' % (site_host, site_name)
 
     from_email = settings.DEFAULT_FROM_EMAIL

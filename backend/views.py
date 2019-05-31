@@ -13,7 +13,7 @@ from backend.serializers import *
 from backend.permissions import *
 from backend.utils.qrcode import text_to_qr
 from backend.utils.email import send_activation_email, send_registered_email
-from backend.utils.excel import export as export_excel
+from backend.utils.excel import *
 from rest_framework.serializers import ValidationError
 
 
@@ -538,7 +538,7 @@ class DeleteCheckIn(generics.DestroyAPIView):
 
 
 class ExportExcel(APIView):
-    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
+    # permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
 
     def get(self, request, pk, format=None):
         try:
@@ -550,4 +550,38 @@ class ExportExcel(APIView):
             return response
         except Exception:
             raise
+
+
+class ImportExcel(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
+
+    def post(self, request, pk, format=None):
+        try:
+            event = Event.objects.get(pk=pk)
+        except Event.DoesNotExist:
+            raise Http404
+        try:
+            file = request.FILES['file']
+        except Exception:
+            raise ValidationError('No file uploaded.')
+        if file.name.split('.')[-1] != 'xlsx':
+            raise ValidationError('Not a .xlsx file.')
+        try:
+            suc, fail, user_count = import_excel(event, file)
+        except Exception as e:
+            raise ValidationError(e)
+
+        res = {'success_count': suc, 'fail_count': fail, 'user_count': user_count}
+        return Response(res)
+
+
+class DownloadExcelTemplate(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
+
+    def get(self, request, format=None):
+        file_path = get_import_template()
+        response = FileResponse(open(file_path, 'rb'))
+        response['content_type'] = 'application/octet-stream'
+        response['Content-Disposition'] = 'attachment; filename=' + quote(os.path.basename(IMPORT_TEMPLATE_FILE_PATH))
+        return response
 
