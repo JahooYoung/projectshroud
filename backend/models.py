@@ -1,5 +1,5 @@
 from backend.utils.uuid import *
-from backend.utils.email import *
+from backend.utils.email import send_approve_or_reject_email
 from django.db import models
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager

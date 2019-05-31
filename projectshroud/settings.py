@@ -78,6 +78,7 @@ TEMPLATES = [
     },
 ]
 
+FILES_DIR = os.path.join(BASE_DIR, "files")
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend/dist/static"),
 ]

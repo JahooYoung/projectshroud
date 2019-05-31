@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, FileResponse
+from urllib.parse import quote
 
 from rest_framework import generics, status
 from rest_framework import permissions
@@ -11,8 +12,8 @@ from rest_framework.decorators import api_view, permission_classes
 from backend.serializers import *
 from backend.permissions import *
 from backend.utils.qrcode import text_to_qr
-from backend.utils.email import *
-
+from backend.utils.email import send_activation_email, send_registered_email
+from backend.utils.excel import export as export_excel
 from rest_framework.serializers import ValidationError
 
 
@@ -535,4 +536,18 @@ class DeleteCheckIn(generics.DestroyAPIView):
     serializer_class = CheckInSerializer
     permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
 
+
+class ExportExcel(APIView):
+    # permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
+
+    def get(self, request, pk, format=None):
+        try:
+            event = Event.objects.get(pk=pk)
+            file_path, file_name = export_excel(event)
+            response = FileResponse(open(file_path, 'rb'))
+            response['content_type'] = 'application/octet-stream'
+            response['Content-Disposition'] = 'attachment; filename=' + quote(file_name)
+            return response
+        except Exception:
+            raise
 
