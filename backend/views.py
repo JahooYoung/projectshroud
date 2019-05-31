@@ -568,6 +568,8 @@ class ImportExcel(APIView):
             raise ValidationError('Not a .xlsx file.')
         try:
             suc, fail, user_count = import_excel(event, file)
+        except ValueError as e:
+            raise ValidationError(e.args[0])
         except Exception as e:
             raise
 

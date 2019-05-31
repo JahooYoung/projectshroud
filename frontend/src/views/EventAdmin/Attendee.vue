@@ -189,6 +189,21 @@
         drop-placeholder="Drop file here..."
       />
     </b-modal>
+
+    <b-modal
+      ref="modal-import-result"
+      title="Import result"
+      ok-only
+      @ok="modalCallback && modalCallback(true)"
+      @cancel="modalCallback && modalCallback(false)"
+      @hide="modalCallback && modalCallback(null)"
+    >
+      <p class="my-3">
+        <b>No. successful users:</b> {{ importResult.successCount }} <br>
+        <b>No. failed users:</b> {{ importResult.failCount }} <br>
+        <b>No. new registered users:</b> {{ importResult.userCount }}
+      </p>
+    </b-modal>
   </b-container>
 </template>
 
@@ -247,7 +262,12 @@ export default {
       modalCallback: null,
       modalData: null,
       newAdminName: '',
-      excelFile: null
+      excelFile: null,
+      importResult: {
+        successCount: 0,
+        failCount: 0,
+        userCount: 0
+      }
     }
   },
   computed: {
@@ -341,7 +361,6 @@ export default {
     async importExcel () {
       const answer = await this.showModal('modal-import-excel')
       if (answer) {
-        console.log(this.excelFile)
         const formData = new FormData()
         formData.append('file', this.excelFile)
         try {
@@ -350,11 +369,12 @@ export default {
               'Content-Type': 'multipart/form-data'
             }
           })
-          this.toastSuccess(JSON.parse(res.data))
+          this.importResult = res.data
+          this.showModal('modal-import-result')
           this.refresh()
         } catch (err) {
           if (err.needHandle) {
-            this.toastError('Failed to import, use template!')
+            this.toastError('Failed to import! Please check your file conform to the template.')
           }
         }
       }

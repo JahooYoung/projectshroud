@@ -92,11 +92,11 @@ def export_excel(event):
 
     row1 += 1
     sheet1.cell(row=row1, column=1).value = '总人数:'
-    sheet1.cell(row=row1+1, column=1).value = row1 - 4
+    sheet1.cell(row=row1+1, column=1).value = row1 - 5
 
     row2 += 1
     sheet2.cell(row=row2, column=1).value = '总人数'
-    sheet2.cell(row=row2+1, column=1).value = row2 - 4
+    sheet2.cell(row=row2+1, column=1).value = row2 - 5
     if not event.require_approve:
         del file['申请参会者']
 
@@ -160,10 +160,8 @@ def parserow(rdata, event):
         return status
     for field in import_fields['transport']:
         data[field] = rdata[colnum].value if rdata[colnum].value is not None else ''
-        if isinstance(data[field], datetime.datetime):
-            print(data[field])
-            data[field] = data[field].replace(tzinfo=pytz.timezone(settings.TIME_ZONE))
-            print(data[field])
+        # if isinstance(data[field], datetime.datetime):
+        #     data[field] = data[field].replace(tzinfo=pytz.timezone(settings.TIME_ZONE))
         colnum += 1
     if data['transport_type'] not in ['Flight', '航班', 'Train', '列车', 'Other', '其他']:
         if data['transport_type'] == '航班':
@@ -185,7 +183,7 @@ def parserow(rdata, event):
         if field.endswith('time'):
             if isinstance(data[field], str):
                 data[field] = datetime.datetime.strptime(data[field], '%Y/%m/%d %H:%M')
-                data[field] = data[field].replace(tzinfo=pytz.timezone(settings.TIME_ZONE))
+                # data[field] = data[field].replace(tzinfo=pytz.timezone(settings.TIME_ZONE))
     for field in import_fields['user']:
         del data[field]
     transport = Transport(user=user, event=event, **data)
@@ -202,6 +200,8 @@ def import_excel(event, file):
             destination.write(chunk)
     file = openpyxl.load_workbook(file_path)
 
+    if '注册参会者' not in file:
+        raise ValueError('Table Name Altered!')
     sheet = file['注册参会者']
     if sheet['D1'].value != 'mgc-' + MAGIC_STRING:
         raise ValueError('Magic String Altered!')
