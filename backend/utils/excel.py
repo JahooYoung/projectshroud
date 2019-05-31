@@ -33,11 +33,12 @@ def fillrow(sheet, row, require_approve, ure):
             sheet.cell(row=row, column=col).value = '已注册'
         col += 1
 
-    if transport is None:
-        return
-    for field in export_fields['transport']:
-        sheet.cell(row=row, column=col).value = getattr(transport, field)
-        col += 1
+    if transport is not None:
+        for field in export_fields['transport']:
+            sheet.cell(row=row, column=col).value = getattr(transport, field)
+            col += 1
+
+    return 1
 
 
 def export(event):
@@ -53,12 +54,17 @@ def export(event):
     for ure in ure_list:
         col = 0
         if ure.approved:
-            fillrow(sheet1, row1, event.require_approve, ure)
-            row1 += 1
+            row1 += fillrow(sheet1, row1, event.require_approve, ure)
         else:
-            fillrow(sheet2, row2, event.require_approve, ure)
-            row2 += 1
+            row2 += fillrow(sheet2, row2, event.require_approve, ure)
 
+    row1 += 1
+    sheet1.cell(row=row1, column=1).value = '总人数:'
+    sheet1.cell(row=row1, column=2).value = row1 - 4
+
+    row2 += 1
+    sheet2.cell(row=row2, column=1).value = '总人数:'
+    sheet2.cell(row=row2, column=2).value = row2 - 4
     if not event.require_approve:
         del file['申请参会者']
 
