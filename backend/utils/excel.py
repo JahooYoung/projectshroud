@@ -193,7 +193,7 @@ def parserow(rdata, event):
     return status
 
 
-def import_excel(event, file):
+def import_excel(event, file, callback):
     file_path = os.path.join(TEMP_FILES_DIR, '%s_upload.xlsx')
     with open(file_path, 'wb+') as destination:
         for chunk in file.chunks():
@@ -201,11 +201,15 @@ def import_excel(event, file):
     file = openpyxl.load_workbook(file_path)
 
     if '注册参会者' not in file:
-        raise ValueError('Table Name Altered!')
+        callback({'error': 'Table Name Altered!'})
+        return
     sheet = file['注册参会者']
     if sheet['D1'].value != 'mgc-' + MAGIC_STRING:
-        raise ValueError('Magic String Altered!')
+        callback({'error': 'Magic String Altered!'})
+        return
+
     rows = list(sheet.rows)
+    total = sheet.max_row - (IMPORT_START_ROW - 1)
     suc, fail, user_count = 0, 0, 0
 
     for rownum in range(IMPORT_START_ROW-1, sheet.max_row):
@@ -215,6 +219,13 @@ def import_excel(event, file):
             user_count += r - 1
         else:
             fail += 1
+        callback({
+            'finished': rownum == sheet.max_row - 1,
+            'success_count': suc,
+            'fail_count': fail,
+            'user_count': user_count,
+            'total': total
+        })
 
-    return suc, fail, user_count
+    return suc, fail, user_count, total
 

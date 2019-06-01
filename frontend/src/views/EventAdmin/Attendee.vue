@@ -17,6 +17,41 @@
       />
     </b-progress>
 
+    <b-alert
+      :show="Boolean(importSocket)"
+      variant="dark"
+      align="left"
+      dismissible
+      @dismissed="closeSocket"
+    >
+      <h6>
+        {{ importResult.finished ? 'Import finished' : 'Importing...' }}
+        (
+        Total: {{ importResult.total }}
+        Success: {{ importResult.successCount }},
+        Failure: {{ importResult.failCount }},
+        New registered user: {{ importResult.userCount }}
+        )
+      </h6>
+      <b-progress
+        :max="importResult.total"
+        height="0.4rem"
+      >
+        <b-progress-bar
+          :value="importResult.successCount"
+          :animated="!importResult.finished"
+          variant="success"
+          striped
+        />
+        <b-progress-bar
+          :value="importResult.failCount"
+          :animated="!importResult.finished"
+          variant="warning"
+          striped
+        />
+      </b-progress>
+    </b-alert>
+
     <TableLayout
       item-name="attendee"
       :refresh="refresh"
@@ -177,6 +212,7 @@
     <b-modal
       ref="modal-import-excel"
       title="Import excel (.xlsx)"
+      :ok-disabled="!excelFile"
       @ok="modalCallback && modalCallback(true)"
       @cancel="modalCallback && modalCallback(false)"
       @hide="modalCallback && modalCallback(null)"
@@ -189,26 +225,12 @@
         drop-placeholder="Drop file here..."
       />
     </b-modal>
-
-    <b-modal
-      ref="modal-import-result"
-      title="Import result"
-      ok-only
-      @ok="modalCallback && modalCallback(true)"
-      @cancel="modalCallback && modalCallback(false)"
-      @hide="modalCallback && modalCallback(null)"
-    >
-      <p class="my-3">
-        <b>No. successful users:</b> {{ importResult.successCount }} <br>
-        <b>No. failed users:</b> {{ importResult.failCount }} <br>
-        <b>No. new registered users:</b> {{ importResult.userCount }}
-      </p>
-    </b-modal>
   </b-container>
 </template>
 
 <script>
 import TableLayout from '@/components/TableLayout.vue'
+import { transformJSON2Object } from '@/plugins/axios.js'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTimes, faCheck, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -264,10 +286,13 @@ export default {
       newAdminName: '',
       excelFile: null,
       importResult: {
+        finished: false,
+        total: 0,
         successCount: 0,
         failCount: 0,
         userCount: 0
-      }
+      },
+      importSocket: null
     }
   },
   computed: {
@@ -277,6 +302,9 @@ export default {
   },
   created () {
     this.refresh()
+  },
+  destroyed () {
+    this.closeSocket()
   },
   methods: {
     async refresh () {
@@ -363,21 +391,57 @@ export default {
       if (answer) {
         const formData = new FormData()
         formData.append('file', this.excelFile)
+        await this.syncImportProgress()
         try {
-          const res = await this.axios.post(`/api/event/${this.eventId}/import/`, formData, {
+          await this.axios.post(`/api/event/${this.eventId}/import/`, formData, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }
           })
-          this.importResult = res.data
-          this.showModal('modal-import-result')
-          this.refresh()
         } catch (err) {
+          this.closeSocket()
           if (err.needHandle) {
             this.toastError('Failed to import! Please check your file conform to the template.')
           }
         }
       }
+    },
+    closeSocket () {
+      if (this.importSocket) {
+        this.importSocket.onclose = null
+        this.importSocket.close()
+        this.importSocket = null
+      }
+    },
+    syncImportProgress () {
+      let host = window.location.host
+      // for dev
+      if (host.search('localhost') !== -1) {
+        host = 'localhost:8000'
+      }
+      this.closeSocket()
+      this.importSocket = new WebSocket(`ws://${host}/ws/import/${this.eventId}/`)
+      this.importSocket.onmessage = e => {
+        const data = transformJSON2Object(JSON.parse(e.data))
+        if (data.error) {
+          this.toastError(data.error)
+          this.closeSocket()
+          return
+        }
+        this.importResult = data
+        if (data.finished) {
+          this.refresh()
+        }
+      }
+      this.importSocket.onclose = e => {
+        this.toastError('Failed to synchronize import progress')
+        this.importSocket = null
+      }
+      return new Promise(resolve => {
+        this.importSocket.onopen = e => {
+          resolve()
+        }
+      })
     }
   }
 }

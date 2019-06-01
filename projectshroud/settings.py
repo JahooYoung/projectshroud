@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'backend.apps.BackendConfig',
     'algoliasearch_django',
     'huey.contrib.djhuey',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -200,8 +201,7 @@ USER_ACTIVATE_URL = '/send/activation/'
 #     }
 # }
 
-from huey import SqliteHuey
-
+# from huey import SqliteHuey
 # HUEY = SqliteHuey('scheduled_job', filename='huey.sqlite3')
 
 HUEY = {
@@ -210,4 +210,15 @@ HUEY = {
     'filename': 'huey.sqlite3',
     'immediate': False
     # 'utc': False
+}
+
+# Channels
+ASGI_APPLICATION = 'projectshroud.routing.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
 }

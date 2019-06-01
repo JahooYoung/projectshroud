@@ -29,5 +29,6 @@ do
     esac
 done
 
-uwsgi --reload projectshroud.pid
+# uwsgi --reload projectshroud.pid
+supervisorctl restart all
 
