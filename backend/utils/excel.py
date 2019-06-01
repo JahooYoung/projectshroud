@@ -131,6 +131,7 @@ def parserow(rdata, event):
     for field in import_fields['user']:
         data[field] = rdata[colnum].value
         colnum += 1
+    data['mobile'] = str(data['mobile'])
     if data['mobile'] is None or not re.match(mobile_re, data['mobile']):
         return 0
 

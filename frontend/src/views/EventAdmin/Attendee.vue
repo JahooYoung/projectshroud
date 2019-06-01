@@ -414,6 +414,13 @@ export default {
       }
     },
     syncImportProgress () {
+      this.importResult = {
+        finished: false,
+        total: 0,
+        successCount: 0,
+        failCount: 0,
+        userCount: 0
+      }
       let host = window.location.host
       // for dev
       if (host.search('localhost') !== -1) {
