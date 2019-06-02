@@ -159,6 +159,8 @@ def parserow(rdata, event):
     # Registration Success or already registered here
     if UserRegisterEvent.objects.filter(user=user, event=event).exists():
         return status
+    event.attendee_count += 1
+    event.save()
     for field in import_fields['transport']:
         data[field] = rdata[colnum].value if rdata[colnum].value is not None else ''
         # if isinstance(data[field], datetime.datetime):
