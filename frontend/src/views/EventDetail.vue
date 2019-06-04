@@ -252,7 +252,11 @@ export default {
     }
   },
   watch: {
-    '$route': 'refresh'
+    '$route' (value, oldValue) {
+      if (value.params.id !== oldValue.params.id) {
+        this.refresh()
+      }
+    }
   },
   created () {
     this.refresh()
