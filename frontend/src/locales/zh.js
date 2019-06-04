@@ -154,8 +154,8 @@ export default {
   'New Password:': '新密码',
   'Repeat New Password:': '重复新密码',
   'Successfully change password!': '修改密码成功',
-  'Username:': '用户名',
-  'Password:': '密码',
+  'Mobile or password is wrong': '手机号或密码错误',
+  'Username:': '用户名:',
+  'Password:': '密码:',
   'Register': '注册'
-
 }
