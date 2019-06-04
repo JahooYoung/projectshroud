@@ -26,7 +26,7 @@
       aria-labelledby="dropdownMenu"
     >
       <li>
-        Search results for {{ query }}:
+        {{ $t('Search results for',[query]) }}:
         <hr class="mt-1 mb-0">
       </li>
       <li

@@ -43,7 +43,7 @@ export default {
       menu: [
         {
           href: 'info',
-          title: 'Basic Info',
+          title: this.$t('Basic Info'),
           icon: {
             element: FontAwesomeIcon,
             attributes: {
@@ -53,7 +53,7 @@ export default {
         },
         {
           href: 'description',
-          title: 'Description',
+          title: this.$t('Description'),
           icon: {
             element: FontAwesomeIcon,
             attributes: {
@@ -63,7 +63,7 @@ export default {
         },
         {
           href: 'administrator',
-          title: 'Administrator',
+          title: this.$t('Administrator Info'),
           icon: {
             element: FontAwesomeIcon,
             attributes: {
@@ -73,7 +73,7 @@ export default {
         },
         {
           href: 'attendee',
-          title: 'Attendee',
+          title: this.$t('Attendee Info'),
           icon: {
             element: FontAwesomeIcon,
             attributes: {
@@ -83,7 +83,7 @@ export default {
         },
         {
           href: 'checkin',
-          title: 'Checkin',
+          title: this.$t('Checkin'),
           icon: {
             element: FontAwesomeIcon,
             attributes: {
@@ -98,7 +98,7 @@ export default {
         },
         {
           href: `/event/${this.$route.params.id}`,
-          title: 'Back',
+          title: this.$t('Back'),
           icon: {
             element: FontAwesomeIcon,
             attributes: {

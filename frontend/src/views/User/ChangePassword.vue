@@ -11,7 +11,7 @@
             lg="4"
           >
             <b-form-group
-              label="Old Password:"
+              :label="$t('Old Password:')"
               label-for="oldPasswordInput"
             >
               <b-form-input
@@ -23,7 +23,7 @@
               />
             </b-form-group>
             <b-form-group
-              label="New Password:"
+              :label="$t('New Password:')"
               label-for="newPasswordInput"
             >
               <b-form-input
@@ -34,7 +34,7 @@
               />
             </b-form-group>
             <b-form-group
-              label="Repeat New Password:"
+              :label="$t('Repeat New Password:')"
               label-for="repeatNewPasswordInput"
             >
               <b-form-input
@@ -49,7 +49,7 @@
               type="submit"
               variant="primary"
             >
-              Confirm
+              {{ $t('Confirm') }}
             </b-button>
           </b-col>
         </b-row>
@@ -78,7 +78,7 @@ export default {
           newPassword1: this.form.newPassword,
           newPassword2: this.form.repeatNewPassword
         })
-        this.toastSuccess('Successfully changed password!')
+        this.toastSuccess(this.$t('Successfully change password!'))
         this.$router.back()
       } catch (err) {
         if (err.needHandle) {

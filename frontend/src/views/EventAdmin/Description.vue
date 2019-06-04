@@ -4,7 +4,7 @@
     class="md-editor"
     :ishljs="false"
     :external-link.camel="false"
-    placeholder="Loading..."
+    :placeholder="$t('Loading...')"
     @change="change"
     @save="save"
   />
@@ -34,7 +34,8 @@ export default {
       .then(res => {
         this.description = this.savedDescription = res.data.description
         if (this.description === '') {
-          this.description = `# ${res.data.title}\nGive your description here...`
+          this.description = `# ${res.data.title}\n` +
+                            this.$t('Give your description here...')
         }
       })
   },
@@ -42,11 +43,11 @@ export default {
     if (this.saved || this.description === this.savedDescription) {
       next()
     } else {
-      this.$bvModal.msgBoxConfirm('Do you want to save the description?', {
-        title: 'Not saved yet',
+      this.$bvModal.msgBoxConfirm(this.$t('Do you want to save the description?'), {
+        title: this.$t('Not saved yet'),
         centered: true,
-        okTitle: 'Yes',
-        cancelTitle: 'No'
+        okTitle: this.$t('Yes'),
+        cancelTitle: this.$t('No')
       })
         .then(ans => {
           if (ans === true) {
@@ -72,11 +73,7 @@ export default {
         .then(res => {
           this.saved = true
           this.savedDescription = res.data.description
-          this.$root.$bvToast.toast('Description saved successfully', {
-            title: `Success`,
-            autoHideDelay: 1000,
-            solid: true
-          })
+          this.toastSuccess(this.$t('Description saved successfully'))
         })
     }
   }

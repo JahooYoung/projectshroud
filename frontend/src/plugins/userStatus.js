@@ -1,4 +1,5 @@
 import { mapState } from 'vuex'
+// import { loadLanguageAsync } from '@/plugins/i18n'
 
 function UserStatus () {}
 
@@ -13,8 +14,8 @@ UserStatus.install = function (Vue, options = {}) {
     methods: {
       checkLogin () {
         if (!this.user) {
-          this.$root.$bvToast.toast('You need to login first', {
-            title: 'Not login yet',
+          this.$root.$bvToast.toast(this.$t('You need to login first'), {
+            title: this.$t('Not login yet'),
             variant: 'warning',
             autoHideDelay: 4000,
             solid: true,
@@ -29,8 +30,8 @@ UserStatus.install = function (Vue, options = {}) {
           return false
         }
         if (!this.userActivated) {
-          this.$root.$bvToast.toast('You need to activate first', {
-            title: 'Not activated yet',
+          this.$root.$bvToast.toast(this.$t('You need to activate first'), {
+            title: this.$t('Not activated yet'),
             variant: 'warning',
             autoHideDelay: 4000,
             solid: true,
@@ -45,8 +46,8 @@ UserStatus.install = function (Vue, options = {}) {
           .then(res => {
             this.$store.commit('setUserActivation', res.data.isActivated)
             if (!res.data.isActivated) {
-              this.$root.$bvToast.toast('Click here to activate your account!', {
-                title: 'Account not activated',
+              this.$root.$bvToast.toast(this.$t('Click here to activate your account!'), {
+                title: this.$t('Account not activated'),
                 variant: 'warning',
                 autoHideDelay: 5000,
                 solid: true,
@@ -57,8 +58,8 @@ UserStatus.install = function (Vue, options = {}) {
           .catch(err => {
             if (err.response && err.response.status >= 400 && err.response.status < 500) {
               this.$store.commit('setUserState', null)
-              this.$root.$bvToast.toast('Your signin seems expired, click here to login again!', {
-                title: 'Error',
+              this.$root.$bvToast.toast(this.$t('Your signin seems expired, click here to login again!'), {
+                title: this.$t('Error'),
                 variant: 'danger',
                 autoHideDelay: 5000,
                 solid: true,

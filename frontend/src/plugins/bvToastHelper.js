@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import { ToastPlugin } from 'bootstrap-vue/es/components'
+// import { loadLanguageAsync } from '@/plugins/i18n'
 
 Vue.use(ToastPlugin)
 
@@ -16,7 +17,7 @@ const install = _Vue => {
     methods: {
       toastSuccess (msg, title, to) {
         this.$root.$bvToast.toast(msg, {
-          title: title || 'Success',
+          title: title || this.$t('Success'),
           variant: 'default',
           autoHideDelay: 3000,
           solid: true,
@@ -25,7 +26,7 @@ const install = _Vue => {
       },
       toastError (msg, title, to) {
         this.$root.$bvToast.toast(msg, {
-          title: title || 'Error',
+          title: title || this.$t('Error'),
           variant: 'danger',
           autoHideDelay: 5000,
           solid: true,

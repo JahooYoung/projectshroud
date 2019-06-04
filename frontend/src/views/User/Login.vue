@@ -12,7 +12,7 @@
           >
             <b-form-group
               id="usernameInputGroup"
-              label="Username:"
+              :label="$t('Username:')"
               label-for="usernameInput"
             >
               <b-form-input
@@ -25,7 +25,7 @@
             </b-form-group>
             <b-form-group
               id="passwordInputGroup"
-              label="Password:"
+              :label="$t('Password:')"
               label-for="passwordInput"
             >
               <b-form-input
@@ -40,13 +40,13 @@
               type="submit"
               variant="primary"
             >
-              Login
+              {{ $t('Login') }}
             </b-button>
             <b-button
               to="/register"
               variant="danger"
             >
-              Register
+              {{ $t('Register') }}
             </b-button>
           </b-col>
         </b-row>

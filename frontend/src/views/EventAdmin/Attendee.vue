@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <h2>Attendee List</h2>
+    <h2>{{ $t('Attendee List') }}</h2>
 
     <b-progress
       class="my-3"
@@ -18,20 +18,22 @@
     </b-progress>
 
     <TableLayout
-      item-name="attendee"
+      :item-name="$t('attendee')"
       :refresh="refresh"
       :total-rows="attendee.length"
     >
       <template #buttons>
         <b-dropdown
           split
-          text="Import"
+          :text="$t('Import')"
+          :ok-title="$t('Accept')"
+          :cancel-title="$t('Reject')"
           variant="outline-dark"
           class="mr-2"
           @click="importExcel"
         >
           <b-dropdown-item @click="downloadTemplate">
-            Download template
+            {{ $t('Download template') }}
           </b-dropdown-item>
         </b-dropdown>
         <b-button
@@ -39,14 +41,14 @@
           variant="outline-dark"
           @click="exportExcel"
         >
-          Export
+          {{ $t('Export') }}
         </b-button>
         <b-button
           class="mr-2"
           variant="outline-dark"
           href="#"
         >
-          Add attendee
+          {{ $t('Add attendee') }}
         </b-button>
       </template>
 
@@ -63,7 +65,7 @@
               {{ row.value.arrivalTime.toLocaleString() }}
             </div>
             <div v-else>
-              None
+              {{ $t('None') }}
             </div>
           </template>
 
@@ -79,7 +81,7 @@
               variant="warning"
               @click="approve(row)"
             >
-              See detail
+              {{ $t('Pending') }}
             </b-button>
           </template>
 
@@ -147,36 +149,36 @@
 
     <b-modal
       ref="modal-approve"
-      ok-title="Accept"
-      cancel-title="Reject"
       cancel-variant="danger"
       @ok="modalCallback && modalCallback(true)"
       @cancel="modalCallback && modalCallback(false)"
       @hide="modalCallback && modalCallback(null)"
     >
       <template #modal-title>
-        {{ modalData && modalData.userInfo.realName }}'s application
+        {{ modalData && modalData.userInfo.realName }}{{ $t(`'s application`) }}
       </template>
-      <h5>Application Text:</h5>
-      {{ modalData && (modalData.applicationText || 'Empty') }}
+      <h5>{{ $t('Application Text:') }}</h5>
+      {{ modalData && (modalData.applicationText || $t('Empty')) }}
     </b-modal>
 
     <b-modal
       ref="modal-add-admin"
-      title="Confirm"
+      :title="$t('Confirm')"
       @ok="modalCallback && modalCallback(true)"
       @cancel="modalCallback && modalCallback(false)"
       @hide="modalCallback && modalCallback(null)"
     >
       <p class="my-3">
-        Are you sure to add {{ newAdminName }} as an administrator? <br>
-        <b>Warning:</b> You cannot undo this operation!
+        {{ $t('Are you sure to add') + newAdminName + $t('as an administrator?') }} <br>
+        <b>{{ $t('Warning:') }}</b> {{ $t('You cannot undo this operation!') }}
       </p>
     </b-modal>
 
     <b-modal
       ref="modal-import-excel"
-      title="Import excel (.xlsx)"
+      :title="$t('Import excel (.xlsx)')"
+      :ok-title="$t('OK')"
+      :cancel-title="$t('Cancel')"
       @ok="modalCallback && modalCallback(true)"
       @cancel="modalCallback && modalCallback(false)"
       @hide="modalCallback && modalCallback(null)"
@@ -184,24 +186,25 @@
       <b-form-file
         v-model="excelFile"
         :state="Boolean(excelFile)"
+        :browse-text="$t('Brouse')"
         accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        placeholder="Choose a file..."
-        drop-placeholder="Drop file here..."
+        :placeholder="$t('Choose a file...')"
+        :drop-placeholder="$t('Drop file here...')"
       />
     </b-modal>
 
     <b-modal
       ref="modal-import-result"
-      title="Import result"
+      :title="$t('Import result')"
       ok-only
       @ok="modalCallback && modalCallback(true)"
       @cancel="modalCallback && modalCallback(false)"
       @hide="modalCallback && modalCallback(null)"
     >
       <p class="my-3">
-        <b>No. successful users:</b> {{ importResult.successCount }} <br>
-        <b>No. failed users:</b> {{ importResult.failCount }} <br>
-        <b>No. new registered users:</b> {{ importResult.userCount }}
+        <b>{{ $t('No. successful users:') }}</b> {{ importResult.successCount }} <br>
+        <b>{{ $t('No. failed users:') }}</b> {{ importResult.failCount }} <br>
+        <b>{{ $t('No. new registered users:') }}</b> {{ importResult.userCount }}
       </p>
     </b-modal>
   </b-container>
@@ -226,11 +229,11 @@ export default {
       fields: [
         {
           key: 'userInfo.realName',
-          label: 'Name'
+          label: this.$t('Name')
         },
         {
           key: 'userInfo.mobile',
-          label: 'Mobile'
+          label: this.$t('Mobile')
         },
         // {
         //   key: 'dateRegistered',
@@ -239,22 +242,22 @@ export default {
         // },
         {
           key: 'transportInfo',
-          label: 'Arrival Info',
+          label: this.$t('Arrival Info'),
           sortable: true
         },
         {
           key: 'approved',
-          label: 'Approve',
+          label: this.$t('Approval Status'),
           sortable: true
         },
         {
           key: 'checkedIn',
-          label: 'Checked in',
+          label: this.$t('Checked-in Status'),
           sortable: true
         },
         {
           key: 'isAdmin',
-          label: 'Is Admin',
+          label: this.$t('Is Admin'),
           sortable: true
         }
       ],
@@ -306,7 +309,7 @@ export default {
           })
           rowItem.isAdmin = true
         } catch (err) {
-          this.toastError('Failed to assign admin')
+          this.toastError(this.$t('Failed to assign admin'))
         }
       }
     },
@@ -323,18 +326,18 @@ export default {
           })
           if (answer) {
             row.item.approved = true
-            this.toastSuccess('Succeed to approve user ' + user)
+            this.toastSuccess(this.$t('Succeed to approve user ', [user]))
           } else {
             this.attendee = this.attendee.filter(
               x => x.userInfo.id !== row.item.userInfo.id
             )
-            this.toastSuccess('Succeed to reject user ' + user)
+            this.toastSuccess(this.$t('Succeed to reject user ', [user]))
           }
         } catch (err) {
           if (answer) {
-            this.toastError('Failed to approve user ' + user)
+            this.toastError(this.$t('Failed to approve user ', [user]))
           } else {
-            this.toastError('Failed to reject user ' + user)
+            this.toastError(this.$t('Failed to reject user ', [user]))
           }
         }
       }
@@ -374,7 +377,7 @@ export default {
           this.refresh()
         } catch (err) {
           if (err.needHandle) {
-            this.toastError('Failed to import! Please check your file conform to the template.')
+            this.toastError(this.$t('Failed to import! Please check your file conform to the template.'))
           }
         }
       }
