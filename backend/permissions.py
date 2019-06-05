@@ -1,6 +1,7 @@
 from rest_framework import permissions
 from backend.models import *
 from rest_framework.serializers import ValidationError
+from django.http import Http404
 
 
 def is_site_admin(user):
@@ -70,6 +71,21 @@ class IsSiteAdminOrEventManager(permissions.BasePermission):
 
     def has_permission(self, request, view):
         user = request.user
+        pk = view.kwargs.get('pk')
+
+        if pk is not None:
+            if view.pk_type == 'event':
+                try:
+                    event = Event.objects.get(pk=pk)
+                except Event.DoesNotExist:
+                    raise Http404
+                return UserManageEvent.objects.filter(user=user, event=event).exists()
+            if view.pk_type == 'checkin':
+                try:
+                    event = CheckIn.objects.get(pk=pk).event
+                except CheckIn.DoesNotExist:
+                    raise Http404
+                return UserManageEvent.objects.filter(user=user, event=event).exists()
 
         if is_site_admin(user):
             return True

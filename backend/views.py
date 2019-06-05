@@ -377,11 +377,10 @@ class AssignEventAdmin(generics.CreateAPIView):
 
 
 class EventDetail(generics.RetrieveUpdateDestroyAPIView):
-    # Need More Test
-
     queryset = Event.objects.all()
     serializer_class = EventDetailSerializer
     permission_classes = (IsEventHostAdminOrReadOnly|IsAdminUser,)
+    pk_type = 'event'
 
     def get(self, request, *args, **kwargs):
         try:
@@ -404,6 +403,7 @@ class EventDetail(generics.RetrieveUpdateDestroyAPIView):
 class EventAttendeeList(generics.ListAPIView):
     serializer_class = UserRegisterEventSerializer
     permission_classes = (permissions.IsAuthenticated, IsActivated)
+    pk_type = 'event'
 
     def get_queryset(self):
         try:
@@ -418,6 +418,7 @@ class EventAttendeeList(generics.ListAPIView):
 class EventAdminList(generics.ListAPIView):
     serializer_class = UserManageEventSerializer
     permission_classes = (permissions.IsAuthenticated, IsActivated)
+    pk_type = 'event'
 
     def get_queryset(self):
         try:
@@ -461,12 +462,14 @@ class TransportView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Transport.objects.all()
     serializer_class = TransportSerializer
     permission_classes = (permissions.IsAuthenticated, IsOwner|IsEventHostAdmin|IsAdminUser)
+    pk_type = 'transport'
 
 
 class EventCheckInList(generics.ListCreateAPIView):
     queryset = CheckIn.objects.all()
     serializer_class = CheckInSerializer
     permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
+    pk_type = 'event'
 
     def get_queryset(self):
         queryset = super(EventCheckInList, self).get_queryset()
@@ -478,6 +481,7 @@ class EventCheckInList(generics.ListCreateAPIView):
 
 class UserCheckInEvent(APIView):
     permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrSelf|IsSiteAdminOrEventManager)
+    pk_type = 'checkin'
 
     def post(self, request, pk, format=None):
         try:
@@ -521,6 +525,7 @@ class UserCheckInEvent(APIView):
 class ToggleCheckIn(APIView):
     serializer_class = CheckInSerializer
     permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
+    pk_type = 'checkin'
 
     def post(self, request, pk, format=None):
         try:
@@ -537,10 +542,12 @@ class DeleteCheckIn(generics.DestroyAPIView):
     queryset = CheckIn.objects.all()
     serializer_class = CheckInSerializer
     permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
+    pk_type = 'checkin'
 
 
 class ExportExcel(APIView):
     permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
+    pk_type = 'event'
 
     def get(self, request, pk, format=None):
         try:
@@ -556,6 +563,7 @@ class ExportExcel(APIView):
 
 class ImportExcel(APIView):
     permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
+    pk_type = 'event'
 
     def post(self, request, pk, format=None):
         try:
