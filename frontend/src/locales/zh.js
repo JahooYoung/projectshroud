@@ -184,5 +184,7 @@ export default {
   'Admin Events': '管理的活动',
   'New Event': '新活动',
   'Blue represents the event is checking in.': '蓝色表示该活动正在签到',
-  'Manage': '管理'
+  'Manage': '管理',
+  'Mobile or password is wrong': '手机号或密码错误',
+  'Username:': '用户名：'
 }
