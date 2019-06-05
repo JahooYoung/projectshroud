@@ -79,7 +79,18 @@
     </b-form-group>
 
     <b-form-group
-      :label="$t('Other detail:')"
+      :label="$t('Accommodation:')"
+      label-for="transport-modal-input-9"
+      label-cols-lg="3"
+    >
+      <location-input
+        id="transport-modal-input-9"
+        v-model="transport.accommodation"
+      />
+    </b-form-group>
+
+    <b-form-group
+      :label="$t('Other details:')"
       label-for="transport-modal-input-8"
       label-cols-lg="3"
     >
@@ -93,6 +104,7 @@
 </template>
 
 <script>
+import { BFormGroup, BFormInput, BFormSelect } from 'bootstrap-vue'
 import TimePicker from '@/components/TimePicker.vue'
 import LocationInput from '@/components/LocationInput.vue'
 import { loadLanguageAsync } from '@/plugins/i18n'
@@ -101,7 +113,10 @@ export default {
   name: 'TransportModal',
   components: {
     TimePicker,
-    LocationInput
+    LocationInput,
+    BFormGroup,
+    BFormInput,
+    BFormSelect
   },
   data () {
     return {
@@ -128,6 +143,7 @@ export default {
         departTime: null,
         arrivalStation: '',
         arrivalTime: null,
+        accommodation: '',
         otherDetail: ''
       }
     },

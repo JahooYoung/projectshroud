@@ -52,7 +52,7 @@ class TransportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transport
         fields = ['id', 'transport_type', 'transport_id', 'depart_station',
-                  'depart_time', 'arrival_station', 'arrival_time', 'other_detail',
+                  'depart_time', 'arrival_station', 'arrival_time', 'accommodation', 'other_detail',
                   'user_info', 'event_info']
 
 

@@ -44,7 +44,7 @@ export default {
   'Success': '成功',
   'Error': '错误',
   'Not login yet': '你尚未登录',
-  'You need to login first': '点击此处登录',
+  'You need to login first': '你需要先登录',
   'Account not activated': '账号未激活',
   'Click here to activate your account!': '点击此处激活你的账号',
   'Not activated yet': '账号未激活',
@@ -186,5 +186,7 @@ export default {
   'Blue represents the event is checking in.': '蓝色表示该活动正在签到',
   'Manage': '管理',
   'Mobile or password is wrong': '手机号或密码错误',
-  'Username:': '用户名：'
+  'Username:': '用户名：',
+  'Accommodation:': '住宿',
+  'Other details:': '其它细节'
 }

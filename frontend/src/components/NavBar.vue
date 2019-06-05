@@ -102,6 +102,10 @@
 </template>
 
 <script>
+import {
+  BNavbar, BNavbarNav, BNavbarBrand, BNavbarToggle, BCollapse, BNavItem,
+  BNavItemDropdown, BDropdownItem, BDropdownDivider, BBadge
+} from 'bootstrap-vue'
 import SearchBoxLoading from './SearchBoxLoading.vue'
 import { loadLanguageAsync } from '@/plugins/i18n'
 
@@ -111,7 +115,17 @@ export default {
     SearchBox: () => ({
       component: import(/* webpackChunkName: "searchbox" */ './SearchBox.vue'),
       loading: SearchBoxLoading
-    })
+    }),
+    BNavbar,
+    BNavbarNav,
+    BNavbarBrand,
+    BNavbarToggle,
+    BCollapse,
+    BNavItem,
+    BNavItemDropdown,
+    BDropdownItem,
+    BDropdownDivider,
+    BBadge
   },
   methods: {
     logout () {

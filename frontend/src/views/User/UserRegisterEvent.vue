@@ -70,7 +70,7 @@
                 <template #header>
                   <div class="d-flex w-100 justify-content-between">
                     <h6 class="mt-1">
-                      Your Transport
+                      Transport &amp; Accommodation
                     </h6>
                     <b-button
                       variant="success"
@@ -87,6 +87,9 @@
                   {{ row.item.transportInfo.departTime.toLocaleString() }} <br>
                   <strong>To</strong> {{ row.item.transportInfo.arrivalStation }} <br>
                   {{ row.item.transportInfo.arrivalTime.toLocaleString() }}
+                  <div v-if="row.item.transportInfo.accommodation">
+                    <strong>Stay at </strong> {{ row.item.transportInfo.accommodation }}
+                  </div>
                   <div v-if="row.item.transportInfo.otherDetail">
                     <strong>p.s.</strong> {{ row.item.transportInfo.otherDetail }}
                   </div>
@@ -105,11 +108,12 @@
 </template>
 
 <script>
+import { BButton, BTable, BLink, BCardGroup, BCard, BCardText } from 'bootstrap-vue'
+import TableLayout from '@/components/TableLayout.vue'
+import TransportModal from '@/components/TransportModal.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faMinus, faCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import TableLayout from '@/components/TableLayout.vue'
-import TransportModal from '@/components/TransportModal.vue'
 
 library.add(faMinus, faCheck)
 
@@ -118,7 +122,13 @@ export default {
   components: {
     FontAwesomeIcon,
     TableLayout,
-    TransportModal
+    TransportModal,
+    BButton,
+    BTable,
+    BLink,
+    BCardGroup,
+    BCard,
+    BCardText
   },
   data () {
     return {

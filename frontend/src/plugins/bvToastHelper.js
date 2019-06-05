@@ -1,6 +1,5 @@
 import Vue from 'vue'
-import { ToastPlugin } from 'bootstrap-vue/es/components'
-// import { loadLanguageAsync } from '@/plugins/i18n'
+import { ToastPlugin } from 'bootstrap-vue'
 
 Vue.use(ToastPlugin)
 
@@ -20,6 +19,15 @@ const install = _Vue => {
           title: title || this.$t('Success'),
           variant: 'default',
           autoHideDelay: 3000,
+          solid: true,
+          to: to
+        })
+      },
+      toastWarning (msg, title, to) {
+        this.$root.$bvToast.toast(msg, {
+          title: title || 'Warning',
+          variant: 'warning',
+          autoHideDelay: 4000,
           solid: true,
           to: to
         })

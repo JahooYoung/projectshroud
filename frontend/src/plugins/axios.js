@@ -10,7 +10,7 @@ function snakeCase (str) {
   return str.replace(/[A-Z]/g, match => '_' + match[0].toLowerCase())
 }
 
-function transformObject2JSON (obj) {
+export function transformObject2JSON (obj) {
   if (typeof obj !== 'object' || !obj) {
     return obj
   }
@@ -32,7 +32,7 @@ function transformObject2JSON (obj) {
   return result
 }
 
-function transformJSON2Object (obj) {
+export function transformJSON2Object (obj) {
   if (typeof obj !== 'object' || !obj) {
     return obj
   }

@@ -1,3 +1,8 @@
+from threading import Thread
+
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -9,12 +14,13 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.serializers import ValidationError
+
 from backend.serializers import *
 from backend.permissions import *
 from backend.utils.qrcode import text_to_qr
 from backend.utils.email import send_activation_email, send_registered_email
 from backend.utils.excel import *
-from rest_framework.serializers import ValidationError
 
 
 def check_is_admin(user, event):
@@ -424,8 +430,6 @@ class EventAdminList(generics.ListAPIView):
 
 
 class TransportCreateView(generics.CreateAPIView):
-    # Not Tested
-
     queryset = Transport.objects.all()
     serializer_class = TransportSerializer
     permission_classes = (permissions.IsAuthenticated, IsSiteAdminOrSelf|IsSiteAdminOrEventManager)
@@ -454,8 +458,6 @@ class TransportCreateView(generics.CreateAPIView):
 
 
 class TransportView(generics.RetrieveUpdateDestroyAPIView):
-    # Not Tested
-
     queryset = Transport.objects.all()
     serializer_class = TransportSerializer
     permission_classes = (permissions.IsAuthenticated, IsOwner|IsEventHostAdmin|IsAdminUser)
@@ -566,15 +568,21 @@ class ImportExcel(APIView):
             raise ValidationError('No file uploaded.')
         if file.name.split('.')[-1] != 'xlsx':
             raise ValidationError('Not a .xlsx file.')
-        try:
-            suc, fail, user_count = import_excel(event, file)
-        except ValueError as e:
-            raise ValidationError(e.args[0])
-        except Exception as e:
-            raise
 
-        res = {'success_count': suc, 'fail_count': fail, 'user_count': user_count}
-        return Response(res)
+        channel_layer = get_channel_layer()
+        send = async_to_sync(channel_layer.group_send)
+        group_name = 'event_%s_import' % event.id
+
+        def callback(data):
+            send(group_name, {
+                'type': 'import_message',
+                'message': data
+            })
+
+        t = Thread(target=import_excel, args=(event, file, callback))
+        t.start()
+
+        return Response(status=status.HTTP_202_ACCEPTED)
 
 
 class DownloadExcelTemplate(APIView):

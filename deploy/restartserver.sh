@@ -1,3 +1,4 @@
 sudo /usr/local/nginx/sbin/nginx -s reload
 cd /home/projectshroud
-uwsgi --reload projectshroud.pid
+# uwsgi --reload projectshroud.pid
+supervisorctl restart all

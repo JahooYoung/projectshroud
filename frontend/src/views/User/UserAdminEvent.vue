@@ -63,12 +63,17 @@
 </template>
 
 <script>
+import { BButton, BTable, BLink, BSpinner } from 'bootstrap-vue'
 import TableLayout from '@/components/TableLayout.vue'
 
 export default {
   name: 'UserAdminEvent',
   components: {
-    TableLayout
+    TableLayout,
+    BButton,
+    BTable,
+    BLink,
+    BSpinner
   },
   data () {
     return {

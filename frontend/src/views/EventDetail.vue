@@ -113,7 +113,7 @@
               <template #header>
                 <div class="d-flex w-100 justify-content-between">
                   <h6 class="mt-1">
-                    Your Transport
+                    Transport &amp; Accommodation
                   </h6>
                   <b-button
                     variant="success"
@@ -130,6 +130,9 @@
                 {{ transport.departTime.toLocaleString() }} <br>
                 <strong>To</strong> {{ transport.arrivalStation }} <br>
                 {{ transport.arrivalTime.toLocaleString() }}
+                <div v-if="transport.accommodation">
+                  <strong>Stay at </strong> {{ transport.accommodation }}
+                </div>
                 <div v-if="transport.otherDetail">
                   <strong>p.s.</strong> {{ transport.otherDetail }}
                 </div>
@@ -159,7 +162,7 @@
         <div v-if="event.requireApprove">
           <hr>
           <b>Application Text</b>
-          <b-textarea
+          <b-form-textarea
             v-model="applicationText"
             class="application-text"
             rows="5"
@@ -223,11 +226,15 @@
 </template>
 
 <script>
-import 'mavon-editor/dist/markdown/github-markdown.min.css'
+import {
+  BSpinner, BCard, BCardTitle, BCardText, BButton, BListGroup, BListGroupItem,
+  BLink, BFormTextarea
+} from 'bootstrap-vue'
 import TransportModal from '@/components/TransportModal.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircleNotch, faCheck, faFileAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import 'mavon-editor/dist/markdown/github-markdown.min.css'
 
 library.add(faCircleNotch, faCheck, faFileAlt)
 
@@ -235,7 +242,16 @@ export default {
   name: 'EventDetail',
   components: {
     TransportModal,
-    FontAwesomeIcon
+    FontAwesomeIcon,
+    BSpinner,
+    BCard,
+    BCardTitle,
+    BCardText,
+    BButton,
+    BListGroup,
+    BListGroupItem,
+    BLink,
+    BFormTextarea
   },
   data () {
     return {
@@ -252,7 +268,11 @@ export default {
     }
   },
   watch: {
-    '$route': 'refresh'
+    '$route' (value, oldValue) {
+      if (value.params.id !== oldValue.params.id) {
+        this.refresh()
+      }
+    }
   },
   created () {
     this.refresh()

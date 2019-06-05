@@ -17,6 +17,41 @@
       />
     </b-progress>
 
+    <b-alert
+      :show="Boolean(importSocket)"
+      variant="dark"
+      align="left"
+      dismissible
+      @dismissed="closeSocket"
+    >
+      <h6>
+        {{ importResult.finished ? 'Import finished' : 'Importing...' }}
+        (
+        Total: {{ importResult.total }}
+        Success: {{ importResult.successCount }},
+        Failure: {{ importResult.failCount }},
+        New registered user: {{ importResult.userCount }}
+        )
+      </h6>
+      <b-progress
+        :max="importResult.total"
+        height="0.4rem"
+      >
+        <b-progress-bar
+          :value="importResult.successCount"
+          :animated="!importResult.finished"
+          variant="success"
+          striped
+        />
+        <b-progress-bar
+          :value="importResult.failCount"
+          :animated="!importResult.finished"
+          variant="warning"
+          striped
+        />
+      </b-progress>
+    </b-alert>
+
     <TableLayout
       :item-name="$t('attendee')"
       :refresh="refresh"
@@ -175,25 +210,6 @@
     </b-modal>
 
     <b-modal
-      ref="modal-import-excel"
-      :title="$t('Import excel (.xlsx)')"
-      :ok-title="$t('OK')"
-      :cancel-title="$t('Cancel')"
-      @ok="modalCallback && modalCallback(true)"
-      @cancel="modalCallback && modalCallback(false)"
-      @hide="modalCallback && modalCallback(null)"
-    >
-      <b-form-file
-        v-model="excelFile"
-        :state="Boolean(excelFile)"
-        :browse-text="$t('Brouse')"
-        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        :placeholder="$t('Choose a file...')"
-        :drop-placeholder="$t('Drop file here...')"
-      />
-    </b-modal>
-
-    <b-modal
       ref="modal-import-result"
       :title="$t('Import result')"
       ok-only
@@ -207,11 +223,22 @@
         <b>{{ $t('No. new registered users:') }}</b> {{ importResult.userCount }}
       </p>
     </b-modal>
+
+    <input
+      id="file-input"
+      type="file"
+      accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      style="display: none"
+    >
   </b-container>
 </template>
 
 <script>
+import {
+  BProgress, BProgressBar, BAlert, BDropdown, BDropdownItem, BButton, BTable
+} from 'bootstrap-vue'
 import TableLayout from '@/components/TableLayout.vue'
+import { transformJSON2Object } from '@/plugins/axios.js'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTimes, faCheck, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -222,7 +249,14 @@ export default {
   name: 'EventAdminAttendee',
   components: {
     TableLayout,
-    FontAwesomeIcon
+    FontAwesomeIcon,
+    BProgress,
+    BProgressBar,
+    BAlert,
+    BDropdown,
+    BDropdownItem,
+    BButton,
+    BTable
   },
   data () {
     return {
@@ -230,7 +264,6 @@ export default {
       modalCallback: null,
       modalData: null,
       newAdminName: '',
-      excelFile: null,
       importResult: {
         successCount: 0,
         failCount: 0,
@@ -282,6 +315,9 @@ export default {
   },
   created () {
     this.refresh()
+  },
+  destroyed () {
+    this.closeSocket()
   },
   methods: {
     async refresh () {
@@ -363,26 +399,82 @@ export default {
     async downloadTemplate () {
       this.download(`/api/download/import/`)
     },
+    chooseFiles () {
+      const input = document.getElementById('file-input')
+      input.click()
+      return new Promise(resolve => {
+        input.onchange = ev => {
+          input.onchange = null
+          const files = input.files
+          input.files = null
+          console.log(files)
+          resolve(files)
+        }
+      })
+    },
     async importExcel () {
-      const answer = await this.showModal('modal-import-excel')
-      if (answer) {
+      const files = await this.chooseFiles()
+      if (files.length > 0) {
         const formData = new FormData()
-        formData.append('file', this.excelFile)
+        formData.append('file', files[0])
+        await this.syncImportProgress()
         try {
-          const res = await this.axios.post(`/api/event/${this.eventId}/import/`, formData, {
+          await this.axios.post(`/api/event/${this.eventId}/import/`, formData, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }
           })
-          this.importResult = res.data
-          this.showModal('modal-import-result')
-          this.refresh()
         } catch (err) {
+          this.closeSocket()
           if (err.needHandle) {
             this.toastError(this.$t('Failed to import! Please check your file conform to the template.'))
           }
         }
       }
+    },
+    closeSocket () {
+      if (this.importSocket) {
+        this.importSocket.onclose = null
+        this.importSocket.close()
+        this.importSocket = null
+      }
+    },
+    syncImportProgress () {
+      this.importResult = {
+        finished: false,
+        total: 0,
+        successCount: 0,
+        failCount: 0,
+        userCount: 0
+      }
+      let host = window.location.host
+      // for dev
+      if (host.search('localhost') !== -1) {
+        host = 'localhost:8000'
+      }
+      this.closeSocket()
+      this.importSocket = new WebSocket(`ws://${host}/ws/import/${this.eventId}/`)
+      this.importSocket.onmessage = e => {
+        const data = transformJSON2Object(JSON.parse(e.data))
+        if (data.error) {
+          this.toastError(data.error)
+          this.closeSocket()
+          return
+        }
+        this.importResult = data
+        if (data.finished) {
+          this.refresh()
+        }
+      }
+      this.importSocket.onclose = e => {
+        this.toastError('Failed to synchronize import progress')
+        this.importSocket = null
+      }
+      return new Promise(resolve => {
+        this.importSocket.onopen = e => {
+          resolve()
+        }
+      })
     }
   }
 }

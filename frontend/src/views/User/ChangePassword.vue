@@ -59,8 +59,16 @@
 </template>
 
 <script>
+import { BForm, BFormGroup, BFormInput, BButton } from 'bootstrap-vue'
+
 export default {
   name: 'ChangePassword',
+  components: {
+    BForm,
+    BFormGroup,
+    BFormInput,
+    BButton
+  },
   data () {
     return {
       form: {

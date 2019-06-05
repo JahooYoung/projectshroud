@@ -226,6 +226,7 @@ class Transport(models.Model):
     depart_time = models.DateTimeField('出发时间', blank=True)
     arrival_station = models.CharField(max_length=20, blank=True, verbose_name='到达站')
     arrival_time = models.DateTimeField('到达时间', blank=False)
+    accommodation = models.CharField(max_length=50, blank=True)
     other_detail = models.TextField('详细信息', blank=True)
 
     class Meta:
