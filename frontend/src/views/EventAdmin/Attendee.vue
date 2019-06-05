@@ -226,7 +226,24 @@ export default {
   },
   data () {
     return {
-      fields: [
+      attendee: [],
+      modalCallback: null,
+      modalData: null,
+      newAdminName: '',
+      excelFile: null,
+      importResult: {
+        successCount: 0,
+        failCount: 0,
+        userCount: 0
+      }
+    }
+  },
+  computed: {
+    eventId () {
+      return this.$route.params.id
+    },
+    fields () {
+      return [
         {
           key: 'userInfo.realName',
           label: this.$t('Name')
@@ -260,22 +277,7 @@ export default {
           label: this.$t('Is Admin'),
           sortable: true
         }
-      ],
-      attendee: [],
-      modalCallback: null,
-      modalData: null,
-      newAdminName: '',
-      excelFile: null,
-      importResult: {
-        successCount: 0,
-        failCount: 0,
-        userCount: 0
-      }
-    }
-  },
-  computed: {
-    eventId () {
-      return this.$route.params.id
+      ]
     }
   },
   created () {

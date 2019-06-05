@@ -10,14 +10,15 @@
             offset-lg="4"
             lg="4"
           >
+            <!-- <p v-html="$t('test html-format')"></p> -->
             <b-form-group
               id="mobileInputGroup"
-              label="Mobile:"
+              :label="$t('Mobile:')"
               label-for="mobileInput"
               label-cols-sm="4"
               label-cols-lg="3"
               :state="($v.mobile.$dirty || null) && !$v.mobile.$error"
-              :valid-feedback="`${$v.mobile.$model} is available!`"
+              :valid-feedback="$t('This mobile is available!')"
             >
               <b-form-input
                 id="mobileInput"
@@ -27,23 +28,23 @@
               />
               <template #invalid-feedback>
                 <div v-if="!$v.mobile.required">
-                  This field is required.
+                  {{ $t('This field is required.') }}
                 </div>
                 <div v-else-if="!$v.mobile.minLength || !$v.mobile.maxLength">
-                  Must have exactly {{ $v.mobile.$params.minLength.min }} digits.
+                  {{ $t('Must have exactly digits.',[$v.mobile.$params.minLength.min]) }}
                 </div>
                 <div v-else-if="!$v.mobile.numeric">
-                  Must be numeric.
+                  {{ $t('Must be numeric.') }}
                 </div>
                 <div v-else-if="!$v.mobile.noServerError">
-                  {{ err.username[0] }}
+                  {{ $t('Register.vue username',[err.username[0]]) }}
                 </div>
               </template>
             </b-form-group>
 
             <b-form-group
               id="emailInputGroup"
-              label="Email:"
+              :label="$t('Email:')"
               label-for="emailInput"
               label-cols-sm="4"
               label-cols-lg="3"
@@ -56,20 +57,20 @@
               />
               <template #invalid-feedback>
                 <div v-if="!$v.email.required">
-                  This field is required.
+                  {{ $t('This field is required.') }}
                 </div>
                 <div v-if="!$v.email.email">
-                  Please input a valid email
+                  {{ $t('Please input a valid email') }}
                 </div>
                 <div v-else-if="!$v.email.noServerError">
-                  {{ err.email[0] }}
+                  {{ $t('Register.vue email', [err.email[0]]) }}
                 </div>
               </template>
             </b-form-group>
 
             <b-form-group
               id="passwordInputGroup"
-              label="Password:"
+              :label="$t('Password:')"
               label-for="passwordInput"
               label-cols-sm="4"
               label-cols-lg="3"
@@ -83,26 +84,26 @@
               />
               <template #invalid-feedback>
                 <div v-if="!$v.password.required">
-                  This field is required.
+                  {{ $t('This field is required.') }}
                 </div>
                 <div v-else-if="!$v.password.minLength">
-                  At least {{ $v.password.$params.minLength.min }} characters.
+                  {{ $t('Password must contain at least characters',[$v.password.$params.minLength.min]) }}
                 </div>
                 <div v-else-if="!$v.password.complex">
-                  Password can not contains only digits, only lowercase alpha or only uppercase alpha.
+                  {{ $t('Password can not contains only digits, only lowercase alpha or only uppercase alpha.') }}
                 </div>
                 <div v-else-if="!$v.password.uncommon">
-                  This password is too common.
+                  {{ $t('This password is too common.') }}
                 </div>
                 <div v-else-if="!$v.password.noServerError">
-                  {{ err.password1[0] }}
+                  {{ $t('Register.vue password', err.password1[0]) }}
                 </div>
               </template>
             </b-form-group>
 
             <b-form-group
               id="RepeatPasswordInputGroup"
-              label="Repeat password:"
+              :label="$t('Repeat password:')"
               label-for="repeatPasswordInput"
               label-cols-sm="4"
               label-cols-lg="3"
@@ -116,14 +117,14 @@
               />
               <template #invalid-feedback>
                 <div v-if="!$v.repeatPassword.sameAsPassword">
-                  Two passwords are different!
+                  {{ $t('Two passwords are different!') }}
                 </div>
               </template>
             </b-form-group>
 
             <b-form-group
               id="realNameInputGroup"
-              label="Real name:"
+              :label="$t('Real name:')"
               label-for="realNameInput"
               label-cols-sm="4"
               label-cols-lg="3"
@@ -136,7 +137,7 @@
               />
               <template #invalid-feedback>
                 <div v-if="!$v.realName.required">
-                  This field is required.
+                  {{ $t('This field is required.') }}
                 </div>
                 <div v-else-if="!$v.realName.noServerError">
                   {{ err.realName[0] }}
@@ -149,7 +150,7 @@
               variant="primary"
               :disabled="$v.$invalid"
             >
-              Register
+              {{ $t('Register') }}
             </b-button>
           </b-col>
         </b-row>

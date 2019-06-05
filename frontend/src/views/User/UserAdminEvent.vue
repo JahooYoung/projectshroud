@@ -1,9 +1,9 @@
 <template>
   <b-container>
-    <h2>Admin Events</h2>
+    <h2>{{ $t('Admin Events') }}</h2>
 
     <TableLayout
-      item-name="event"
+      :item-name="$t('Event')"
       :refresh="refresh"
       :total-rows="events.length"
     >
@@ -13,7 +13,7 @@
           variant="outline-dark"
           to="/event/new"
         >
-          New Event
+          {{ $t('New Event') }}
         </b-button>
       </template>
 
@@ -25,14 +25,14 @@
           :tbody-tr-class="rowClass"
           primary-key="id"
           sort-by="startTime"
-          caption="Blue represents the event is checking in."
+          :caption="$t('Blue represents the event is checking in.')"
         >
           <div
             slot="table-busy"
             class="text-center text-primary my-2"
           >
             <b-spinner class="align-middle mr-2" />
-            <strong>Loading...</strong>
+            <strong>{{ $t('Loading...') }}</strong>
           </div>
 
           <template
@@ -53,7 +53,7 @@
               size="sm"
               :to="`/event/${row.item.id}/admin`"
             >
-              Manage
+              {{ $t('Manage') }}
             </b-button>
           </template>
         </b-table>

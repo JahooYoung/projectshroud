@@ -1,4 +1,5 @@
 export default {
+  'test html-format': '<b>test html-format</b>',
   'Website name': 'NavBar',
   'Registered Future Events': 'Registered Future Events',
   'Search results for': 'Search results for {0}',
@@ -11,5 +12,14 @@ export default {
   'Failed to add channel ': 'Failed to add channel {0}',
   'Enter message \'\'': 'Enter message \'{0}\'',
   'Event "" saved successfully': 'Event "{0}" saved successfully',
-  'Successfully delete event ': 'Successfully delete event "{0}"'
+  'Successfully delete event ': 'Successfully delete event "{0}"',
+  'Must have exactly digits.': 'Must have exactly {0} digits.',
+  'Register.vue username': '{0}',
+  'Register.vue email': '{0}',
+  'Password must contain at least characters':
+  'Password must contain at least {0} characters',
+  'Register.vue password': '{0}',
+  'This page will automatically close in <b></b> seconds.':
+  'This page will automatically close in <b>{0}</b> seconds.',
+  'SendActivation.vue msg': '{0}'
 }

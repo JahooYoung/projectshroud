@@ -12,7 +12,7 @@
           >
             <b-form-group
               id="usernameInputGroup"
-              :label="$t('Username:')"
+              :label="$t('Mobile:')"
               label-for="usernameInput"
             >
               <b-form-input
