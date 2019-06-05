@@ -430,8 +430,6 @@ class EventAdminList(generics.ListAPIView):
 
 
 class TransportCreateView(generics.CreateAPIView):
-    # Not Tested
-
     queryset = Transport.objects.all()
     serializer_class = TransportSerializer
     permission_classes = (permissions.IsAuthenticated, IsSiteAdminOrSelf|IsSiteAdminOrEventManager)
@@ -460,8 +458,6 @@ class TransportCreateView(generics.CreateAPIView):
 
 
 class TransportView(generics.RetrieveUpdateDestroyAPIView):
-    # Not Tested
-
     queryset = Transport.objects.all()
     serializer_class = TransportSerializer
     permission_classes = (permissions.IsAuthenticated, IsOwner|IsEventHostAdmin|IsAdminUser)

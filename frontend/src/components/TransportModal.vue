@@ -79,6 +79,17 @@
     </b-form-group>
 
     <b-form-group
+      label="Accommodation:"
+      label-for="transport-modal-input-9"
+      label-cols-lg="3"
+    >
+      <location-input
+        id="transport-modal-input-9"
+        v-model="transport.accommodation"
+      />
+    </b-form-group>
+
+    <b-form-group
       label="Other detail:"
       label-for="transport-modal-input-8"
       label-cols-lg="3"
@@ -133,6 +144,7 @@ export default {
         departTime: null,
         arrivalStation: '',
         arrivalTime: null,
+        accommodation: '',
         otherDetail: ''
       }
     },

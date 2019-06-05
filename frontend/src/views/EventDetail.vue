@@ -113,7 +113,7 @@
               <template #header>
                 <div class="d-flex w-100 justify-content-between">
                   <h6 class="mt-1">
-                    Your Transport
+                    Transport &amp; Accommodation
                   </h6>
                   <b-button
                     variant="success"
@@ -130,6 +130,9 @@
                 {{ transport.departTime.toLocaleString() }} <br>
                 <strong>To</strong> {{ transport.arrivalStation }} <br>
                 {{ transport.arrivalTime.toLocaleString() }}
+                <div v-if="transport.accommodation">
+                  <strong>Stay at </strong> {{ transport.accommodation }}
+                </div>
                 <div v-if="transport.otherDetail">
                   <strong>p.s.</strong> {{ transport.otherDetail }}
                 </div>

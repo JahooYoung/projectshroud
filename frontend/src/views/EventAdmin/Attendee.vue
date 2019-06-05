@@ -209,29 +209,18 @@
       </p>
     </b-modal>
 
-    <b-modal
-      ref="modal-import-excel"
-      title="Import excel (.xlsx)"
-      :ok-disabled="!excelFile"
-      @ok="modalCallback && modalCallback(true)"
-      @cancel="modalCallback && modalCallback(false)"
-      @hide="modalCallback && modalCallback(null)"
+    <input
+      id="file-input"
+      type="file"
+      accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      style="display: none"
     >
-      <b-form-file
-        v-model="excelFile"
-        :state="Boolean(excelFile)"
-        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        placeholder="Choose a file..."
-        drop-placeholder="Drop file here..."
-      />
-    </b-modal>
   </b-container>
 </template>
 
 <script>
 import {
-  BProgress, BProgressBar, BAlert, BDropdown, BDropdownItem, BButton, BTable,
-  BFormFile
+  BProgress, BProgressBar, BAlert, BDropdown, BDropdownItem, BButton, BTable
 } from 'bootstrap-vue'
 import TableLayout from '@/components/TableLayout.vue'
 import { transformJSON2Object } from '@/plugins/axios.js'
@@ -252,8 +241,7 @@ export default {
     BDropdown,
     BDropdownItem,
     BButton,
-    BTable,
-    BFormFile
+    BTable
   },
   data () {
     return {
@@ -296,7 +284,6 @@ export default {
       modalCallback: null,
       modalData: null,
       newAdminName: '',
-      excelFile: null,
       importResult: {
         finished: false,
         total: 0,
@@ -398,11 +385,24 @@ export default {
     async downloadTemplate () {
       this.download(`/api/download/import/`)
     },
+    chooseFiles () {
+      const input = document.getElementById('file-input')
+      input.click()
+      return new Promise(resolve => {
+        input.onchange = ev => {
+          input.onchange = null
+          const files = input.files
+          input.files = null
+          console.log(files)
+          resolve(files)
+        }
+      })
+    },
     async importExcel () {
-      const answer = await this.showModal('modal-import-excel')
-      if (answer) {
+      const files = await this.chooseFiles()
+      if (files.length > 0) {
         const formData = new FormData()
-        formData.append('file', this.excelFile)
+        formData.append('file', files[0])
         await this.syncImportProgress()
         try {
           await this.axios.post(`/api/event/${this.eventId}/import/`, formData, {
