@@ -117,3 +117,10 @@ def send_notification_email(ure, day_msg):
     msg.attach_alternative(content, "text/html")
 
     return msg.send()
+
+
+def send_event_change_email(event):
+    # Todo
+
+    pass
+

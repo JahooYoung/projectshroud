@@ -1,5 +1,5 @@
 from backend.utils.uuid import *
-from backend.utils.email import send_approve_or_reject_email
+from backend.utils.email import send_approve_or_reject_email, send_event_change_email
 from django.db import models
 from django.contrib.auth.models import User, AnonymousUser
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
@@ -114,6 +114,15 @@ class UserProfile(AbstractBaseUser):
     def is_staff(self):
         return bool(self.is_site_admin and self.is_active)
 
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            super(UserProfile, self).save(*args, **kwargs)
+        else:
+            old = UserProfile.objects.get(id=self.pk)
+            if getattr(self, 'email', None) != getattr(old, 'email', None):
+                self.is_activated = False
+            super(UserProfile, self).save(*args, **kwargs)
+
 
 class Event(models.Model):
     id = models.CharField(max_length=12,
@@ -174,18 +183,18 @@ class Event(models.Model):
     # def disable_checkin(self):
     #     self.checkin_enabled = False
 
-    # def save(self, *args, **kwargs):
-    #     """
-    #     Use the `pygments` library to create a highlighted HTML
-    #     representation of the code snippet.
-    #     """
-    #     lexer = get_lexer_by_name(self.language)
-    #     linenos = 'table' if self.linenos else False
-    #     options = {'title': self.title} if self.title else {}
-    #     formatter = HtmlFormatter(style=self.style, linenos=linenos,
-    #                             full=True, **options)
-    #     self.highlighted = highlight(self.code, lexer, formatter)
-    #     super(Snippet, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            super(Event, self).save(*args, **kwargs)
+        else:
+            old = Event.objects.get(id=self.pk)
+            important_change = False
+            for field in ['start_time', 'end_time', 'location']:
+                if getattr(self, field, None) != getattr(old, field, None):
+                    important_change = True
+            if important_change:
+                send_event_change_email(self)
+            super(Event, self).save(*args, **kwargs)
 
 
 class CheckIn(models.Model):
