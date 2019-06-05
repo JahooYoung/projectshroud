@@ -229,6 +229,10 @@
 </template>
 
 <script>
+import {
+  BProgress, BProgressBar, BAlert, BDropdown, BDropdownItem, BButton, BTable,
+  BFormFile
+} from 'bootstrap-vue'
 import TableLayout from '@/components/TableLayout.vue'
 import { transformJSON2Object } from '@/plugins/axios.js'
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -241,7 +245,15 @@ export default {
   name: 'EventAdminAttendee',
   components: {
     TableLayout,
-    FontAwesomeIcon
+    FontAwesomeIcon,
+    BProgress,
+    BProgressBar,
+    BAlert,
+    BDropdown,
+    BDropdownItem,
+    BButton,
+    BTable,
+    BFormFile
   },
   data () {
     return {

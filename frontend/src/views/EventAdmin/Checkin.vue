@@ -91,6 +91,7 @@
     <b-modal
       ref="show-QRcode"
       :title="'QRcode For Channel ' + currentChannelName"
+      ok-only
       size="lg"
     >
       <b-img
@@ -105,12 +106,19 @@
 </template>
 
 <script>
+import { BButton, BTable, BForm, BFormGroup, BFormInput, BImg } from 'bootstrap-vue'
 import TableLayout from '@/components/TableLayout.vue'
 
 export default {
   name: 'EventAdminCheckin',
   components: {
-    TableLayout
+    TableLayout,
+    BButton,
+    BTable,
+    BForm,
+    BFormGroup,
+    BFormInput,
+    BImg
   },
   data () {
     return {

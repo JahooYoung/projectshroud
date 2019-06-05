@@ -88,11 +88,6 @@
         :disabled="isLoading"
         @click="onSubmit"
       >
-        <b-spinner
-          v-show="isLoading"
-          small
-          type="grow"
-        />
         {{ newEvent ? 'Create' : 'Save' }}
       </b-button>
 
@@ -131,6 +126,7 @@
 </template>
 
 <script>
+import { BForm, BFormGroup, BFormInput, BFormCheckbox, BButton } from 'bootstrap-vue'
 import TimePicker from '@/components/TimePicker.vue'
 import LocationInput from '@/components/LocationInput.vue'
 
@@ -138,7 +134,12 @@ export default {
   name: 'EventAdminInfo',
   components: {
     TimePicker,
-    LocationInput
+    LocationInput,
+    BForm,
+    BFormGroup,
+    BFormInput,
+    BFormCheckbox,
+    BButton
   },
   props: {
     newEvent: {

@@ -65,8 +65,17 @@
 </template>
 
 <script>
+import { BInputGroup, BInputGroupAppend, BFormInput, BButton, BPagination } from 'bootstrap-vue'
+
 export default {
   name: 'TableLayout',
+  components: {
+    BInputGroup,
+    BInputGroupAppend,
+    BFormInput,
+    BButton,
+    BPagination
+  },
   props: {
     itemName: {
       type: String,

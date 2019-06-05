@@ -124,8 +124,24 @@
 </template>
 
 <script>
+import {
+  BCard, BCardText, BForm, BFormGroup, BFormInput, BButton, BInputGroup,
+  BInputGroupAppend, BFormCheckbox
+} from 'bootstrap-vue'
+
 export default {
   name: 'UserProfile',
+  components: {
+    BCard,
+    BCardText,
+    BForm,
+    BFormGroup,
+    BFormInput,
+    BButton,
+    BInputGroup,
+    BInputGroupAppend,
+    BFormCheckbox
+  },
   data () {
     return {
       savedUserProfile: null,

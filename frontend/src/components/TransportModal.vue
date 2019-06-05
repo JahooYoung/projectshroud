@@ -93,6 +93,7 @@
 </template>
 
 <script>
+import { BFormGroup, BFormInput, BFormSelect } from 'bootstrap-vue'
 import TimePicker from '@/components/TimePicker.vue'
 import LocationInput from '@/components/LocationInput.vue'
 
@@ -106,7 +107,10 @@ export default {
   name: 'TransportModal',
   components: {
     TimePicker,
-    LocationInput
+    LocationInput,
+    BFormGroup,
+    BFormInput,
+    BFormSelect
   },
   data () {
     return {

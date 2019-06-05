@@ -19,13 +19,15 @@
 </template>
 
 <script>
+import { BNavForm } from 'bootstrap-vue'
 import algoliasearch from 'algoliasearch/lite'
 import TypeAhead from './TypeAhead.vue'
 
 export default {
   name: 'SearchBox',
   components: {
-    TypeAhead
+    TypeAhead,
+    BNavForm
   },
   data () {
     return {

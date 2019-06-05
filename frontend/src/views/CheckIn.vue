@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import { BButton } from 'bootstrap-vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTimesCircle, faCheckCircle } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -46,7 +47,8 @@ library.add(faTimesCircle, faCheckCircle)
 export default {
   name: 'UserCheckIn',
   components: {
-    FontAwesomeIcon
+    FontAwesomeIcon,
+    BButton
   },
   data () {
     return {

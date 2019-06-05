@@ -56,15 +56,16 @@
 </template>
 
 <script>
+import { BForm, BFormGroup, BFormInput, BButton } from 'bootstrap-vue'
+
 export default {
   name: 'Login',
-  // directives: {
-  //   focus: {
-  //     inserted: el => {
-  //       el.focus()
-  //     }
-  //   }
-  // },
+  components: {
+    BForm,
+    BFormGroup,
+    BFormInput,
+    BButton
+  },
   data () {
     return {
       form: {

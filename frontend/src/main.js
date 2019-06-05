@@ -7,11 +7,12 @@ import nprogress from './plugins/nprogress'
 import UserStatus from './plugins/userStatus'
 import bvToastHelper from './plugins/bvToastHelper'
 
-import BootstrapVue from 'bootstrap-vue'
+import { LayoutPlugin, ModalPlugin } from 'bootstrap-vue'
 import './style.scss'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
-Vue.use(BootstrapVue)
+Vue.use(LayoutPlugin)
+Vue.use(ModalPlugin)
 Vue.use(UserStatus)
 Vue.use(bvToastHelper)
 

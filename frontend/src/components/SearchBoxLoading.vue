@@ -14,8 +14,13 @@
 </template>
 
 <script>
+import { BNavForm } from 'bootstrap-vue'
+
 export default {
-  name: 'SearchBoxLoading'
+  name: 'SearchBoxLoading',
+  components: {
+    BNavForm
+  }
 }
 </script>
 

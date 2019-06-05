@@ -128,8 +128,21 @@
 </template>
 
 <script>
+import {
+  BJumbotron, BButton, BLink, BCard, BListGroup, BListGroupItem, BBadge
+} from 'bootstrap-vue'
+
 export default {
   name: 'Home',
+  components: {
+    BJumbotron,
+    BButton,
+    BLink,
+    BCard,
+    BListGroup,
+    BListGroupItem,
+    BBadge
+  },
   data () {
     return {
       futureEvents: [],

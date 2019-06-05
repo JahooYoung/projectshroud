@@ -159,7 +159,7 @@
         <div v-if="event.requireApprove">
           <hr>
           <b>Application Text</b>
-          <b-textarea
+          <b-form-textarea
             v-model="applicationText"
             class="application-text"
             rows="5"
@@ -223,11 +223,15 @@
 </template>
 
 <script>
-import 'mavon-editor/dist/markdown/github-markdown.min.css'
+import {
+  BSpinner, BCard, BCardTitle, BCardText, BButton, BListGroup, BListGroupItem,
+  BLink, BFormTextarea
+} from 'bootstrap-vue'
 import TransportModal from '@/components/TransportModal.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircleNotch, faCheck, faFileAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import 'mavon-editor/dist/markdown/github-markdown.min.css'
 
 library.add(faCircleNotch, faCheck, faFileAlt)
 
@@ -235,7 +239,16 @@ export default {
   name: 'EventDetail',
   components: {
     TransportModal,
-    FontAwesomeIcon
+    FontAwesomeIcon,
+    BSpinner,
+    BCard,
+    BCardTitle,
+    BCardText,
+    BButton,
+    BListGroup,
+    BListGroupItem,
+    BLink,
+    BFormTextarea
   },
   data () {
     return {

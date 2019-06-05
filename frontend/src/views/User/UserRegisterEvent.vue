@@ -105,11 +105,12 @@
 </template>
 
 <script>
+import { BButton, BTable, BLink, BCardGroup, BCard, BCardText } from 'bootstrap-vue'
+import TableLayout from '@/components/TableLayout.vue'
+import TransportModal from '@/components/TransportModal.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faMinus, faCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import TableLayout from '@/components/TableLayout.vue'
-import TransportModal from '@/components/TransportModal.vue'
 
 library.add(faMinus, faCheck)
 
@@ -118,7 +119,13 @@ export default {
   components: {
     FontAwesomeIcon,
     TableLayout,
-    TransportModal
+    TransportModal,
+    BButton,
+    BTable,
+    BLink,
+    BCardGroup,
+    BCard,
+    BCardText
   },
   data () {
     return {

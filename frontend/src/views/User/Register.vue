@@ -159,11 +159,18 @@
 </template>
 
 <script>
+import { BForm, BFormGroup, BFormInput, BButton } from 'bootstrap-vue'
 import { validationMixin } from 'vuelidate'
 import { required, minLength, maxLength, numeric, sameAs, email, helpers, not } from 'vuelidate/lib/validators'
 
 export default {
   name: 'Register',
+  components: {
+    BForm,
+    BFormGroup,
+    BFormInput,
+    BButton
+  },
   mixins: [validationMixin],
   data () {
     return {

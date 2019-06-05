@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import { BButton, BTable, BLink } from 'bootstrap-vue'
 import TableLayout from '@/components/TableLayout.vue'
 
 const fields = Object.freeze([
@@ -73,7 +74,10 @@ const fields = Object.freeze([
 export default {
   name: 'EventList',
   components: {
-    TableLayout
+    TableLayout,
+    BButton,
+    BTable,
+    BLink
   },
   data () {
     return {
