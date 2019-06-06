@@ -115,10 +115,11 @@ class UserProfile(AbstractBaseUser):
         return bool(self.is_site_admin and self.is_active)
 
     def save(self, *args, **kwargs):
-        if not self.pk:
+        try:
+            old = UserProfile.objects.get(id=self.pk)
+        except UserProfile.DoesNotExist:
             super(UserProfile, self).save(*args, **kwargs)
         else:
-            old = UserProfile.objects.get(id=self.pk)
             if getattr(self, 'email', None) != getattr(old, 'email', None):
                 self.is_activated = False
             super(UserProfile, self).save(*args, **kwargs)
@@ -184,10 +185,11 @@ class Event(models.Model):
     #     self.checkin_enabled = False
 
     def save(self, *args, **kwargs):
-        if not self.pk:
+        try:
+            old = Event.objects.get(id=self.pk)
+        except Event.DoesNotExist:
             super(Event, self).save(*args, **kwargs)
         else:
-            old = Event.objects.get(id=self.pk)
             important_change = False
             for field in ['start_time', 'end_time', 'location']:
                 if getattr(self, field, None) != getattr(old, field, None):
