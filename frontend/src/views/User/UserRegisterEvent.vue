@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <h2>{{ this.$t('Registered Events') }}</h2>
+    <h2>{{ $t('Registered Events') }}</h2>
 
     <TableLayout
       :item-name="$t('Event')"
@@ -50,7 +50,7 @@
               size="sm"
               @click="row.toggleDetails"
             >
-              {{ row.detailsShowing ? $t('Hide') : $t('Show') + this.$t('Details') }}
+              {{ row.detailsShowing ? $t('Hide') : $t('Show') + $t('Details') }}
             </b-button>
           </template>
 

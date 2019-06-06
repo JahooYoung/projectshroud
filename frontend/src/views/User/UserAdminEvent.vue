@@ -25,7 +25,6 @@
           :tbody-tr-class="rowClass"
           primary-key="id"
           sort-by="startTime"
-          :caption="$t('Blue represents the event is checking in.')"
         >
           <div
             slot="table-busy"

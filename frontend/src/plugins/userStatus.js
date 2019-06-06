@@ -31,7 +31,7 @@ UserStatus.install = function (Vue) {
       },
       async checkUserActivation () {
         try {
-          const res = this.axios.get('/api/dummy/')
+          const res = await this.axios.get('/api/dummy/')
           this.$store.commit('setUserActivation', res.data.isActivated)
           if (!res.data.isActivated) {
             this.toastWarning(this.$t('Click here to activate your account!'), this.$t('Account not activated'), '/user-profile')
