@@ -13,7 +13,7 @@
           lg="9"
           order-lg="1"
         >
-          <b-card header="Event Description">
+          <b-card :header="$t('Event Description')">
             <div
               v-if="event"
               class="markdown-body"
@@ -34,14 +34,14 @@
         >
           <div class="right-card">
             <b-card
-              header="Event Information"
+              :header="$t('Event Information')"
               class="mb-2"
             >
               <b-card-text>
                 <h6> {{ event.title }} </h6>
-                <strong>At</strong> {{ event.location }} <br>
-                <strong>From</strong> {{ event.startTime.toLocaleString() }} <br>
-                <strong>To</strong> {{ event.endTime.toLocaleString() }} <br>
+                <strong>{{ $t('At') }}</strong> {{ event.location }} <br>
+                <strong>{{ $t('From') }}</strong> {{ event.startTime.toLocaleString() }} <br>
+                <strong>{{ $t('To') }}</strong> {{ event.endTime.toLocaleString() }} <br>
               </b-card-text>
 
               <b-list-group flush>
@@ -113,7 +113,7 @@
               <template #header>
                 <div class="d-flex w-100 justify-content-between">
                   <h6 class="mt-1">
-                    Transport &amp; Accommodation
+                    {{ $t('Transport') }} &amp; {{ $t('Accommodation') }}
                   </h6>
                   <b-button
                     variant="success"
@@ -126,15 +126,15 @@
               </template>
               <b-card-text v-if="transport">
                 <strong>{{ transport.transportType }}</strong> {{ transport.transportId }} <br>
-                <strong>From</strong> {{ transport.departStation }} <br>
+                <strong>{{ $t('From') }}</strong> {{ transport.departStation }} <br>
                 {{ transport.departTime.toLocaleString() }} <br>
-                <strong>To</strong> {{ transport.arrivalStation }} <br>
+                <strong>{{ $t('To') }}</strong> {{ transport.arrivalStation }} <br>
                 {{ transport.arrivalTime.toLocaleString() }}
                 <div v-if="transport.accommodation">
-                  <strong>Stay at </strong> {{ transport.accommodation }}
+                  <strong>{{ $t('Stay at') }}</strong> {{ transport.accommodation }}
                 </div>
                 <div v-if="transport.otherDetail">
-                  <strong>p.s.</strong> {{ transport.otherDetail }}
+                  <strong>{{ $t('p.s.') }}</strong> {{ transport.otherDetail }}
                 </div>
               </b-card-text>
               <b-card-text v-else>
@@ -157,11 +157,11 @@
         class="my-2"
         align="center"
       >
-        Are you sure to register? <br>
-        You can also provide your transport info
+        {{ $t('Are you sure to register?') }} <br>
+        {{ $t('You can also provide your transport info.') }}
         <div v-if="event.requireApprove">
           <hr>
-          <b>Application Text</b>
+          <b>{{ $t('Application Text') }}</b>
           <b-form-textarea
             v-model="applicationText"
             class="application-text"
@@ -170,15 +170,15 @@
         </div>
         <div v-if="conflictEvent">
           <hr>
-          <b>Warning</b>: this event is in conflict with <br>
+          <b>{{ $t('Warning:') }}</b> {{ $t('this event is in conflict with ') }}<br>
           <b-link
             :to="`/event/${conflictEvent.id}`"
             @click="$refs['modal-register'].hide()"
           >
             {{ conflictEvent.title }}
           </b-link> <br>
-          It starts at {{ conflictEvent.startTime.toLocaleString() }} <br>
-          and ends at {{ conflictEvent.endTime.toLocaleString() }}
+          {{ $t('It starts at') }} {{ conflictEvent.startTime.toLocaleString() }} <br>
+          {{ $t('and ends at') }} {{ conflictEvent.endTime.toLocaleString() }}
         </div>
       </div>
 
@@ -188,7 +188,7 @@
             variant="secondary"
             @click="$refs['modal-register'].hide()"
           >
-            Cancel
+            {{ $t('Cancel') }}
           </b-button>
           <b-button
             variant="primary"
@@ -196,7 +196,7 @@
             :disabled="isLoading"
             @click="$refs['modal-register'].hide(), register()"
           >
-            Yes
+            {{ $t('Yes') }}
           </b-button>
           <b-button
             variant="primary"
@@ -204,7 +204,7 @@
             :disabled="isLoading"
             @click="$refs['modal-register'].hide(), registerAndTransport()"
           >
-            Yes and Provide Transport
+            {{ $t('Yes and Provide Transport') }}
           </b-button>
         </div>
       </template>
@@ -216,8 +216,8 @@
       @ok="unregister"
     >
       <p class="my-3">
-        Are you sure to unregister? <br>
-        <b>Warning:</b> Your current registration status will be lost!
+        {{ $t('Are you sure to unregister?') }} <br>
+        <b>{{ $t('Warning:') }}</b> {{ $t('Your current registration status will be lost!') }}
       </p>
     </b-modal>
 
@@ -280,7 +280,7 @@ export default {
   methods: {
     makeToast (succeed, message) {
       this.$root.$bvToast.toast(message, {
-        title: succeed ? 'Succeed' : 'Error',
+        title: succeed ? this.$t('Success') : this.$t('Error'),
         variant: succeed ? 'default' : 'danger',
         autoHideDelay: 3000,
         solid: true
@@ -326,7 +326,7 @@ export default {
         })
         this.event.eventRegistered = true
         this.event.userRegisterEvent = res.data
-        this.makeToast(true, 'Register successfully')
+        this.makeToast(true, this.$t('Register successfully'))
       } catch (err) {
         if (err.response && err.response.status === 400) {
           this.makeToast(false, err.response.data.detail)
@@ -346,7 +346,7 @@ export default {
         })
         this.event.eventRegistered = false
         this.event.userRegisterEvent = null
-        this.makeToast(true, 'Unegister successfully')
+        this.makeToast(true, this.$t('Unregister successfully'))
       } catch (err) {
         if (err.response) {
           this.makeToast(false, err.response.data.detail)

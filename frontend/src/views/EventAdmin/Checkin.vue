@@ -124,7 +124,18 @@ export default {
   },
   data () {
     return {
-      fields: [
+      channel: [],
+      newChannelName: '',
+      currentChannelName: '',
+      qrcodeURL: null
+    }
+  },
+  computed: {
+    eventId () {
+      return this.$route.params.id
+    },
+    fields () {
+      return [
         {
           key: 'name',
           label: this.$t('Location'),
@@ -147,16 +158,7 @@ export default {
           key: 'delete',
           label: this.$t('Delete')
         }
-      ],
-      channel: [],
-      newChannelName: '',
-      currentChannelName: '',
-      qrcodeURL: null
-    }
-  },
-  computed: {
-    eventId () {
-      return this.$route.params.id
+      ]
     }
   },
   watch: {
