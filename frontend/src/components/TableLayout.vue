@@ -8,7 +8,7 @@
       <b-input-group>
         <b-form-input
           v-model="filter"
-          :placeholder="`Search ${itemName}`"
+          :placeholder="$t(`Search `) +`${itemName}`"
         />
         <b-input-group-append>
           <b-button
@@ -16,7 +16,7 @@
             :disabled="!filter"
             @click="filter = ''"
           >
-            Clear
+            {{ $t('Clear') }}
           </b-button>
         </b-input-group-append>
       </b-input-group>
@@ -34,7 +34,7 @@
         :disabled="isLoading"
         @click="refresh"
       >
-        Refresh
+        {{ $t('Refresh') }}
       </b-button>
     </b-col>
 
@@ -48,6 +48,8 @@
       :busy="isLoading"
       :per-page="perPage"
       :current-page="currentPage"
+      :empty-text="$t('There are no records to show')"
+      :empty-filtered-text="$t('There are no records matching your request')"
     />
 
     <b-col cols="12">

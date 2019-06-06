@@ -7,13 +7,13 @@
       >
         <b-card>
           <h4 class="mb-3">
-            Edit Profile
+            {{ $t('Edit Profile') }}
           </h4>
           <b-form @submit.prevent="save">
             <b-form-group
               label-cols-sm="4"
               label-cols-lg="3"
-              label="Mobile"
+              :label="$t('Mobile')"
               label-for="mobileInput"
             >
               <b-form-input
@@ -25,7 +25,7 @@
             <b-form-group
               label-cols-sm="4"
               label-cols-lg="3"
-              label="Real Name"
+              :label="$t('Real Name')"
               label-for="realNameInput"
             >
               <b-form-input
@@ -37,7 +37,7 @@
             <b-form-group
               label-cols-sm="4"
               label-cols-lg="3"
-              label="Email"
+              :label="$t('Email')"
               label-for="emailInput"
             >
               <b-input-group>
@@ -52,7 +52,7 @@
                     variant="success"
                     disabled
                   >
-                    activated
+                    {{ $t('Activated') }}
                   </b-button>
                   <b-button
                     v-else
@@ -60,7 +60,7 @@
                     :disabled="isLoading"
                     @click="activate"
                   >
-                    activate
+                    {{ $t('Activate') }}
                   </b-button>
                 </b-input-group-append>
               </b-input-group>
@@ -68,7 +68,7 @@
             <b-form-group
               label-cols-sm="4"
               label-cols-lg="3"
-              label="Receive Email"
+              :label="$t('Receive Email?')"
             >
               <div style="text-align: left;">
                 <b-form-checkbox
@@ -84,26 +84,25 @@
               type="submit"
               :disabled="!modified || isLoading"
             >
-              Save
+              {{ $t('Save') }}
             </b-button>
             <b-button
               class="ml-5"
               variant="info"
               to="/change-password"
             >
-              Change Password
+              {{ $t('Change Password') }}
             </b-button>
           </b-form>
         </b-card>
 
         <b-modal
           id="modal-activate-email"
-          title="Email Activation"
+          :title="$t('Email Activation')"
           lazy
           @ok="refresh"
         >
-          A confirmation email was sent to <b>{{ userProfile.email }}</b>. <br>
-          Click "ok" after the confirmation succeeds.
+          <p v-html="$t('UserProfile.vue confirm email',[userProfile.email])" />
         </b-modal>
       </b-col>
       <b-col md="4">
@@ -114,8 +113,8 @@
           img-top
         >
           <b-card-text>
-            Registered Events: 10 <br>
-            Managed Events: 20
+            {{ $t('UserProfile.vue fill1',["Registered Events: 10"]) }} <br>
+            {{ $t('UserProfile.vue fill2',["Managed Events: 20"]) }}
           </b-card-text>
         </b-card>
       </b-col>
@@ -179,7 +178,7 @@ export default {
     async activate () {
       // check saved?
       if (this.modified) {
-        this.toastError('Please save your profile first')
+        this.toastError(this.$t('Please save your profile first'))
         return
       }
       // send confirmation email
@@ -187,10 +186,21 @@ export default {
       this.$bvModal.show('modal-activate-email')
     },
     async save () {
+      const message = this.$t('Are you sure to change your profile?') +
+        this.$t('You\'ll need to reactivate your account if your email is changed.')
+      const ans = await this.$bvModal.msgBoxConfirm(message, {
+        // centered: true,
+        title: this.$t('Confirm'),
+        okTitle: this.$t('OK'),
+        cancelTitle: this.$t('Cancel')
+      })
+      if (!ans) {
+        return
+      }
       try {
         const res = await this.axios.put(`/api/users/${this.userProfile.id}/`, this.userProfile)
         this.savedUserProfile = res.data
-        this.toastSuccess('Profile saved successfully')
+        this.toastSuccess(this.$t('Profile saved successfully'))
         this.refresh()
       } catch (err) {
         if (err.needHandle) {

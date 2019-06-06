@@ -2,14 +2,14 @@
   <b-modal
     ref="transport-modal"
     size="lg"
-    title="Edit Transport Info"
-    :ok-title="id ? 'Save' : 'Create'"
+    :title="$t('Edit Transport Info')"
+    :ok-title="id ? $t('Save') : $t('Create')"
     no-close-on-backdrop
     @ok="callback && callback(true)"
     @hide="callback && callback(false)"
   >
     <b-form-group
-      label="Transport type:"
+      :label="$t('Transport type:')"
       label-for="transport-modal-input-2"
       label-cols-lg="3"
     >
@@ -21,19 +21,19 @@
     </b-form-group>
 
     <b-form-group
-      label="Transport id:"
+      :label="$t('Transport id:')"
       label-for="transport-modal-input-3"
       label-cols-lg="3"
     >
       <b-form-input
         id="transport-modal-input-3"
         v-model="transport.transportId"
-        placeholder="Flight No. or Train No."
+        :placeholder="$t('Flight No. or Train No.')"
       />
     </b-form-group>
 
     <b-form-group
-      label="Depart station:"
+      :label="$t('Depart station:')"
       label-for="transport-modal-input-4"
       label-cols-lg="3"
     >
@@ -45,7 +45,7 @@
     </b-form-group>
 
     <b-form-group
-      label="Depart time:"
+      :label="$t('Depart time:')"
       label-for="transport-modal-input-5"
       label-cols-lg="3"
     >
@@ -56,7 +56,7 @@
     </b-form-group>
 
     <b-form-group
-      label="Arrival station:"
+      :label="$t('Arrival station:')"
       label-for="transport-modal-input-6"
       label-cols-lg="3"
     >
@@ -68,7 +68,7 @@
     </b-form-group>
 
     <b-form-group
-      label="Arrival time:"
+      :label="$t('Arrival time:')"
       label-for="transport-modal-input-7"
       label-cols-lg="3"
     >
@@ -79,7 +79,7 @@
     </b-form-group>
 
     <b-form-group
-      label="Accommodation:"
+      :label="$t('Accommodation:')"
       label-for="transport-modal-input-9"
       label-cols-lg="3"
     >
@@ -90,14 +90,14 @@
     </b-form-group>
 
     <b-form-group
-      label="Other detail:"
+      :label="$t('Other details:')"
       label-for="transport-modal-input-8"
       label-cols-lg="3"
     >
       <b-form-input
         id="transport-modal-input-8"
         v-model="transport.otherDetail"
-        placeholder="Enter other detail"
+        :placeholder="$t('Enter other detail')"
       />
     </b-form-group>
   </b-modal>
@@ -107,12 +107,7 @@
 import { BFormGroup, BFormInput, BFormSelect } from 'bootstrap-vue'
 import TimePicker from '@/components/TimePicker.vue'
 import LocationInput from '@/components/LocationInput.vue'
-
-const transportOptions = Object.freeze([
-  { value: 'Flight', text: '航班' },
-  { value: 'Train', text: '列车' },
-  { value: 'Other', text: '其他' }
-])
+import { loadLanguageAsync } from '@/plugins/i18n'
 
 export default {
   name: 'TransportModal',
@@ -127,7 +122,11 @@ export default {
     return {
       id: null,
       transport: null,
-      transportOptions,
+      transportOptions: Object.freeze([
+        { value: 'Flight', text: this.$t('Flight') },
+        { value: 'Train', text: this.$t('Train') },
+        { value: 'Other', text: this.$t('Other') }
+      ]),
       callback: null
     }
   },
@@ -138,7 +137,7 @@ export default {
     reset () {
       this.transport = {
         eventId: null,
-        transportType: 'Flight',
+        transportType: this.$t('Flight'),
         transportId: '',
         departStation: '',
         departTime: null,
@@ -180,7 +179,7 @@ export default {
 
       if (!this.id) {
         if (!eventId) {
-          throw new Error('eventId is not provided')
+          throw new Error(this.$t('eventId is not provided'))
         }
         try {
           const res = await this.axios.post(`/api/trans/`, {
@@ -191,7 +190,7 @@ export default {
           return res.data
         } catch (err) {
           if (err.response) {
-            this.toastError('Failed to save transport info')
+            this.toastError(this.$t('Failed to save transport info'))
           }
         }
       } else {
@@ -200,7 +199,7 @@ export default {
           return res.data
         } catch (err) {
           if (err.response) {
-            this.toastError('Failed to save transport info')
+            this.toastError(this.$t('Failed to save transport info'))
           }
         }
       }
@@ -208,6 +207,9 @@ export default {
     resetShow (...args) {
       this.reset()
       return this.show(...args)
+    },
+    changeLocale (lang) {
+      loadLanguageAsync(lang)
     }
   }
 }

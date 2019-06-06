@@ -11,7 +11,7 @@
         :icon="['far', 'times-circle']"
         :style="{ color: 'red' }"
       />
-      {{ msg }}
+      {{ $t('CheckIn.vue msg',[msg]) }}
     </h4>
     <hr class="mb-5">
     <div class="pt-3">
@@ -52,8 +52,12 @@ export default {
   },
   data () {
     return {
-      msg: 'Processing...',
       checked: false
+    }
+  },
+  computed: {
+    msg () {
+      return this.$t('Processing...')
     }
   },
   created () {
@@ -64,24 +68,24 @@ export default {
       if (!this.checkActivated()) {
         return
       }
-      this.msg = 'Checking in...'
+      this.msg = this.$t('Checking in...')
       const token = this.$route.query.token
       try {
         await this.axios.post(`/api/checkin/${token}/`)
-        this.msg = 'Checkin successfully.'
+        this.msg = this.$t('Checkin successfully.')
         this.checked = true
       } catch (err) {
-        this.msg = 'Failed to checkin.'
+        this.msg = this.$t('Failed to checkin.')
         if (err.response) {
           switch (err.response.status) {
             case 400:
-              this.msg = err.response.data[0]
-              if (this.msg === 'Already checked in.') {
+              this.msg = this.$t(err.response.data[0])
+              if (this.msg === this.$t('Already checked in.')) {
                 this.checked = true
               }
               break
             case 404:
-              this.msg = 'Channel not found.'
+              this.msg = this.$t('Channel not found.')
               break
           }
         }

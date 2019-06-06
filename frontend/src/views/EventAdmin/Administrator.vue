@@ -1,9 +1,9 @@
 <template>
   <b-container>
-    <h2>Administrator List</h2>
+    <h2>{{ $t('Administrator List') }}</h2>
 
     <TableLayout
-      item-name="administrator"
+      :item-name="$t('administrator')"
       :refresh="refresh"
       :total-rows="administrators.length"
     >
@@ -14,11 +14,11 @@
           variant="outline-dark"
           to="attendee"
         >
-          Add admin
+          {{ $t('Add admin') }}
         </b-button>
         <b-tooltip
           target="add-admin-tooltip"
-          title="Click '+' in attendee list to make an attendee an admin"
+          :title="$t(`Click '+' in attendee list to make an attendee an admin`)"
         />
       </template>
 
@@ -34,7 +34,7 @@
             class="text-center text-primary my-2"
           >
             <b-spinner class="align-middle mr-2" />
-            <strong>Loading...</strong>
+            <strong>{{ $t('Loading...') }}</strong>
           </div>
         </b-table>
       </template>
@@ -58,9 +58,9 @@ export default {
   data () {
     return {
       fields: [
-        { key: 'realName', label: 'Name' },
-        { key: 'mobile', label: 'Mobile' },
-        { key: 'email', label: 'Email' }
+        { key: 'realName', label: this.$t('Name') },
+        { key: 'mobile', label: this.$t('Mobile') },
+        { key: 'email', label: this.$t('Email') }
       ],
       administrators: []
     }

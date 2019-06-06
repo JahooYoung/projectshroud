@@ -10,17 +10,17 @@
       @ok="close"
     >
       <template #modal-header>
-        <h5>Activation succeeded</h5>
+        <h5>{{ $t('Activation succeeded') }}</h5>
       </template>
-      You have successfully activate your email. <br>
-      This page will automatically close in <b>{{ countdown }}</b> seconds.
+      {{ $t('You have successfully activate your email.') }} <br>
+      <p :v-html="$t('This page will automatically close in <b></b> seconds.',[countdown])" />
     </b-modal>
     <b-modal
       id="modal-error"
       centered
-      ok-title="Retry"
+      :ok-title="$t('Retry')"
       ok-variant="danger"
-      cancel-title="Close Tab"
+      :cancel-title="$t('Close Tab')"
       cancel-variant="dark"
       no-close-on-esc
       no-close-on-backdrop
@@ -28,9 +28,9 @@
       @cancel.prevent="close"
     >
       <template #modal-header>
-        <h5>Activation failed</h5>
+        <h5>{{ $t('Activation failed') }}</h5>
       </template>
-      {{ msg }}
+      {{ $t('SendActivation.vue msg',[msg]) }}
     </b-modal>
   </div>
 </template>
@@ -40,8 +40,12 @@ export default {
   name: 'SendActivation',
   data () {
     return {
-      countdown: 10,
-      msg: 'Some error occured...'
+      countdown: 10
+    }
+  },
+  computed: {
+    msg () {
+      return this.$t('Some error occured...')
     }
   },
   mounted () {

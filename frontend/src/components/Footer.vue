@@ -1,7 +1,7 @@
 <template>
   <footer>
     <hr>
-    This is footer
+    {{ $('This is footer') }}
   </footer>
 </template>
 
