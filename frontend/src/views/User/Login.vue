@@ -12,7 +12,7 @@
           >
             <b-form-group
               id="usernameInputGroup"
-              label="Username:"
+              :label="$t('Mobile:')"
               label-for="usernameInput"
             >
               <b-form-input
@@ -25,8 +25,9 @@
             </b-form-group>
             <b-form-group
               id="passwordInputGroup"
-              label="Password:"
+              :label="$t('Password:')"
               label-for="passwordInput"
+              :state="!haveErr"
             >
               <b-form-input
                 id="passwordInput"
@@ -34,19 +35,25 @@
                 type="password"
                 required
               />
+              <template #invalid-feedback>
+                <div v-if="haveErr">
+                  {{ $t('Mobile or password is wrong') }}!
+                </div>
+              </template>
             </b-form-group>
             <b-button
               class="mr-md-3"
               type="submit"
               variant="primary"
+              :disabled="haveErr"
             >
-              Login
+              {{ $t('Login') }}
             </b-button>
             <b-button
               to="/register"
               variant="danger"
             >
-              Register
+              {{ $t('Register') }}
             </b-button>
           </b-col>
         </b-row>
@@ -71,34 +78,40 @@ export default {
       form: {
         username: '',
         password: ''
-      }
+      },
+      haveErr: false
+    }
+  },
+  watch: {
+    'form.username' () {
+      this.haveErr = false
+    },
+    'form.password' () {
+      this.haveErr = false
     }
   },
   methods: {
-    onSubmit () {
-      this.axios.post('/api/auth/login/', {
-        username: this.form.username,
-        password: this.form.password
-      })
-        .then(res => {
-          this.$store.commit('setUserState', {
-            user: this.form.username,
-            key: res.data.key
-          })
-          return this.checkUserActivation()
+    async onSubmit () {
+      try {
+        const res = await this.axios.post('/api/auth/login/', {
+          username: this.form.username,
+          password: this.form.password
         })
-        .then(() => {
-          if (window.history.length > 1) {
-            this.$router.back()
-          } else {
-            this.$router.push('/')
-          }
+        this.$store.commit('setUserState', {
+          user: this.form.username,
+          key: res.data.key
         })
-        .catch(err => {
-          if (err.response) {
-            alert(JSON.stringify(err.response.data))
-          }
-        })
+        await this.checkUserActivation()
+        if (window.history.length > 1) {
+          this.$router.back()
+        } else {
+          this.$router.push('/')
+        }
+      } catch (err) {
+        if (err.needHandle) {
+          this.haveErr = true
+        }
+      }
     }
   }
 }

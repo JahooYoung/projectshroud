@@ -2,9 +2,9 @@
   <b-nav-form>
     <type-ahead
       v-model="query"
-      placeholder="Search events..."
-      no-result-text="No result."
-      searching-text="Just a moment..."
+      :placeholder="$t('Search events...')"
+      :no-result-text="$t('No result.')"
+      :searching-text="$t('Just a moment...')"
       select-first
       :min-chars="1"
       :delay-time="250"

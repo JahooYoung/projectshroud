@@ -1,9 +1,9 @@
 <template>
   <b-container>
-    <h2>Event List</h2>
+    <h2>{{ $t('Event List') }}</h2>
 
     <TableLayout
-      item-name="event"
+      :item-name="$t('Event')"
       :refresh="refresh"
       :total-rows="events.length"
     >
@@ -13,7 +13,7 @@
           variant="outline-dark"
           to="/event/new"
         >
-          New Event
+          {{ $t('New Event') }}
         </b-button>
       </template>
 
@@ -29,7 +29,7 @@
             class="text-center text-primary my-2"
           >
             <b-spinner class="align-middle mr-2" />
-            <strong>Loading...</strong>
+            <strong>{{ $t('Loading...') }}</strong>
           </div>
 
           <template #title="row">
@@ -47,30 +47,6 @@
 import { BButton, BTable, BLink } from 'bootstrap-vue'
 import TableLayout from '@/components/TableLayout.vue'
 
-const fields = Object.freeze([
-  {
-    key: 'title',
-    label: 'Title'
-  },
-  {
-    key: 'startTime',
-    sortable: true,
-    formatter: value => value.toLocaleString()
-  },
-  {
-    key: 'location',
-    label: 'Location'
-  },
-  {
-    key: 'hostDisplayInfo',
-    label: 'Host'
-  },
-  {
-    key: 'requireApprove',
-    formatter: value => value ? 'Yes' : 'No'
-  }
-])
-
 export default {
   name: 'EventList',
   components: {
@@ -81,8 +57,36 @@ export default {
   },
   data () {
     return {
-      fields,
       events: []
+    }
+  },
+  computed: {
+    fields () {
+      return [
+        {
+          key: 'title',
+          label: this.$t('Title')
+        },
+        {
+          key: 'startTime',
+          label: this.$t('Start time'),
+          sortable: true,
+          formatter: value => value.toLocaleString()
+        },
+        {
+          key: 'location',
+          label: this.$t('Location')
+        },
+        {
+          key: 'hostDisplayInfo',
+          label: this.$t('Host')
+        },
+        {
+          key: 'requireApprove',
+          label: this.$t('Approve required?'),
+          formatter: value => value ? this.$t('Yes') : this.$t('No')
+        }
+      ]
     }
   },
   created () {

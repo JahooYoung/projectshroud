@@ -5,7 +5,7 @@
         id="titleInputGroup"
         label-cols-sm="4"
         label-cols-lg="3"
-        label="Title"
+        :label="$t('Title')"
         label-for="titleInput"
       >
         <b-form-input
@@ -18,7 +18,7 @@
         id="startTimeInputGroup"
         label-cols-sm="4"
         label-cols-lg="3"
-        label="Start time"
+        :label="$t('Start time')"
         label-for="startTimeInput"
       >
         <time-picker
@@ -30,7 +30,7 @@
         id="endTimeInputGroup"
         label-cols-sm="4"
         label-cols-lg="3"
-        label="End time"
+        :label="$t('End time')"
         label-for="endTimeInput"
       >
         <time-picker
@@ -42,7 +42,7 @@
         id="locationInputGroup"
         label-cols-sm="4"
         label-cols-lg="3"
-        label="Location"
+        :label="$t('Location')"
         label-for="locationInput"
       >
         <location-input
@@ -55,7 +55,7 @@
         id="publicInputGroup"
         label-cols-sm="4"
         label-cols-lg="3"
-        label="Public"
+        :label="$t('Is public?')"
         label-for="publicInput"
       >
         <div style="text-align: left;">
@@ -71,7 +71,7 @@
         id="publicInputGroup"
         label-cols-sm="4"
         label-cols-lg="3"
-        label="Require approve"
+        :label="$t('Require approve?')"
         label-for="publicInput"
       >
         <div style="text-align: left;">
@@ -88,7 +88,7 @@
         :disabled="isLoading"
         @click="onSubmit"
       >
-        {{ newEvent ? 'Create' : 'Save' }}
+        {{ newEvent ? $t('Create') : $t('Save') }}
       </b-button>
 
       <b-button
@@ -98,12 +98,12 @@
         :disabled="isLoading"
         @click="$refs['modal-delete'].show()"
       >
-        Delete
+        {{ $t('Delete') }}
       </b-button>
 
       <b-modal
         ref="modal-delete"
-        title="Confirm Deletion"
+        :title="$t('Confirm Deletion')"
         lazy
         @show="deleteInput = ''"
         @shown="$refs.deleteConfirmInput.focus()"
@@ -114,10 +114,10 @@
             ref="deleteConfirmInput"
             v-model="deleteInput"
             :state="deleteInputState"
-            :placeholder="`Enter '${confirmMessage}'`"
+            :placeholder="$t('Enter message \'\'', [confirmMessage])"
           />
           <b-form-text v-if="isLoading">
-            Deleting... Hold on a minute please...
+            {{ $t('Deleting... Hold on a minute please...') }}
           </b-form-text>
         </b-form>
       </b-modal>
@@ -157,7 +157,7 @@ export default {
         public: true,
         requireApprove: false
       },
-      confirmMessage: 'I am sure',
+      confirmMessage: this.$t('I am sure'),
       deleteInput: ''
     }
   },
@@ -186,7 +186,7 @@ export default {
       } else {
         const res = await this.axios.patch(`/api/event/${this.$route.params.id}/`, this.event)
         this.event = res.data
-        this.toastSuccess(`Event "${res.data.title}" saved successfully`)
+        this.toastSuccess(this.$t('Event "" saved successfully', [res.data.title]))
       }
     },
     async deleteEvent () {
@@ -194,7 +194,7 @@ export default {
         return
       }
       await this.axios.delete(`/api/event/${this.$route.params.id}/`)
-      this.toastSuccess('Successfully delete event ' + this.event.title)
+      this.toastSuccess(this.$t('Successfully delete event ', [this.event.title]))
       this.$router.push('/admin-event')
     }
   }

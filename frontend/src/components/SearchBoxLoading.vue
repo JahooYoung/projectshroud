@@ -6,7 +6,7 @@
     >
       <input
         class="form-control form-control-sm type-ahead-select taller"
-        placeholder="Preparing search..."
+        :placeholder="$t('Preparing search...')"
         disabled
       >
     </div>
