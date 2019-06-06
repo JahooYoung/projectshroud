@@ -104,6 +104,8 @@
       <b-modal
         ref="modal-delete"
         :title="$t('Confirm Deletion')"
+        :ok-title="$t('OK')"
+        :cancel-title="$t('Cancel')"
         lazy
         @show="deleteInput = ''"
         @shown="$refs.deleteConfirmInput.focus()"
@@ -157,13 +159,15 @@ export default {
         public: true,
         requireApprove: false
       },
-      confirmMessage: this.$t('I am sure'),
       deleteInput: ''
     }
   },
   computed: {
     deleteInputState () {
       return this.deleteInput === this.confirmMessage
+    },
+    confirmMessage () {
+      return this.$t('I am sure')
     }
   },
   watch: {

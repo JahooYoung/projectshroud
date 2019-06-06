@@ -13,7 +13,7 @@
           lg="9"
           order-lg="1"
         >
-          <b-card header="Event Description">
+          <b-card :header="$t('Event Description')">
             <div
               v-if="event"
               class="markdown-body"
@@ -34,7 +34,7 @@
         >
           <div class="right-card">
             <b-card
-              header="Event Information"
+              :header="$t('Event Information')"
               class="mb-2"
             >
               <b-card-text>

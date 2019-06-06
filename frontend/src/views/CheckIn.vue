@@ -52,12 +52,8 @@ export default {
   },
   data () {
     return {
-      checked: false
-    }
-  },
-  computed: {
-    msg () {
-      return this.$t('Processing...')
+      checked: false,
+      msg: this.$t('Processing...')
     }
   },
   created () {
