@@ -594,7 +594,7 @@ class ImportExcel(APIView):
 
 
 class DownloadExcelTemplate(APIView):
-    permission_classes = (permissions.IsAuthenticated, IsActivated, IsSiteAdminOrEventManager)
+    permission_classes = (permissions.IsAuthenticated, IsActivated)
     pk_type = 'event'
 
     def get(self, request, format=None):
