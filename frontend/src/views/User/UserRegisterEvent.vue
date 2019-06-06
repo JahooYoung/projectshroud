@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <h2>{{ this.$t('Registered Events') }}</h2>
+    <h2>{{ $t('Registered Events') }}</h2>
 
     <TableLayout
       :item-name="$t('Event')"
@@ -50,27 +50,27 @@
               size="sm"
               @click="row.toggleDetails"
             >
-              {{ row.detailsShowing ? $t('Hide') : $t('Show') + this.$t('Details') }}
+              {{ row.detailsShowing ? $t('Hide') : $t('Show') + $t('Details') }}
             </b-button>
           </template>
 
           <template #row-details="row">
             <b-card-group deck>
               <b-card
-                header="Event Information"
+                :header="$t('Event Information')"
               >
                 <b-card-text>
                   <h6> {{ row.item.eventInfo.title }} </h6>
-                  <strong>At</strong> {{ row.item.eventInfo.location }} <br>
-                  <strong>From</strong> {{ row.item.eventInfo.startTime.toLocaleString() }} <br>
-                  <strong>To</strong> {{ row.item.eventInfo.endTime.toLocaleString() }} <br>
+                  <strong>{{ $t('At') }}</strong> {{ row.item.eventInfo.location }} <br>
+                  <strong>{{ $t('From') }}</strong> {{ row.item.eventInfo.startTime.toLocaleString() }} <br>
+                  <strong>{{ $t('To') }}</strong> {{ row.item.eventInfo.endTime.toLocaleString() }} <br>
                 </b-card-text>
               </b-card>
               <b-card>
                 <template #header>
                   <div class="d-flex w-100 justify-content-between">
                     <h6 class="mt-1">
-                      Transport &amp; Accommodation
+                      {{ $t('Transport') }} &amp; {{ $t('Accommodation') }}
                     </h6>
                     <b-button
                       variant="success"
@@ -83,15 +83,15 @@
                 </template>
                 <b-card-text v-if="row.item.transportInfo">
                   <strong>{{ row.item.transportInfo.transportType }}</strong> {{ row.item.transportInfo.transportId }} <br>
-                  <strong>From</strong> {{ row.item.transportInfo.departStation }} <br>
+                  <strong>{{ $t('From') }}</strong> {{ row.item.transportInfo.departStation }} <br>
                   {{ row.item.transportInfo.departTime.toLocaleString() }} <br>
-                  <strong>To</strong> {{ row.item.transportInfo.arrivalStation }} <br>
+                  <strong>{{ $t('To') }}</strong> {{ row.item.transportInfo.arrivalStation }} <br>
                   {{ row.item.transportInfo.arrivalTime.toLocaleString() }}
                   <div v-if="row.item.transportInfo.accommodation">
-                    <strong>Stay at </strong> {{ row.item.transportInfo.accommodation }}
+                    <strong>{{ $t('Stay at') }} </strong> {{ row.item.transportInfo.accommodation }}
                   </div>
                   <div v-if="row.item.transportInfo.otherDetail">
-                    <strong>p.s.</strong> {{ row.item.transportInfo.otherDetail }}
+                    <strong>{{ $t('p.s.') }}</strong> {{ row.item.transportInfo.otherDetail }}
                   </div>
                 </b-card-text>
                 <b-card-text v-else>

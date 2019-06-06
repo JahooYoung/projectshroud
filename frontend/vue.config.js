@@ -1,15 +1,16 @@
 module.exports = {
   devServer: {
     // Server: 'http://10.128.202.42:8000'
+    // LocalServer: 'http://localhost:8000'
     proxy: {
       '^/api/': {
-        target: 'http://localhost:8000'
+        target: 'http://10.128.202.42:8000'
       },
       '^/admin/': {
-        target: 'http://localhost:8000'
+        target: 'http://10.128.202.42:8000'
       },
       '^/static/rest_framework/': {
-        target: 'http://localhost:8000'
+        target: 'http://10.128.202.42:8000'
       }
     }
   },
