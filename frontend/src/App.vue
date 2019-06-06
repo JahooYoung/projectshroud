@@ -42,8 +42,8 @@ export default {
       err.needHandle = true
       if (!err.response) {
         err.needHandle = false
-        this.$bvToast.toast('Fail to connect server', {
-          title: 'Network Error',
+        this.$bvToast.toast(this.$t('Fail to connect server'), {
+          title: this.$t('Network Error'),
           variant: 'secondary',
           autoHideDelay: 4000,
           solid: true
@@ -65,8 +65,8 @@ export default {
           case 403:
             // Forbidden: user does not have permission.
             err.needHandle = false
-            this.$bvToast.toast('You do not have permission', {
-              title: 'Forbidden',
+            this.$bvToast.toast(this.$t('You do not have permission'), {
+              title: this.$t('Forbidden'),
               variant: 'secondary',
               autoHideDelay: 4000,
               solid: true
@@ -79,8 +79,8 @@ export default {
           case 500:
             // Internal Server Error
             err.needHandle = false
-            this.$bvToast.toast('It seems some error occured in the server', {
-              title: 'Internal Server Error',
+            this.$bvToast.toast(this.$t('It seems some error occured in the server'), {
+              title: this.$t('Internal Server Error'),
               variant: 'secondary',
               autoHideDelay: 4000,
               solid: true
@@ -88,8 +88,8 @@ export default {
             break
           default:
             err.needHandle = false
-            this.$bvToast.toast('Unknown status code ' + err.response.status, {
-              title: 'Unknown Error',
+            this.$bvToast.toast(this.$t('Unknown status code ') + err.response.status, {
+              title: this.$t('Unknown Error'),
               variant: 'secondary',
               autoHideDelay: 4000,
               solid: true

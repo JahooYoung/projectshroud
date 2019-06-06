@@ -1,9 +1,9 @@
 <template>
   <b-container>
-    <h2>Registered Events</h2>
+    <h2>{{ $t('Registered Events') }}</h2>
 
     <TableLayout
-      item-name="event"
+      :item-name="$t('Event')"
       :refresh="refresh"
       :total-rows="userRegisterEvent.length"
     >
@@ -26,7 +26,7 @@
               {{ row.value.departTime.toLocaleString() }}
             </div>
             <div v-else>
-              None
+              {{ $t('None') }}
             </div>
           </template>
 
@@ -50,7 +50,7 @@
               size="sm"
               @click="row.toggleDetails"
             >
-              {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
+              {{ row.detailsShowing ? $t('Hide') : $t('Show') + $t('Details') }}
             </b-button>
           </template>
 
@@ -77,7 +77,7 @@
                       size="sm"
                       @click="editTransport(row)"
                     >
-                      Edit
+                      {{ $t('Edit') }}
                     </b-button>
                   </div>
                 </template>
@@ -95,7 +95,7 @@
                   </div>
                 </b-card-text>
                 <b-card-text v-else>
-                  None
+                  {{ $t('None') }}
                 </b-card-text>
               </b-card>
             </b-card-group>
@@ -132,30 +132,35 @@ export default {
   },
   data () {
     return {
-      fields: [
+      userRegisterEvent: []
+    }
+  },
+  computed: {
+    fields () {
+      return [
         {
           key: 'eventInfo.title',
-          label: 'Event'
+          label: this.$t('Event')
         },
         {
           key: 'eventInfo.startTime',
-          label: 'Start Time',
+          label: this.$t('Start time'),
           sortable: true,
           formatter: value => value.toLocaleString()
         },
         {
           key: 'transportInfo',
-          label: 'Depart Info'
+          label: this.$t('Depart Info')
         },
         {
           key: 'checkedIn',
-          label: 'Checked in'
+          label: this.$t('Check-in status')
         },
         {
-          key: 'actions'
+          key: 'actions',
+          label: this.$t('Actions')
         }
-      ],
-      userRegisterEvent: []
+      ]
     }
   },
   created () {

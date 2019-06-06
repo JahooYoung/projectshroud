@@ -19,10 +19,10 @@
       >
         <b-navbar-nav>
           <b-nav-item to="/">
-            {{ $t('Home') }}
+            {{ $t(`Home`) }}
           </b-nav-item>
           <b-nav-item to="/event">
-            {{ $t('Event') }}
+            {{ $t(`Event`) }}
           </b-nav-item>
         </b-navbar-nav>
 

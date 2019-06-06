@@ -1,9 +1,9 @@
 <template>
   <b-container>
-    <h2> Channel List</h2>
+    <h2>{{ $t('Channel List') }}</h2>
 
     <TableLayout
-      item-name="channel"
+      :item-name="$t('channel')"
       :refresh="refresh"
       :total-rows="channel.length"
     >
@@ -13,7 +13,7 @@
           variant="outline-dark"
           @click="$refs['add-channel'].show()"
         >
-          Add channel
+          {{ $t('Add channel') }}
         </b-button>
       </template>
 
@@ -31,7 +31,7 @@
               variant="primary"
               @click="toggle(row.item)"
             >
-              Activate
+              {{ $t('Begin checkin') }}
             </b-button>
             <b-button
               v-else
@@ -39,7 +39,7 @@
               variant="warning"
               @click="toggle(row.item)"
             >
-              Inactivate
+              {{ $t('Stop checkin') }}
             </b-button>
           </template>
 
@@ -49,7 +49,7 @@
               size="sm"
               @click="showQRcode(row.item)"
             >
-              Show QRcode
+              {{ $t('Show QRcode') }}
             </b-button>
           </template>
 
@@ -59,7 +59,7 @@
               size="sm"
               @click="deleteChannel(row.item)"
             >
-              Delete
+              {{ $t('Delete') }}
             </b-button>
           </template>
         </b-table>
@@ -68,14 +68,15 @@
 
     <b-modal
       ref="add-channel"
-      title="Add new channel"
-      ok-title="Add"
+      :title="$t('Add new channel')"
+      :ok-title="$t('Add')"
+      :cancel-title="$t('Cancel')"
       @shown="$refs['channel-name-input'].focus()"
       @ok="addChannel()"
     >
       <b-form @submit.prevent="$refs['add-channel'].hide(), addChannel()">
         <b-form-group
-          label="Channel name:"
+          :label="$t('Channel name:')"
           label-for="channel-name-input"
           label-cols-lg="3"
         >
@@ -90,7 +91,8 @@
 
     <b-modal
       ref="show-QRcode"
-      :title="'QRcode For Channel ' + currentChannelName"
+      :title="$t('QRcode For Channel ',[currentChannelName])"
+      :ok-title="$t('OK')"
       ok-only
       size="lg"
     >
@@ -99,7 +101,7 @@
         center
         fluid
         :src="qrcodeURL"
-        alt="Qrcode cannot display correctly"
+        :alt="$t('Qrcode cannot display correctly')"
       />
     </b-modal>
   </b-container>
@@ -125,25 +127,25 @@ export default {
       fields: [
         {
           key: 'name',
-          label: 'Location',
+          label: this.$t('Location'),
           sortable: true
         },
         {
           key: 'count',
-          label: 'Attendee Count',
+          label: this.$t('Attendee Count'),
           sortable: true
         },
         {
           key: 'activate',
-          label: 'Activate'
+          label: this.$t('Is checking in?')
         },
         {
           key: 'QRcode',
-          label: 'QRcode'
+          label: this.$t('QRcode')
         },
         {
           key: 'delete',
-          label: 'Delete'
+          label: this.$t('Delete')
         }
       ],
       channel: [],
@@ -173,12 +175,12 @@ export default {
         await this.axios.post(`/api/event/${this.eventId}/checkin/`, {
           name: this.newChannelName
         })
-        this.toastSuccess('Successfully added channel ' + this.newChannelName)
+        this.toastSuccess(this.$t('Successfully added channel ', [this.newChannelName]))
         this.newChannelName = ''
         this.refresh()
       } catch (err) {
         if (err.needHandle) {
-          this.toastError('Failed to add channel ' + this.newChannelName)
+          this.toastError(this.$t('Failed to add channel ', [this.newChannelName]))
         }
       }
     },
@@ -187,10 +189,12 @@ export default {
       this.refresh()
     },
     async deleteChannel (channel) {
-      const message = 'Are you sure?'
+      const message = this.$t('All data related to this channel will be deleted')
       const answer = await this.$bvModal.msgBoxConfirm(message, {
         // centered: true,
-        title: 'Confirm Deletion'
+        title: this.$t('Confirm Deletion'),
+        okTitle: this.$t('OK'),
+        cancelTitle: this.$t('Cancel')
       })
       if (answer) {
         await this.axios.delete(`/api/checkin/${channel.checkinToken}/delete/`)
@@ -204,7 +208,7 @@ export default {
         this.$refs['show-QRcode'].show()
       } catch (err) {
         if (err.needHandle) {
-          this.toastError('Failed to get QRcode')
+          this.toastError(this.$t('Failed to get QRcode'))
         }
       }
     },
