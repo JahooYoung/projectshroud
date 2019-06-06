@@ -21,7 +21,7 @@
               v-html="event.descriptionHtml"
             />
             <b-card-title v-else>
-              This event does not exist
+              {{ $t('This event does not exist') }}
             </b-card-title>
           </b-card>
         </b-col>
@@ -54,7 +54,7 @@
                       <font-awesome-icon
                         icon="file-alt"
                       />
-                      Require approvement
+                      {{ $t('Require approvement') }}
                     </b>
                     <b v-else-if="!event.userRegisterEvent.approved">
                       <font-awesome-icon
@@ -62,14 +62,14 @@
                         class="fa-spin"
                         :style="{ color: '#2196F3' }"
                       />
-                      Waiting for approvement
+                      {{ $t('Waiting for approvement') }}
                     </b>
                     <b v-else>
                       <font-awesome-icon
                         icon="check"
                         :style="{ color: 'green' }"
                       />
-                      Approved
+                      {{ $t('Approved') }}
                     </b>
                   </div>
                   <b-button
@@ -78,7 +78,7 @@
                     :disabled="isLoading"
                     @click="checkActivated() && $refs['modal-register'].show()"
                   >
-                    Register
+                    {{ $t('Register') }}
                   </b-button>
                   <b-button
                     v-else-if="!event.userRegisterEvent.checkedIn"
@@ -86,14 +86,14 @@
                     :disabled="isLoading"
                     @click="$refs['modal-unregister'].show()"
                   >
-                    Unregister
+                    {{ $t('Unregister') }}
                   </b-button>
                   <b v-else>
                     <font-awesome-icon
                       icon="check"
                       :style="{ color: 'green' }"
                     />
-                    Checked in
+                    {{ $t('Checked in') }}
                   </b>
                 </b-list-group-item>
                 <b-list-group-item v-if="event.eventAdmin">
@@ -101,7 +101,7 @@
                     variant="dark"
                     :to="`/event/${$route.params.id}/admin`"
                   >
-                    Manage this event
+                    {{ $t('Manage this event') }}
                   </b-button>
                 </b-list-group-item>
               </b-list-group>
@@ -120,7 +120,7 @@
                     size="sm"
                     @click="editTransport"
                   >
-                    Edit
+                    {{ $t('Edit') }}
                   </b-button>
                 </div>
               </template>
@@ -138,7 +138,7 @@
                 </div>
               </b-card-text>
               <b-card-text v-else>
-                None
+                {{ $t('None') }}
               </b-card-text>
             </b-card>
           </div>

@@ -8,7 +8,7 @@
       bg-variant="white"
     >
       <template slot="header">
-        Academic Conference
+        {{ $t('Academic Conference') }}
       </template>
 
       <template slot="lead">
@@ -27,7 +27,7 @@
         variant="primary"
         to="/login"
       >
-        Login or Register
+        {{ $t('Login or Register') }}
       </b-button>
       <!-- <b-button variant="success" href="#">I am host</b-button> -->
     </b-jumbotron>
@@ -64,7 +64,7 @@
               class="mb-2"
               style="text-align: left"
             >
-              Short description here?
+              {{ $t('Short description here.') }}
             </p>
             <hr>
           </div>
