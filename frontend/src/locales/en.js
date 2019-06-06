@@ -21,5 +21,10 @@ export default {
   'Register.vue password': '{0}',
   'This page will automatically close in <b></b> seconds.':
   'This page will automatically close in <b>{0}</b> seconds.',
-  'SendActivation.vue msg': '{0}'
+  'SendActivation.vue msg': '{0}',
+  'UserProfile.vue confirm email':
+  'A confirmation email was sent to <b>{0}</b>.<br> Click ok after the confirmation succeeds.',
+  'UserProfile.vue fill1': '',
+  'UserProfile.vue fill2': '',
+  'CheckIn.vue msg': '{0}'
 }

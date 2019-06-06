@@ -77,33 +77,37 @@ export default {
   },
   data () {
     return {
-      fields: [
+      events: []
+    }
+  },
+  computed: {
+    fields () {
+      return [
         {
           key: 'title',
-          label: 'Title'
+          label: this.$t('Title')
         },
         {
           key: 'startTime',
-          label: 'Start Time',
+          label: this.$t('Start time'),
           sortable: true,
           formatter: value => value.toLocaleString()
         },
         {
           key: 'attendeeCount',
-          label: 'No. Attendee',
+          label: this.$t('No. Attendee'),
           sortable: true
         },
         {
           key: 'applicantCount',
-          label: 'No. Applicant',
+          label: this.$t('No. Applicant'),
           sortable: true
         },
         {
           key: 'actions',
-          label: 'Actions'
+          label: this.$t('Actions')
         }
-      ],
-      events: []
+      ]
     }
   },
   created () {
