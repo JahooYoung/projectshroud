@@ -184,10 +184,10 @@ EMAIL_HOST_PASSWORD = '5LingFournoreply'
 DEFAULT_FROM_EMAIL = 'noreply <%s>' % EMAIL_HOST_USER
 
 SITE_OFFICIAL_NAME = 'TESTSHROUD'
-if environ.get('DJANGO_DB') == 'mysql':
-    SITE_HOST_NAME = '47.94.219.224:8000'
+if os.environ.get('DJANGO_DEFAULT_HOST') is not None:
+    SITE_HOST = os.environ.get('DJANGO_DEFAULT_HOST')
 else:
-    SITE_HOST_NAME = 'localhost:8000'
+    SITE_HOST = 'http://localhost:8000'
 SITE_DOMAIN_NAME = 'testshroud.top'
 
 USER_ACTIVATE_URL = '/send/activation/'

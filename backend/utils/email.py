@@ -4,7 +4,7 @@ from django.core.mail import EmailMultiAlternatives
 
 
 site_name = settings.SITE_OFFICIAL_NAME
-site_host = settings.SITE_HOST_NAME
+site_host = settings.SITE_HOST
 site_domain = settings.SITE_DOMAIN_NAME
 activate_url = settings.USER_ACTIVATE_URL
 
@@ -13,7 +13,7 @@ def send_activation_email(user, event=None, passwd=None):
     id = user.id
     name = user.real_name
     token = user.activate_token
-    activation_link = 'http://%s%s?token=%s' % (site_host, activate_url, token)
+    activation_link = '%s%s?token=%s' % (site_host, activate_url, token)
 
     content = '<p>亲爱的 <strong>%s</strong> 您好:</p>\n' % name
     if event is None:
@@ -41,7 +41,7 @@ def send_approve_or_reject_email(user, event, approved=True):
         return 0
 
     name = user.real_name
-    href = 'http://%s/event/%s' % (site_host, event.id)
+    href = '%s/event/%s' % (site_host, event.id)
 
     if approved:
         message = '您注册参加<a href="%s">%s</a>的申请已被管理员批准，活动将于%s在%s举行，请按时参加。'
@@ -70,7 +70,7 @@ def send_registered_email(user, event, approved=True):
         return 0
 
     name = user.real_name
-    href = 'http://%s/event/%s' % (site_host, event.id)
+    href = '%s/event/%s' % (site_host, event.id)
 
     if approved:
         message = '您已成功注册<a href="%s">%s</a>，活动将于%s在%s举行，请按时参加。'
@@ -103,7 +103,7 @@ def send_notification_email(ure, day_msg):
 
     name = ure.user.real_name
 
-    href = 'http://%s/event/%s' % (site_host, ure.event.id)
+    href = '%s/event/%s' % (site_host, ure.event.id)
     message = '您注册的<a href="%s">%s</a>将于%s在%s举行，请按时参加。'
     message %= (href, ure.event.title, before_days[1], ure.event.location)
 
