@@ -5,6 +5,7 @@ from backend.models import *
 
 class UserProfileSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
+    mobile = serializers.ReadOnlyField()
     is_activated = serializers.ReadOnlyField()
 
     class Meta:

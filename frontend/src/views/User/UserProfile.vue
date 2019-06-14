@@ -19,6 +19,7 @@
               <b-form-input
                 id="mobileInput"
                 v-model="userProfile.mobile"
+                disabled
                 required
               />
             </b-form-group>
