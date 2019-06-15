@@ -12,5 +12,6 @@ venv*/
 cert/
 log/
 backend/migrations/
+projectshroud/settings.py
 
 *.http
