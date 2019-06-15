@@ -33,7 +33,13 @@
 2. 安装[python(3.6或以上)](https://www.python.org/), [nodejs(LTS版)](https://nodejs.org), [yarn](https://yarnpkg.com/zh-Hant/), [redis](https://redis.io/)
 3. 建议使用[Virtualenv](https://virtualenv.pypa.io/en/stable/)
 4. `pip install -r requirements.txt`
-5. `(cd frontend; yarn install)`（前端依赖改了就要做一次）
+5. 将`settings.py`（出于安全原因没有存放于git仓库中）移至`projectshroud/`子目录下，设置`DEBUG = True`
+6. `(cd frontend; yarn install)`（前端依赖改了就要做一次）
+
+### 数据库配置
+
+1. 如果使用默认的SQLite，则直接下一步；如果使用MySQL，设置环境变量`DJANGO_DB=mysql`，`MYSQL_USER`和`MYSQL_PSW`为MySQL的用户名和密码，并创建一个名为`shrouddb`的数据库
+2. `python manage.py makemigrations backend && python manage.py makemigrations && python manage.py migrate`
 
 ### 启动后端开发服务器
 
@@ -48,23 +54,24 @@
 2. `yarn serve`
 3. 浏览器访问`http://localhost:8080`
 
-## 部署
+## 生产环境部署
 
 1. 准备环境，见[环境](#环境)，并安装[Nginx](http://nginx.org/en/)
 2. 构建前端文件：`(cd frontend; yarn build)`
-3. 配置数据库
-   1. 如果用默认的SQLite，则直接下一步；如果用MySQL，则设置环境变量`DJANGO_DB=mysql`，`MYSQL_USER`和`MYSQL_PSW`为MySQL的用户和密码，并创建一个名为`shrouddb`的数据库
+3. 将`settings.py`（出于安全原因没有存放于git仓库中）移至`projectshroud/`子目录下，在其中设置`DEBUG = False`
+4. 配置数据库
+   1. 如果使用默认的SQLite，则直接下一步；如果使用MySQL，设置环境变量`DJANGO_DB=mysql`，`MYSQL_USER`和`MYSQL_PSW`为MySQL的用户名和密码，并创建一个名为`shrouddb`的数据库
    2. `python manage.py makemigrations backend && python manage.py makemigrations && python manage.py migrate`
-4. 配置nginx：可参考[nginx.conf](deploy/nginx.conf)，注意修改
+5. 配置nginx：可参考[nginx.conf](deploy/nginx.conf)，注意修改
    1. 用户为当前登录的用户（第1行）
    2. `/path-to-projectshroud/`为你的`projectshroud`路径
    3. `/path-to-virtualenv/`为你的virtualenv的路径
    4. `ssl/`为你的https证书路径
-5. 创建日志文件夹：`mkdir -p log deploy/daphne` 
-6. 配置后端ASGI应用守护进程：修改`deploy/supervisord.conf`中的`/home/projectshroud/`你的`projectshroud`路径
-7. 运行nginx：`sudo nginx`
-8. 运行redis：`redis-server `（可通过修改redis配置文件来daemonize）
-9. 运行ASGI应用：`supervisord -c ./deploy/supervisord.conf`
+6. 创建日志文件夹：`mkdir -p log deploy/daphne` 
+7. 配置后端ASGI应用守护进程：修改`deploy/supervisord.conf`中的`/home/projectshroud/`你的`projectshroud`路径
+8. 运行nginx：`sudo nginx`
+9. 运行redis：`redis-server `（可通过修改redis配置文件来daemonize）
+10. 运行ASGI应用：`supervisord -c ./deploy/supervisord.conf`
 
 ## 数据模式
 见[models.py](./backend/models.py)
