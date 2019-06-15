@@ -22,7 +22,7 @@
   - [MyQR](https://github.com/sylnsfar/qrcode) for QRcode generation
   - [Django Channels](https://channels.readthedocs.io/en/latest/index.html) for websocket
   - [Openpyxl](https://openpyxl.readthedocs.io/en/stable/) for Excel import/export
-- 前后端通信使用[RESTful API](https://www.runoob.com/w3cnote/restful-architecture.html)，文档见[API_doc.md](./backend/API_doc.md)
+- 前后端通信使用[RESTful API](https://www.runoob.com/w3cnote/restful-architecture.html)，后端接口的URL和实现见[urls.py](./backend/urls.py)和[views.md](./backend/views.py)
 - 服务器采用[Nginx](http://nginx.org/en/)
 
 ## 开发准备
