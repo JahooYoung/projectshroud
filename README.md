@@ -28,10 +28,11 @@
 
 ### 环境
 
-1. 建议使用virtualenv
-2. `pip install -r requirements.txt`
-3. 安装[yarn](https://yarnpkg.com/zh-Hant/)
-4. `cd frontend && yarn install`（前端依赖改了就要做一次）
+1. `git clone https://github.com/JahooYoung/projectshroud.git`
+2. 安装[python(3.6或以上)](https://www.python.org/), [nodejs(LTS版)](https://nodejs.org), [yarn](https://yarnpkg.com/zh-Hant/), [redis](https://redis.io/)
+3. 建议使用[Virtualenv](https://virtualenv.pypa.io/en/stable/)
+4. `pip install -r requirements.txt`
+5. `(cd frontend; yarn install)`（前端依赖改了就要做一次）
 
 ### 启动后端开发服务器
 
@@ -46,8 +47,26 @@
 2. `yarn serve`
 3. 浏览器访问`http://localhost:8080`
 
+## 部署
+
+1. 准备环境，见[环境](#环境)，并安装[Nginx](http://nginx.org/en/)
+2. 构建前端文件：`(cd frontend; yarn build)`
+3. 配置数据库
+   1. 如果用默认的SQLite，则直接下一步；如果用MySQL，则设置环境变量`DJANGO_DB=mysql`，`MYSQL_USER`和`MYSQL_PSW`为MySQL的用户和密码，并创建一个名为`shrouddb`的数据库
+   2. `python manage.py makemigrations backend && python manage.py makemigrations && python manage.py migrate`
+4. 配置nginx：可参考[nginx.conf](deploy/nginx.conf)，注意修改
+   1. 用户为当前登录的用户（第1行）
+   2. `/path-to-projectshroud/`为你的`projectshroud`路径
+   3. `/path-to-virtualenv/`为你的virtualenv的路径
+   4. `ssl/`为你的https证书路径
+5. 创建日志文件夹：`mkdir -p log deploy/daphne` 
+6. 配置后端ASGI应用守护进程：修改`deploy/supervisord.conf`中的`/home/projectshroud/`你的`projectshroud`路径
+7. 运行nginx：`sudo nginx`
+8. 运行redis：`redis-server `（可通过修改redis配置文件来daemonize）
+9. 运行ASGI应用：`supervisord -c ./deploy/supervisord.conf`
+
 ## 数据模式
-See [models.py](./backend/models.py)
+见[models.py](./backend/models.py)
 
 ### 关于自定义UserProfile
 使用非Django自带的User Model，必须作为整个项目的第一次migrations

@@ -104,7 +104,7 @@ if environ.get('DJANGO_DB') == 'mysql':
         'default': {
             'ENGINE': 'django.db.backends.mysql',   # 数据库引擎
             'NAME': 'shrouddb',
-    	    'USER': environ.get('MYSQL_USER'),                # 数据库用户名
+            'USER': environ.get('MYSQL_USER'),                # 数据库用户名
             'PASSWORD': environ.get('MYSQL_PSW'),             # 密码
             'HOST': 'localhost',    # 主机
             'PORT': '3306',         # 数据库使用的端口
