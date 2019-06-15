@@ -21,6 +21,7 @@
   - [algoliasearch](https://www.algolia.com) for search indexing
   - [MyQR](https://github.com/sylnsfar/qrcode) for QRcode generation
   - [Django Channels](https://channels.readthedocs.io/en/latest/index.html) for websocket
+  - [Openpyxl](https://openpyxl.readthedocs.io/en/stable/) for Excel import/export
 - 前后端通信使用[RESTful API](https://www.runoob.com/w3cnote/restful-architecture.html)，文档见[API_doc.md](./backend/API_doc.md)
 - 服务器采用[Nginx](http://nginx.org/en/)
 
