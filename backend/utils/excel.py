@@ -15,11 +15,11 @@ TEMP_FILES_DIR = os.path.join(settings.FILES_DIR, 'temp')
 export_fields = {'user': ['real_name', 'mobile', 'email', 'is_activated'],
                  'status': ['approved', 'application_text'],
                  'transport': ['transport_type', 'transport_id', 'depart_station', 'depart_time',
-                               'arrival_station', 'arrival_time', 'other_detail']
+                               'arrival_station', 'arrival_time', 'accommodation', 'other_detail']
                 }
 import_fields = {'user': ['real_name', 'mobile', 'email'],
                  'transport': ['transport_type', 'transport_id', 'depart_station', 'depart_time',
-                               'arrival_station', 'arrival_time', 'other_detail']
+                               'arrival_station', 'arrival_time', 'accommodation', 'other_detail']
                 }
 MAGIC_STRING = 'tE5St3Sh1rOuD'
 empty_re = r'^[\s]+$'
