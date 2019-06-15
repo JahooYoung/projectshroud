@@ -19,7 +19,7 @@
               <b-form-input
                 id="mobileInput"
                 v-model="userProfile.mobile"
-                disabled
+                readonly
                 required
               />
             </b-form-group>
