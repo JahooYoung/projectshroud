@@ -8,20 +8,12 @@
       bg-variant="white"
     >
       <template slot="header">
-        {{ $t('Academic Conference') }}
+        {{ $t('Academic Conference Manager') }}
       </template>
 
       <template slot="lead">
-        This is a simple hero unit, a simple jumbotron-style component for calling extra attention to
-        featured content or information.
+        Proudly presented by TeamShroud © 2019
       </template>
-
-      <hr class="my-4">
-
-      <p>
-        It uses utility classes for typography and spacing to space content out within the larger
-        container.
-      </p>
 
       <b-button
         variant="primary"
@@ -30,6 +22,12 @@
         {{ $t('Login or Register') }}
       </b-button>
       <!-- <b-button variant="success" href="#">I am host</b-button> -->
+
+      <hr class="my-4">
+
+      <p>
+        Developed and Maintained by 504 Studio: Yifan Yu, Jiahong Yang, Lidian Zhuo
+      </p>
     </b-jumbotron>
 
     <b-container v-else>

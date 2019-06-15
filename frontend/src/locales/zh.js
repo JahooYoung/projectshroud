@@ -8,6 +8,7 @@ export default {
   'Your Profile': '个人信息',
   'Registered events': '已注册的活动',
   'Admin events': '管理活动',
+  'Academic Conference Manager': '会议活动事务管理Web平台',
   'Logout': '登出',
   'Login': '登录',
   'Recent Events': '近期举办的活动',

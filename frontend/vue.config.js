@@ -4,13 +4,13 @@ module.exports = {
     // LocalServer: 'http://localhost:8000'
     proxy: {
       '^/api/': {
-        target: 'http://10.128.202.42:8000'
+        target: 'http://localhost:8000'
       },
       '^/admin/': {
-        target: 'http://10.128.202.42:8000'
+        target: 'http://localhost:8000'
       },
       '^/static/rest_framework/': {
-        target: 'http://10.128.202.42:8000'
+        target: 'http://localhost:8000'
       }
     }
   },
