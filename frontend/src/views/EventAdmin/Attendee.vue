@@ -78,13 +78,6 @@
         >
           {{ $t('Export') }}
         </b-button>
-        <b-button
-          class="mr-2"
-          variant="outline-dark"
-          href="#"
-        >
-          {{ $t('Add attendee') }}
-        </b-button>
       </template>
 
       <template v-slot="config">
@@ -120,10 +113,7 @@
             </b-button>
           </template>
 
-          <template
-            slot="checkedIn"
-            slot-scope="row"
-          >
+          <template #checkedIn="row">
             <font-awesome-icon
               v-if="row.value"
               :id="'checkin-popover-' + row.item.userInfo.id"
@@ -153,10 +143,7 @@
             </b-popover> -->
           </template>
 
-          <template
-            slot="isAdmin"
-            slot-scope="row"
-          >
+          <template #isAdmin="row">
             <font-awesome-icon
               v-if="row.value"
               :id="'checkin-popover-' + row.item.userInfo.id"
@@ -169,14 +156,82 @@
               icon="times"
               :style="{ color: 'red' }"
             />
-            <font-awesome-icon
+            <!-- <font-awesome-icon
               v-if="!row.value"
               :id="'checkin-popover-' + row.item.userInfo.id"
               icon="plus"
               :style="{ color: '#2196F3' }"
               class="ml-3"
               @click="assignAdmin(row.item)"
-            />
+            /> -->
+          </template>
+
+          <template #actions="row">
+            <b-button
+              size="sm"
+              @click="row.toggleDetails"
+            >
+              {{ row.detailsShowing ? $t('Hide Details') : $t('Show Details') }}
+            </b-button>
+          </template>
+
+          <template #row-details="row">
+            <b-card-group deck>
+              <b-card>
+                <template #header>
+                  <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mt-1">
+                      {{ $t('User Information') }}
+                    </h6>
+                    <b-button
+                      variant="primary"
+                      size="sm"
+                      :disabled="row.item.isAdmin"
+                      @click="assignAdmin(row.item)"
+                    >
+                      {{ $t('Assign Admin') }}
+                    </b-button>
+                  </div>
+                </template>
+                <b-card-text>
+                  <strong>{{ $t('Real name:') }}</strong> {{ row.item.userInfo.realName }} <br>
+                  <strong>{{ $t('Mobile:') }}</strong> {{ row.item.userInfo.mobile }} <br>
+                  <strong>{{ $t('Email:') }}</strong> {{ row.item.userInfo.email }} <br>
+                </b-card-text>
+              </b-card>
+              <b-card>
+                <template #header>
+                  <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mt-1">
+                      {{ $t('Transport') }} &amp; {{ $t('Accommodation') }}
+                    </h6>
+                    <b-button
+                      variant="success"
+                      size="sm"
+                      @click="editTransport(row)"
+                    >
+                      {{ $t('Edit') }}
+                    </b-button>
+                  </div>
+                </template>
+                <b-card-text v-if="row.item.transportInfo">
+                  <strong>{{ row.item.transportInfo.transportType }}</strong> {{ row.item.transportInfo.transportId }} <br>
+                  <strong>{{ $t('From') }}</strong> {{ row.item.transportInfo.departStation }} <br>
+                  {{ row.item.transportInfo.departTime.toLocaleString() }} <br>
+                  <strong>{{ $t('To') }}</strong> {{ row.item.transportInfo.arrivalStation }} <br>
+                  {{ row.item.transportInfo.arrivalTime.toLocaleString() }}
+                  <div v-if="row.item.transportInfo.accommodation">
+                    <strong>{{ $t('Stay at') }} </strong> {{ row.item.transportInfo.accommodation }}
+                  </div>
+                  <div v-if="row.item.transportInfo.otherDetail">
+                    <strong>{{ $t('p.s.') }}</strong> {{ row.item.transportInfo.otherDetail }}
+                  </div>
+                </b-card-text>
+                <b-card-text v-else>
+                  {{ $t('None') }}
+                </b-card-text>
+              </b-card>
+            </b-card-group>
           </template>
         </b-table>
       </template>
@@ -185,6 +240,8 @@
     <b-modal
       ref="modal-approve"
       cancel-variant="danger"
+      :ok-title="$t('Accept')"
+      :cancel-title="$t('Reject')"
       @ok="modalCallback && modalCallback(true)"
       @cancel="modalCallback && modalCallback(false)"
       @hide="modalCallback && modalCallback(null)"
@@ -199,6 +256,8 @@
     <b-modal
       ref="modal-add-admin"
       :title="$t('Confirm')"
+      :ok-title="$t('OK')"
+      :cancel-title="$t('Cancel')"
       @ok="modalCallback && modalCallback(true)"
       @cancel="modalCallback && modalCallback(false)"
       @hide="modalCallback && modalCallback(null)"
@@ -209,35 +268,24 @@
       </p>
     </b-modal>
 
-    <b-modal
-      ref="modal-import-result"
-      :title="$t('Import result')"
-      ok-only
-      @ok="modalCallback && modalCallback(true)"
-      @cancel="modalCallback && modalCallback(false)"
-      @hide="modalCallback && modalCallback(null)"
-    >
-      <p class="my-3">
-        <b>{{ $t('No. successful users:') }}</b> {{ importResult.successCount }} <br>
-        <b>{{ $t('No. failed users:') }}</b> {{ importResult.failCount }} <br>
-        <b>{{ $t('No. new registered users:') }}</b> {{ importResult.userCount }}
-      </p>
-    </b-modal>
-
     <input
       id="file-input"
       type="file"
       accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       style="display: none"
     >
+
+    <transport-modal ref="tp-modal" />
   </b-container>
 </template>
 
 <script>
 import {
-  BProgress, BProgressBar, BAlert, BDropdown, BDropdownItem, BButton, BTable
+  BProgress, BProgressBar, BAlert, BDropdown, BDropdownItem, BButton, BTable,
+  BCardGroup, BCard, BCardText
 } from 'bootstrap-vue'
 import TableLayout from '@/components/TableLayout.vue'
+import TransportModal from '@/components/TransportModal.vue'
 import { transformJSON2Object } from '@/plugins/axios.js'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTimes, faCheck, faPlus } from '@fortawesome/free-solid-svg-icons'
@@ -249,6 +297,7 @@ export default {
   name: 'EventAdminAttendee',
   components: {
     TableLayout,
+    TransportModal,
     FontAwesomeIcon,
     BProgress,
     BProgressBar,
@@ -256,7 +305,10 @@ export default {
     BDropdown,
     BDropdownItem,
     BButton,
-    BTable
+    BTable,
+    BCardGroup,
+    BCard,
+    BCardText
   },
   data () {
     return {
@@ -309,6 +361,10 @@ export default {
           key: 'isAdmin',
           label: this.$t('Is Admin'),
           sortable: true
+        },
+        {
+          key: 'actions',
+          label: this.$t('Actions')
         }
       ]
     }
@@ -323,6 +379,15 @@ export default {
     async refresh () {
       const res = await this.axios.get(`/api/event/${this.eventId}/attendee/`)
       this.attendee = res.data
+    },
+    editTransport (row) {
+      const item = this.attendee[row.index]
+      this.$refs['tp-modal'].resetShow(item.transportInfo, item.eventInfo.id)
+        .then(transport => {
+          if (transport !== false) {
+            item.transportInfo = transport
+          }
+        })
     },
     // manualCheckIn (rowItem) {
     //   // Todo

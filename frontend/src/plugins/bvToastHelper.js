@@ -25,7 +25,7 @@ const install = _Vue => {
       },
       toastWarning (msg, title, to) {
         this.$root.$bvToast.toast(msg, {
-          title: title || 'Warning',
+          title: title || this.$t('Warning'),
           variant: 'warning',
           autoHideDelay: 4000,
           solid: true,

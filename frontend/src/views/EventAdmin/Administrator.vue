@@ -18,7 +18,7 @@
         </b-button>
         <b-tooltip
           target="add-admin-tooltip"
-          :title="$t(`Click '+' in attendee list to make an attendee an admin`)"
+          :title="$t(`Click 'Assign admin' in 'User Information' card in attendee list`)"
         />
       </template>
 

@@ -30,6 +30,21 @@
             </div>
           </template>
 
+          <template #approved="row">
+            <font-awesome-icon
+              v-if="row.value"
+              :id="'checkin-popover-' + row.item.userInfo.id"
+              icon="check"
+              :style="{ color: 'green' }"
+            />
+            <font-awesome-icon
+              v-else
+              :id="'checkin-popover-' + row.item.userInfo.id"
+              icon="minus"
+              :style="{ color: '#2196F3' }"
+            />
+          </template>
+
           <template #checkedIn="row">
             <font-awesome-icon
               v-if="row.value"
@@ -50,7 +65,7 @@
               size="sm"
               @click="row.toggleDetails"
             >
-              {{ row.detailsShowing ? $t('Hide') : $t('Show') + $t('Details') }}
+              {{ row.detailsShowing ? $t('Hide Details') : $t('Show Details') }}
             </b-button>
           </template>
 
@@ -153,6 +168,10 @@ export default {
           label: this.$t('Depart Info')
         },
         {
+          key: 'approved',
+          label: this.$t('Approve status')
+        },
+        {
           key: 'checkedIn',
           label: this.$t('Check-in status')
         },
@@ -189,7 +208,7 @@ export default {
 </script>
 
 <style scoped>
-.card-detail {
+/* .card-detail {
   text-align: left;
-}
+} */
 </style>
