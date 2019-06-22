@@ -472,7 +472,6 @@ export default {
           input.onchange = null
           const files = input.files
           input.files = null
-          console.log(files)
           resolve(files)
         }
       })
@@ -505,6 +504,7 @@ export default {
       }
     },
     syncImportProgress () {
+      this.closeSocket()
       this.importResult = {
         finished: false,
         total: 0,
@@ -512,13 +512,13 @@ export default {
         failCount: 0,
         userCount: 0
       }
-      let host = window.location.host
+      let host = window.location.host; let protocol = window.location.protocol
       // for dev
       if (host.search('localhost') !== -1) {
         host = 'localhost:8000'
       }
-      this.closeSocket()
-      this.importSocket = new WebSocket(`ws://${host}/ws/import/${this.eventId}/`)
+      protocol = protocol === 'https:' ? 'wss:' : 'ws:'
+      this.importSocket = new WebSocket(`${protocol}//${host}/ws/import/${this.eventId}/`)
       this.importSocket.onmessage = e => {
         const data = transformJSON2Object(JSON.parse(e.data))
         if (data.error) {

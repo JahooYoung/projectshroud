@@ -8,7 +8,7 @@ from backend.utils.email import send_activation_email
 
 
 VERSION = '0.1.1'
-REGISTRATION_API = 'http://localhost:8000/api/auth/registration/'
+REGISTRATION_API = settings.REGISTRATION_API
 IMPORT_TEMPLATE_FILE_PATH = os.path.join(settings.FILES_DIR, 'template/Import_template.xlsx')
 EXPORT_TEMPLATE_FILE_PATH = os.path.join(settings.FILES_DIR, 'template/Export_template.xlsx')
 TEMP_FILES_DIR = os.path.join(settings.FILES_DIR, 'temp')
